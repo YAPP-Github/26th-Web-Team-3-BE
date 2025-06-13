@@ -21,6 +21,6 @@ class ApiExceptionHandler {
             status = ExtendedHttpStatus.INTERNAL_SERVER_ERROR,
             code = "internal.error"
         )
-        return ResponseEntity.status(500).body(ApiResponse.error(error))
+        return ResponseEntity.status(ExtendedHttpStatus.INTERNAL_SERVER_ERROR.code).body(ApiResponse.error(error))
     }
 }
