@@ -4,7 +4,6 @@ import com.yapp.demo.common.env.AppEnv
 import com.yapp.demo.common.support.SpringContextHolder
 
 data class ApiError(
-    val appId: String,
     val status: ExtendedHttpStatus,
     val code: String,
     val message: String?,
@@ -17,9 +16,8 @@ data class ApiError(
             args: Array<out Any>? = null,
             data: Any? = null
         ): ApiError {
-            val appId = SpringContextHolder.getBean(AppEnv::class.java).getId()
             val message = MessageResolver.resolve(code, args)
-            return ApiError(appId, status, code, message, data)
+            return ApiError( status, code, message, data)
         }
     }
 }
