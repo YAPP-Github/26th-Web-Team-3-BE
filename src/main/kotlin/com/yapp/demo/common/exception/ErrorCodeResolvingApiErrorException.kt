@@ -1,36 +1,18 @@
 package com.yapp.demo.common.exception
 
-import com.yapp.demo.common.env.AppEnv
-import com.yapp.demo.common.support.SpringContextHolder
+import com.yapp.demo.common.error.ErrorMessages
 
 open class ErrorCodeResolvingApiErrorException : ApiErrorException {
 
-    companion object {
-        private val appEnv: AppEnv by lazy {
-            SpringContextHolder.getBean(AppEnv::class.java)
-        }
-    }
-
     constructor(
-        statusCode: ExtendedHttpStatus,
-        code: String,
+        error: ErrorMessages,
         args: Array<out Any>? = null,
         data: Any? = null,
         cause: Throwable? = null
-    ) : super(
-        ApiError(
-            appId = appEnv.getId(),
-            status = statusCode,
-            code = code,
-            message = MessageResolver.resolve(code, args),
-            data = data
-        ),
-        cause
-    )
+    ) : super(ApiError.of(error, args, data), cause)
 
     constructor(
-        statusCode: ExtendedHttpStatus,
-        code: String,
+        error: ErrorMessages,
         cause: Throwable? = null
-    ) : this(statusCode, code, null, null, cause)
+    ) : this(error, null, null, cause)
 }

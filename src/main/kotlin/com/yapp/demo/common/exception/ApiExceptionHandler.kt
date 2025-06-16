@@ -1,6 +1,7 @@
 package com.yapp.demo.common.exception
 
 import com.yapp.demo.common.dto.ApiResponse
+import com.yapp.demo.common.error.ErrorMessages
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -17,10 +18,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleUnknownException(ex: Exception): ResponseEntity<ApiResponse<Nothing>> {
-        val error = ApiError.of(
-            status = ExtendedHttpStatus.INTERNAL_SERVER_ERROR,
-            code = "internal.error"
-        )
+        val error = ApiError.of(ErrorMessages.INTERNAL_SERVER_ERROR)
         return ResponseEntity.status(ExtendedHttpStatus.INTERNAL_SERVER_ERROR.code).body(ApiResponse.error(error))
     }
 }

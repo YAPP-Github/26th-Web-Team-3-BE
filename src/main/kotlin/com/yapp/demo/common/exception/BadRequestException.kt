@@ -1,10 +1,7 @@
 package com.yapp.demo.common.exception
 
+import com.yapp.demo.common.error.ErrorMessages
+
 class BadRequestException(
-    code: String = "bad-request",
     cause: Throwable? = null
-) : ErrorCodeResolvingApiErrorException(
-    ExtendedHttpStatus.BAD_REQUEST,
-    code,
-    cause
-)
+) : ErrorCodeResolvingApiErrorException(ErrorMessages.INVALID_INPUT_VALUE, cause)

@@ -1,7 +1,6 @@
 package com.yapp.demo.common.exception
 
-import com.yapp.demo.common.env.AppEnv
-import com.yapp.demo.common.support.SpringContextHolder
+import com.yapp.demo.common.error.ErrorMessages
 
 data class ApiError(
     val status: ExtendedHttpStatus,
@@ -11,13 +10,12 @@ data class ApiError(
 ) {
     companion object {
         fun of(
-            status: ExtendedHttpStatus,
-            code: String,
+            error: ErrorMessages,
             args: Array<out Any>? = null,
             data: Any? = null
         ): ApiError {
-            val message = MessageResolver.resolve(code, args)
-            return ApiError( status, code, message, data)
+            val message = if (args != null) String.format(error.message, *args) else error.message
+            return ApiError(error.status, error.status.code.toString(), message, data)
         }
     }
 }
