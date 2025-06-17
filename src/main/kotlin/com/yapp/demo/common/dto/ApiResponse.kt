@@ -10,16 +10,16 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class ApiResponse<T>(
     @get:JsonProperty("result")
     val result: T? = null,
-
     @get:JsonProperty("error")
     @Schema(hidden = true)
-    val error: ApiError? = null
+    val error: ApiError? = null,
 ) {
     @get:JsonIgnore
     val isSuccess: Boolean get() = error == null
 
     companion object {
         fun <T> success(result: T): ApiResponse<T> = ApiResponse(result = result)
+
         fun <T> error(error: ApiError): ApiResponse<T> = ApiResponse(error = error)
     }
 }
