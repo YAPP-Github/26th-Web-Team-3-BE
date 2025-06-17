@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 
 class ApiExceptionHandlerTest {
-
     private val handler = ApiExceptionHandler()
 
     @Test

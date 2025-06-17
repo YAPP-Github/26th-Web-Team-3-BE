@@ -16,5 +16,5 @@ enum class ErrorMessages(
     INTERNAL_SERVER_ERROR(ExtendedHttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
 
     // 400
-    INVALID_INPUT_VALUE(ExtendedHttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다.")
+    INVALID_INPUT_VALUE(ExtendedHttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다."),
 }

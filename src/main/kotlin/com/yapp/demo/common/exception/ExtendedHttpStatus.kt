@@ -7,10 +7,13 @@ enum class ExtendedHttpStatus(val code: Int) {
     NOT_FOUND(404),
     CONFLICT(409),
     INTERNAL_SERVER_ERROR(500),
-    SERVICE_UNAVAILABLE(503);
+    SERVICE_UNAVAILABLE(503),
+    ;
 
     fun isClientError() = code in 400..499
+
     fun isServerError() = code in 500..599
+
     fun isError() = isClientError() || isServerError()
 
     companion object {
