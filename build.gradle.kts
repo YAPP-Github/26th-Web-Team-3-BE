@@ -1,14 +1,14 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
-
-    kotlin("plugin.spring") version "2.1.0"
-    kotlin("plugin.jpa") version "2.1.0"
-    kotlin("plugin.allopen") version "2.1.0"
-
-    kotlin("kapt") version "2.1.0"
+    kotlin("jvm") version "1.9.24"
+    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.jpa") version "1.9.24"
+    kotlin("plugin.allopen") version "1.9.24"
+    kotlin("kapt") version "1.9.24"
 
     id("org.springframework.boot") version "3.4.4"
     id("io.spring.dependency-management") version "1.1.7"
+
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
 }
 
 group = "com.yapp"
