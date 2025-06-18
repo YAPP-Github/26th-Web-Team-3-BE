@@ -3,7 +3,7 @@ name: PR labeler
 
 on:
   pull_request:
-    types: [ opened ]
+    types: [opened, edited, synchronize]
 
 jobs:
   labeler:
