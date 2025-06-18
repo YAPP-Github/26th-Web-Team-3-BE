@@ -1,9 +1,8 @@
-# workflow 의 이름
 name: PR labeler
 
 on:
-  pull_request:
-    types: [opened, edited, synchronize]
+  pull_request_target:
+    types: [ opened, edited, synchronize ]
 
 jobs:
   labeler:
@@ -17,4 +16,4 @@ jobs:
         id: labeler
         uses: jimschubert/labeler-action@v2
         with:
-          GITHUB_TOKEN: ${{secrets.GITHUB_PAT}}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
