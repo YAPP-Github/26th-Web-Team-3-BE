@@ -5,8 +5,8 @@ FROM gradle:8.5-jdk17 AS build
 ARG APP_DIR=/home/app
 
 # 소스 코드 복사
-COPY .. ${APP_DIR}
-WORKDIR ${APP_DIR}/qrust-api
+COPY . ${APP_DIR}
+WORKDIR ${APP_DIR}
 
 # 빌드 실행
 RUN gradle build --no-daemon -x test
