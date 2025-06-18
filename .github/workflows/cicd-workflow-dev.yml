@@ -42,7 +42,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH to EC2 and trigger switch
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy deployment files to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./deployment/develop/"
+          target: ~/
+          overwrite: true
+
+      - name: Run Blue-Green Switch Script on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -52,8 +65,9 @@ jobs:
             echo "Pulling latest image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:dev
 
-            echo "Starting blue-green switch..."
-            bash /home/ec2-user/scripts/switch-blue-green.sh
+            echo "Running switch script..."
+            chmod +x ~/deployment/develop/switch-blue-green.sh
+            bash ~/deployment/develop/switch-blue-green.sh
 
-            echo "Cleaning unused images..."
+            echo "Cleaning up..."
             docker image prune -f
