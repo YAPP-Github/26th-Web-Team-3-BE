@@ -48,7 +48,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:dev
 
             echo "Starting blue-green switch..."
-            bash /home/ec2-user/scripts/switch_blue_green.sh
+            bash /home/ec2-user/scripts/switch-blue-green.sh
 
             echo "Cleaning unused images..."
             docker image prune -f
