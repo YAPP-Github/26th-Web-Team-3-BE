@@ -5,6 +5,14 @@ on:
     branches:
       - develop
 
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Deployment reason (optional)"
+        required: false
+        default: "manual deploy"
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-latest
