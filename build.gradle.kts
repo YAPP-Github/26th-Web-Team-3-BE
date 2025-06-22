@@ -43,6 +43,7 @@ dependencies {
 
     // swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0")
 
     // jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -61,6 +62,16 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+    // webClient
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // asm
+    implementation("org.ow2.asm:asm:9.6")
+    implementation("org.ow2.asm:asm-tree:9.6")
+
+    // loger
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
