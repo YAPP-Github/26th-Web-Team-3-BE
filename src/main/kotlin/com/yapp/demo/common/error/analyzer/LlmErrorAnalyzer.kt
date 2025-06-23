@@ -18,7 +18,6 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class LlmErrorAnalyzer(
-    @Qualifier("llmWebClient")
     private val llmWebClient: WebClient,
     private val llmProperties: LlmProperties,
 ) : ErrorAnalyzer {
