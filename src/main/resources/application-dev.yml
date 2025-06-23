@@ -20,3 +20,19 @@ minio:
   accessKey: ${MINIO_ACCESS_KEY}
   secretKey: ${MINIO_SECRET_KEY}
   bucketName: ${MINIO_BUCKET_NAME}
+
+oauth:
+  kakao:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    redirect-uri: http://localhost:3000
+    client-name: kakao
+    authorization-uri: https://kauth.kakao.com/oauth/authorize
+    token-uri: https://kauth.kakao.com/oauth/token
+    user-info-uri: https://kapi.kakao.com/v2/user/me
+    scope: profile_nickname,profile_image
+
+jwt:
+  client-secret: ${JWT_SECRET}
+  expiration: 86400000
+  issuer: yapp
