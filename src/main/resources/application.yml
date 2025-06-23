@@ -10,3 +10,12 @@ management:
     web:
       exposure:
         include: health
+
+llm:
+  key: ${LLM_KEY}
+  id: ${LLM_ID}
+  service-name: ${LLM_SERVICE_NAME}
+  base-url: ${LLM_BASE_URL}
+
+discord:
+  webhook-url: ${DISCORD_WEBHOOK_URL}
