@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 
 class ApiExceptionHandlerTest {
-
     private lateinit var reporter: LlmErrorReporter
     private lateinit var handler: ApiExceptionHandler
 
@@ -43,10 +42,11 @@ class ApiExceptionHandlerTest {
     fun `Unknown Exception이 발생하면 LlmErrorReporter가 호출되고 500 응답을 반환해야 한다`() {
         // given
         val ex = RuntimeException("DB 연결 실패")
-        val mockRequest = mockk<HttpServletRequest> {
-            every { requestURI } returns "/api/test"
-            every { method } returns "POST"
-        }
+        val mockRequest =
+            mockk<HttpServletRequest> {
+                every { requestURI } returns "/api/test"
+                every { method } returns "POST"
+            }
 
         // when
         val response: ResponseEntity<ApiResponse<Nothing>> = handler.handleUnknownException(ex, mockRequest)
@@ -59,13 +59,15 @@ class ApiExceptionHandlerTest {
 
         // LLM 분석 요청 확인
         verify(exactly = 1) {
-            reporter.report(withArg {
-                assertThat(it.path).isEqualTo("/api/test")
-                assertThat(it.httpMethod).isEqualTo("POST")
-                assertThat(it.exception).isEqualTo(ex)
-                assertThat(it.notify).isTrue()
-                assertThat(it.userId).isNull()
-            })
+            reporter.report(
+                withArg {
+                    assertThat(it.path).isEqualTo("/api/test")
+                    assertThat(it.httpMethod).isEqualTo("POST")
+                    assertThat(it.exception).isEqualTo(ex)
+                    assertThat(it.notify).isTrue()
+                    assertThat(it.userId).isNull()
+                },
+            )
         }
     }
 }

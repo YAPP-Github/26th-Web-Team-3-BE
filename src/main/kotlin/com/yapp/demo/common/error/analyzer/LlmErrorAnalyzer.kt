@@ -27,16 +27,16 @@ class LlmErrorAnalyzer(
             method = HttpMethod.POST,
             uri = "/api/v1/prediction/${llmProperties.id}",
             requestBody =
-            mapOf(
-                "question" to
-                    """
+                mapOf(
+                    "question" to
+                        """
                         service: ${llmProperties.serviceName},
                         httpMethod: ${request.httpMethod.lowercase()},
                         requestUrl: ${request.path},
                         cause: ${getStackTraceAsString(request.exception.message!!, filteredStackTrace)},
                         methodSignatures: ${getMethodSignatures(filteredStackTrace)}
                         """.trimIndent(),
-            ),
+                ),
             headersConsumer = { it.setBearerAuth(llmProperties.key) },
         )
     }
