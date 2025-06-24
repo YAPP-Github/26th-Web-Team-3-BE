@@ -41,7 +41,6 @@ class LlmErrorReporterTest {
             )
 
         every { redisTemplate.opsForValue().setIfAbsent(any(), any(), any()) } returns true
-        every { redisTemplate.opsForValue().setIfAbsent(any(), any(), any()) } returns true
         every { llmErrorAnalyzer.analyze(any()) } returns
             AnalyzeErrorResponse(
                 success = true,
