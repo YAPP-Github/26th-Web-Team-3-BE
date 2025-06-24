@@ -15,6 +15,10 @@ inline fun <reified T> WebClient.call(
         .headers(headersConsumer)
         .bodyValue(requestBody)
         .retrieve()
+        .onStatus({ it.isError }) { response ->
+            response.bodyToMono(String::class.java)
+                .map { RuntimeException("LLM API 호출 실패: $it") }
+        }
         .bodyToMono(T::class.java)
-        .block()!!
+        .block() ?: throw RuntimeException("LLM API 응답이 null입니다")
 }
