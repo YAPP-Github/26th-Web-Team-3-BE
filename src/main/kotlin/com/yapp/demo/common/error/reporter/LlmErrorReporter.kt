@@ -36,10 +36,10 @@ class LlmErrorReporter(
 
         try {
             val response = llmErrorAnalyzer.analyze(request)
-            if (!response.success) {
-                log.error { "처리에 실패했습니다. response=$response" }
-                return
-            }
+//            if (!response.success) {
+//                log.error { "처리에 실패했습니다. response=$response" }
+//                return
+//            }
 
             notify(request, response)
         } catch (e: Exception) {

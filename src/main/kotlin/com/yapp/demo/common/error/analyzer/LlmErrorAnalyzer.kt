@@ -23,27 +23,21 @@ class LlmErrorAnalyzer(
     override fun analyze(request: AnalyzeErrorRequest): AnalyzeErrorResponse {
         val filteredStackTrace = filterStackTrace(request.exception)
 
-        val json =
-            llmWebClient.call<AnalyzeErrorResponse.Json>(
-                method = HttpMethod.POST,
-                uri = "/api/v1/prediction/${llmProperties.id}",
-                requestBody =
-                    mapOf(
-                        "question" to
-                            """
-                            service: ${llmProperties.serviceName},
-                            httpMethod: ${request.httpMethod.lowercase()},
-                            requestUrl: ${request.path},
-                            cause: ${getStackTraceAsString(request.exception.message!!, filteredStackTrace)},
-                            methodSignatures: ${getMethodSignatures(filteredStackTrace)}
-                            """.trimIndent(),
-                    ),
-                headersConsumer = { it.setBearerAuth(llmProperties.key) },
-            )
-
-        return AnalyzeErrorResponse(
-            success = true,
-            json = json,
+        return llmWebClient.call(
+            method = HttpMethod.POST,
+            uri = "/api/v1/prediction/${llmProperties.id}",
+            requestBody =
+            mapOf(
+                "question" to
+                    """
+                        service: ${llmProperties.serviceName},
+                        httpMethod: ${request.httpMethod.lowercase()},
+                        requestUrl: ${request.path},
+                        cause: ${getStackTraceAsString(request.exception.message!!, filteredStackTrace)},
+                        methodSignatures: ${getMethodSignatures(filteredStackTrace)}
+                        """.trimIndent(),
+            ),
+            headersConsumer = { it.setBearerAuth(llmProperties.key) },
         )
     }
 
