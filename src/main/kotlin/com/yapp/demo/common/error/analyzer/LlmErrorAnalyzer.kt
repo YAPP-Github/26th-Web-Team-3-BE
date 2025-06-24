@@ -23,21 +23,27 @@ class LlmErrorAnalyzer(
     override fun analyze(request: AnalyzeErrorRequest): AnalyzeErrorResponse {
         val filteredStackTrace = filterStackTrace(request.exception)
 
-        return llmWebClient.call(
-            method = HttpMethod.POST,
-            uri = "/api/v1/prediction/${llmProperties.id}",
-            requestBody =
-                mapOf(
-                    "question" to
-                        """
-                        service: ${llmProperties.serviceName},
-                        httpMethod: ${request.httpMethod.lowercase()},
-                        requestUrl: ${request.path},
-                        cause: ${getStackTraceAsString(request.exception.message!!, filteredStackTrace)},
-                        methodSignatures: ${getMethodSignatures(filteredStackTrace)}
-                        """.trimIndent(),
-                ),
-            headersConsumer = { it.setBearerAuth(llmProperties.key) },
+        val json =
+            llmWebClient.call<AnalyzeErrorResponse.Json>(
+                method = HttpMethod.POST,
+                uri = "/api/v1/prediction/${llmProperties.id}",
+                requestBody =
+                    mapOf(
+                        "question" to
+                            """
+                            service: ${llmProperties.serviceName},
+                            httpMethod: ${request.httpMethod.lowercase()},
+                            requestUrl: ${request.path},
+                            cause: ${getStackTraceAsString(request.exception.message!!, filteredStackTrace)},
+                            methodSignatures: ${getMethodSignatures(filteredStackTrace)}
+                            """.trimIndent(),
+                    ),
+                headersConsumer = { it.setBearerAuth(llmProperties.key) },
+            )
+
+        return AnalyzeErrorResponse(
+            success = true,
+            json = json,
         )
     }
 
@@ -64,29 +70,29 @@ class LlmErrorAnalyzer(
         className: String,
         lineToFind: Int,
     ): MethodSignatureInfo? {
-        val classInputStream =
-            this.javaClass.classLoader
-                .getResourceAsStream(className.replace('.', '/') + ".class")
-                ?: return null
+        return this.javaClass.classLoader
+            .getResourceAsStream(className.replace('.', '/') + ".class")
+            ?.use { classInputStream ->
+                val classNode = ClassNode()
+                val classReader = ClassReader(classInputStream)
+                classReader.accept(classNode, 0)
 
-        val classNode = ClassNode()
-        val classReader = ClassReader(classInputStream)
-        classReader.accept(classNode, 0)
+                for (method in classNode.methods) {
+                    val lineNumbers = mutableListOf<Int>()
 
-        for (method in classNode.methods) {
-            val lineNumbers = mutableListOf<Int>()
+                    for (insn in method.instructions) {
+                        if (insn is LineNumberNode) {
+                            lineNumbers.add(insn.line)
+                        }
+                    }
 
-            for (insn in method.instructions) {
-                if (insn is LineNumberNode) {
-                    lineNumbers.add(insn.line)
+                    if (lineToFind in lineNumbers) {
+                        return extractMethodSignature(className, lineToFind, method)
+                    }
                 }
-            }
 
-            if (lineToFind in lineNumbers) {
-                return extractMethodSignature(className, lineToFind, method)
+                null // use 블록의 반환값
             }
-        }
-        return null
     }
 
     private fun extractMethodSignature(
