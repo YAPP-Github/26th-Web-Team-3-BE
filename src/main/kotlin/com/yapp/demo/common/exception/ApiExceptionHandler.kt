@@ -4,8 +4,10 @@ import com.yapp.demo.common.dto.ApiResponse
 import com.yapp.demo.common.error.ErrorMessages
 import com.yapp.demo.common.error.analyzer.dto.AnalyzeErrorRequest
 import com.yapp.demo.common.error.reporter.LlmErrorReporter
+import com.yapp.demo.common.logging.RequestIdFilter
 import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
+import org.slf4j.MDC
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -40,7 +42,7 @@ class ApiExceptionHandler(
                 // TODO: 로그인 사용자 주입
                 userId = null,
                 notify = true,
-                logId = UUID.randomUUID().toString(),
+                logId = MDC.get(RequestIdFilter.REQUEST_ID),
             ),
         )
 
