@@ -11,6 +11,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.ValueOperations
 import kotlin.test.Test
 
 @ExtendWith(MockKExtension::class)
@@ -23,6 +24,9 @@ class LlmErrorReporterTest {
 
     @MockK
     lateinit var redisTemplate: RedisTemplate<String, Boolean>
+
+    @MockK
+    lateinit var valueOperations: ValueOperations<String, Boolean>
 
     @InjectMockKs
     lateinit var reporter: LlmErrorReporter
@@ -40,7 +44,9 @@ class LlmErrorReporterTest {
                 logId = "log-1",
             )
 
-        every { redisTemplate.opsForValue().setIfAbsent(any(), any(), any()) } returns true
+        every { redisTemplate.opsForValue() } returns valueOperations
+        every { valueOperations.setIfAbsent(any(), any(), any()) } returns true
+        every { redisTemplate.delete(any<String>()) } returns true
         every { llmErrorAnalyzer.analyze(any()) } returns
             AnalyzeErrorResponse(
                 success = true,
@@ -59,7 +65,9 @@ class LlmErrorReporterTest {
         reporter.report(request)
 
         // then
+        verify { valueOperations.setIfAbsent(any(), true, LlmErrorReporter.NOTIFY_DURATION) }
         verify { llmErrorAnalyzer.analyze(request) }
         verify { discordNotifier.notify(match { it.contains("action") }) }
+        verify { valueOperations.set(any(), true, LlmErrorReporter.NOTIFY_DURATION) }
     }
 }
