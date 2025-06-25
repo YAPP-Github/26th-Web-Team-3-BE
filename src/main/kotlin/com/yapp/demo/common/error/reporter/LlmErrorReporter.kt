@@ -44,6 +44,7 @@ class LlmErrorReporter(
             notify(request, response)
         } catch (e: Exception) {
             log.error(e) { "에러 분석 및 발송 중에 에러가 발생했습니다." }
+            redisTemplate.delete(key)
         }
     }
 
