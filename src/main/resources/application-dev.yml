@@ -21,3 +21,17 @@ minio:
   secretKey: ${MINIO_SECRET_KEY}
   bucketName: ${MINIO_BUCKET_NAME}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+      base-path: ${MANAGEMENT_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
