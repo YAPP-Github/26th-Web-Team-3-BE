@@ -38,6 +38,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     // implementation("org.springframework.boot:spring-boot-starter-security")
 
+    // prometheus
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
     // mail
     implementation("org.springframework.boot:spring-boot-starter-mail:3.3.10")
 
