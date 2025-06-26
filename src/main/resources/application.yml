@@ -5,8 +5,21 @@ spring:
   application:
     name: demo
 
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg [%X{requestId}]%n"
+
 management:
   endpoints:
     web:
       exposure:
         include: health
+
+llm:
+  key: ${LLM_KEY}
+  id: ${LLM_ID}
+  service-name: ${LLM_SERVICE_NAME}
+  base-url: ${LLM_BASE_URL}
+
+discord:
+  webhook-url: ${DISCORD_WEBHOOK_URL}
