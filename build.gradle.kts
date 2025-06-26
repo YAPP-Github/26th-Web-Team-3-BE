@@ -55,8 +55,7 @@ dependencies {
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    // oauth2
-    // implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.3.10")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
 
     // jwt
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")

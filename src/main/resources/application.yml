@@ -15,6 +15,22 @@ management:
       exposure:
         include: health
 
+oauth:
+  kakao:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+    client-name: kakao
+    authorization-uri: https://kauth.kakao.com/oauth/authorize
+    token-uri: https://kauth.kakao.com/oauth/token
+    user-info-uri: https://kapi.kakao.com/v2/user/me
+    scope: profile_nickname,profile_image
+
+jwt:
+  client-secret: ${JWT_SECRET}
+  expiration: 86400000
+  issuer: yapp
+
 llm:
   key: ${LLM_KEY}
   id: ${LLM_ID}
