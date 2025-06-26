@@ -2,11 +2,11 @@ package com.yapp.demo.common.exception
 
 import com.yapp.demo.common.dto.ApiResponse
 import com.yapp.demo.common.error.ErrorMessages
+import mu.KotlinLogging
 import com.yapp.demo.common.error.analyzer.dto.AnalyzeErrorRequest
 import com.yapp.demo.common.error.reporter.LlmErrorReporter
 import com.yapp.demo.common.logging.RequestIdFilter
 import jakarta.servlet.http.HttpServletRequest
-import mu.KotlinLogging
 import org.slf4j.MDC
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -20,6 +20,7 @@ class ApiExceptionHandler(
 
     @ExceptionHandler(ApiErrorException::class)
     fun handleApiErrorException(ex: ApiErrorException): ResponseEntity<ApiResponse<Nothing>> {
+        log.error { "ApiErrorException occurred: ${ex.error.data}" }
         return ResponseEntity
             .status(ex.error.status.code)
             .body(ApiResponse.error(ex.error))
