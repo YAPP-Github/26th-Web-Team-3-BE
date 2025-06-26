@@ -39,7 +39,7 @@ health_check() {
     log "INFO" "HealthCheck" "Checking $NAME (Attempt $((RETRIES + 1))/$MAX_RETRIES)..."
 
     local STATUS
-    STATUS=$(docker exec "$CONTAINER_ID" curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/actuator/health || true)
+    STATUS=$(docker exec "$CONTAINER_ID" curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/health || true)
 
     if [[ "$STATUS" == "200" ]]; then
       log "INFO" "HealthCheck" "$NAME is healthy."
