@@ -12,8 +12,8 @@ class JwtConfig {
     @Value("\${jwt.client-secret}")
     lateinit var clientSecret: String
 
-    @Value("\${jwt.expiration:3600}")
-    var expiration: Int = 0
+    @Value("\${jwt.expiration}")
+    var expiration: Int = 3600
 
     fun getExpirationMillis(current: Long): Long = current + expiration * 1000L
 

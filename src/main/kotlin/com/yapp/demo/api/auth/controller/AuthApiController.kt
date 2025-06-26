@@ -19,7 +19,7 @@ class AuthApiController(
     val authService: AuthService,
 ) : AuthEndPoint {
     @GetMapping("/oauth/kakao")
-    override fun googleAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
                 OAuthUrlResponse(authConfig.oauthUrl()),

@@ -22,7 +22,6 @@ class RestClientUtil(
             .get()
             .uri(url)
             .headers { httpHeaders ->
-                httpHeaders.contentType = MediaType.APPLICATION_FORM_URLENCODED
                 applyHeaders(httpHeaders, headers)
             }.retrieve()
             .onStatus(HttpStatusCode::is4xxClientError) { _, response ->

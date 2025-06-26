@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody
 @Tag(name = "auth", description = "인증 API")
 interface AuthEndPoint {
     @Operation(summary = "카카오 oauth url 조회", description = "카카오 oauth url을 조회합니다.")
-    fun googleAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+    fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(summary = "카카오 로그인 요청", description = "카카오 로그인을 요청합니다.")
     fun login(

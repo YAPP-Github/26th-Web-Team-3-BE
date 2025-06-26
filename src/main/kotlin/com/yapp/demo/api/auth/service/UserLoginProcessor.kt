@@ -13,15 +13,15 @@ class UserLoginProcessor(
 ) {
     @Transactional
     fun loginOrRegister(
-        kakaoAuthToken: KakaoUserInfoDto,
+        kakaoUserInfo: KakaoUserInfoDto,
         provider: OAuthProvider,
     ): User =
-        userRepository.findByOauthIdAndProvider(kakaoAuthToken.id.toString(), provider)
+        userRepository.findByOauthIdAndProvider(kakaoUserInfo.id.toString(), provider)
             ?: userRepository.save(
                 User(
-                    oauthId = kakaoAuthToken.id.toString(),
+                    oauthId = kakaoUserInfo.id.toString(),
                     provider = provider,
-                    nickname = kakaoAuthToken.kakaoAccount?.profile?.nickname,
+                    nickname = kakaoUserInfo.kakaoAccount?.profile?.nickname,
                 ),
             )
 }

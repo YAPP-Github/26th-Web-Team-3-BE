@@ -25,8 +25,8 @@ class User(
     @Column(name = "provider")
     @Enumerated(EnumType.STRING)
     val provider: OAuthProvider,
-    @Column(name = "is_with_drawl", nullable = false)
-    val isWithDrawl: Boolean = false,
+    @Column(name = "is_withdrawal", nullable = false)
+    val isWithdrawal: Boolean = false,
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     val role: UserRole = UserRole.USER,

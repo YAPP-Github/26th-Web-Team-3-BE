@@ -60,29 +60,32 @@ class JwtComponent(
         return Claims(jwt)
     }
 
-    class Claims private constructor() {
-        lateinit var id: String
-        lateinit var roles: Array<String>
-        private lateinit var issuedAt: Date
-        private lateinit var expiresAt: Date
-
-        constructor(jwt: JwtClaims) : this() {
-            this.id = jwt.subject
-            this.roles = (jwt["roles"] as List<*>).map { it.toString() }.toTypedArray()
-            this.issuedAt = jwt.issuedAt
-            this.expiresAt = jwt.expiration
-        }
+    class Claims private constructor(
+        val id: String,
+        val roles: Array<String>,
+        val issuedAt: Date,
+        val expiresAt: Date,
+    ) {
+        constructor(jwt: JwtClaims) : this(
+            id = jwt.subject,
+            roles = (jwt["roles"] as List<*>).map { it.toString() }.toTypedArray(),
+            issuedAt = jwt.issuedAt,
+            expiresAt = jwt.expiration,
+        )
 
         companion object {
             fun of(
                 id: String,
                 role: String,
-            ): Claims {
-                val claims = Claims()
-                claims.id = id
-                claims.roles = arrayOf(role)
-                return claims
-            }
+                now: Date,
+                expiration: Date,
+            ): Claims =
+                Claims(
+                    id = id,
+                    roles = arrayOf(role),
+                    issuedAt = now,
+                    expiresAt = expiration,
+                )
         }
     }
 }
