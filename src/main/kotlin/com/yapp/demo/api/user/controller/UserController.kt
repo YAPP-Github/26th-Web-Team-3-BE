@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/users")
 class UserController(
     private val userService: UserService,
-) : UserEndPoint {
+) : UserSwagger {
     @GetMapping("/my-info")
     override fun getMyInfo(userInfoDto: UserInfoDto): ResponseEntity<ApiResponse<UserResponse>> =
         ResponseEntity.ok().body(
