@@ -1,5 +1,7 @@
 package com.yapp.demo.api.auth.component
 
+import com.yapp.demo.common.error.ErrorMessages
+import com.yapp.demo.common.exception.ApiErrorException
 import com.yapp.demo.config.JwtConfig
 import io.jsonwebtoken.Claims as JwtClaims
 import io.jsonwebtoken.Jwts
@@ -47,17 +49,24 @@ class JwtComponent(
             .compact()
     }
 
-    fun verify(token: String?): Claims {
-        val jwt =
-            Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .requireIssuer(jwtConfig.issuer)
-                .build()
-                .parseClaimsJws(token)
-                .body
-
-        return Claims(jwt)
+    fun verify(token: String): Claims {
+        try {
+            val jwt =
+                Jwts
+                    .parserBuilder()
+                    .setSigningKey(key)
+                    .requireIssuer(jwtConfig.issuer)
+                    .build()
+                    .parseClaimsJws(token)
+                    .body
+            return Claims(jwt)
+        } catch (e: io.jsonwebtoken.ExpiredJwtException) {
+            throw ApiErrorException(ErrorMessages.EXPIRED_TOKEN)
+        } catch (e: io.jsonwebtoken.JwtException) {
+            throw ApiErrorException(ErrorMessages.INVALID_TOKEN)
+        } catch (e: Exception) {
+            throw ApiErrorException(ErrorMessages.INVALID_TOKEN)
+        }
     }
 
     class Claims private constructor(

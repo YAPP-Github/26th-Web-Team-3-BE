@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class AuthApiController(
     val authConfig: AuthConfig,
     val authService: AuthService,
-) : AuthEndPoint {
+) : AuthSwagger {
     @GetMapping("/oauth/kakao")
     override fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(

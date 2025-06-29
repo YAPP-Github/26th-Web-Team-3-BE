@@ -5,6 +5,7 @@ import com.yapp.demo.common.error.ErrorMessages
 data class ApiError(
     val status: ExtendedHttpStatus,
     val code: String,
+    val errorCode: Int,
     val message: String?,
     val data: Any? = null,
 ) {
@@ -15,7 +16,7 @@ data class ApiError(
             data: Any? = null,
         ): ApiError {
             val message = if (args != null) String.format(error.message, *args) else error.message
-            return ApiError(error.status, error.status.code.toString(), message, data)
+            return ApiError(error.status, error.status.code.toString(), error.errorCode, message, data)
         }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 
 @Tag(name = "auth", description = "인증 API")
-interface AuthEndPoint {
+interface AuthSwagger {
     @Operation(summary = "카카오 oauth url 조회", description = "카카오 oauth url을 조회합니다.")
     fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
