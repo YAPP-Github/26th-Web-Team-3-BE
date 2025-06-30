@@ -75,6 +75,10 @@ dependencies {
     // loger
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
+    // flyway
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-mysql")
+
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
