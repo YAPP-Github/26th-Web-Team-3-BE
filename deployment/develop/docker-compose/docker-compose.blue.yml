@@ -9,9 +9,12 @@ services:
       - ../.env.dev
     environment:
       - TZ=Asia/Seoul
+      - SPRING_PROFILES_ACTIVE=dev
     restart: always
     networks:
       - docker_compose_backend
+    volumes:
+      - /var/logs/dev:/app/logs/dev
 
 networks:
   docker_compose_backend:
