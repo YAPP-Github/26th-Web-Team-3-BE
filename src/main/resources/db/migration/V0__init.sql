@@ -17,7 +17,7 @@ CREATE TABLE time_capsule_user
 (
     id         BIGINT      NOT NULL AUTO_INCREMENT,
     user_id    BIGINT      NOT NULL,
-    capsule_id CHAR(36)    NOT NULL,
+    capsule_id BIGINT      NOT NULL,
     joined_at  TIMESTAMP   NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
@@ -26,7 +26,8 @@ CREATE TABLE time_capsule_user
 
 CREATE TABLE time_capsule
 (
-    id          CHAR(36)     NOT NULL, -- UUID 형식
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
+    uuid        CHAR(36)     NOT NULL, -- UUID 형식
     invite_code VARCHAR(255) NOT NULL,
     title       VARCHAR(255) NOT NULL,
     subtitle    VARCHAR(255) NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE time_capsule
 CREATE TABLE letter
 (
     id            BIGINT       NOT NULL AUTO_INCREMENT,
-    capsule_id    CHAR(36)     NOT NULL,
+    capsule_id    BIGINT       NOT NULL,
     user_id       BIGINT       NOT NULL,
     from_nickname VARCHAR(255) NOT NULL,
     content       TEXT         NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE time_capsule_like
 (
     id         BIGINT      NOT NULL AUTO_INCREMENT,
     user_id    BIGINT      NOT NULL,
-    capsule_id CHAR(36)    NOT NULL, -- UUID 형식
+    capsule_id BIGINT      NOT NULL,
     liked_at   TIMESTAMP   NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
