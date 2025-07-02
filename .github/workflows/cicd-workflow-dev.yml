@@ -51,6 +51,16 @@ jobs:
           target: ~/
           overwrite: true
 
+      - name: Copy Filebeat config to EC2 temp location
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./logging/develop/filebeat.yml"
+          target: "~/filebeat.yml"
+          overwrite: true
+
       - name: Run Blue-Green Switch Script on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -64,6 +74,15 @@ jobs:
             echo "Running switch script..."
             chmod +x ~/deployment/develop/switch-blue-green.sh
             bash ~/deployment/develop/switch-blue-green.sh
+
+            echo "Moving and setting Filebeat configuration..."
+            sudo mv ~/filebeat.yml /etc/filebeat/filebeat.yml
+            sudo chown root:root /etc/filebeat/filebeat.yml
+            sudo chmod 644 /etc/filebeat/filebeat.yml
+
+            echo "Restarting Filebeat service..."
+            sudo systemctl daemon-reload
+            sudo systemctl restart filebeat
 
             echo "Cleaning up..."
             docker image prune -f
