@@ -23,6 +23,7 @@
             </rollingPolicy>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"application":"${APP_NAME}", "environment":"dev"}</customFields>
+                <includeMdcKeyName>requestId</includeMdcKeyName>
             </encoder>
         </appender>
 
@@ -54,6 +55,7 @@
                 <maxHistory>60</maxHistory> <totalSizeCap>2GB</totalSizeCap> </rollingPolicy>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"application":"${APP_NAME}", "environment":"prod"}</customFields>
+                <includeMdcKeyName>requestId</includeMdcKeyName>
             </encoder>
         </appender>
 
