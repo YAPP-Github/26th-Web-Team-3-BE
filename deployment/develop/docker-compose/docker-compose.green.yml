@@ -14,7 +14,7 @@ services:
     networks:
       - docker_compose_backend
     volumes:
-      - /var/logs/dev:/app/logs/dev
+      - /var/logs/dev:/logs/dev
 
 networks:
   docker_compose_backend:

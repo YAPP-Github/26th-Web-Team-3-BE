@@ -1,9 +1,9 @@
 spring:
+  application:
+    name: lettie
+
   profiles:
     active: local
-
-  application:
-    name: demo
 
 logging:
   pattern:
