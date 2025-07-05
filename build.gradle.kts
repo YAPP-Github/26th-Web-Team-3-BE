@@ -73,6 +73,7 @@ dependencies {
     implementation("org.ow2.asm:asm-tree:9.6")
 
     // loger
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // test

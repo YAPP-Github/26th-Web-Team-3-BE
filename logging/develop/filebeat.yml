@@ -1,0 +1,58 @@
+###################### Filebeat Configuration Example #########################
+
+# This file is an example configuration file highlighting only the most common
+# options. The filebeat.reference.yml file from the same directory contains all the
+# supported options with more comments. You can use it as a reference.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/filebeat/index.html
+
+# For more available modules and options, please see the filebeat.reference.yml sample
+# configuration file.
+
+# ============================== Filebeat inputs ===============================
+
+filebeat.inputs:
+
+  - type: filestream
+
+    id: my-filestream-id
+
+    enabled: true
+
+    paths:
+      - /var/logs/dev/*.json.log
+
+    json.keys_under_root: true
+    json.overwrite_keys: true
+    json.add_error_key: true
+
+# ================================== General ===================================
+# name: lettie
+# tags: ["dev-logs", "spring-boot"]
+
+
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+  hosts: ["www.jhzlo.world:5044"]
+
+# Optional SSL. By default is off.
+# ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+# ssl.certificate: "/etc/pki/client/cert.pem"
+# ssl.key: "/etc/pki/client/cert.key"
+
+# ================================= Processors =================================
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  # - add_kubernetes_metadata: ~
+
+# ================================== Logging ===================================
+# logging.level: info
+
+# ============================= X-Pack Monitoring ==============================
+# Filebeat can export internal metrics to a central Elasticsearch monitoring cluster.
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["www.jhzlo.world:9200"]
