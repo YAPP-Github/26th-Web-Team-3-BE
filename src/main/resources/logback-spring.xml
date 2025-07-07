@@ -32,7 +32,7 @@
             <appender-ref ref="FILE-DEV-JSON"/>
         </root>
 
-        <logger name="com.yapp.demo" level="DEBUG" additivity="false">
+        <logger name="com.yapp.lettie" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE-DEV-JSON"/>
         </logger>
@@ -64,7 +64,7 @@
             <appender-ref ref="FILE-PROD-JSON"/>
         </root>
 
-        <logger name="com.yapp.demo" level="INFO" additivity="false"> <appender-ref ref="CONSOLE"/>
+        <logger name="com.yapp.lettie" level="INFO" additivity="false"> <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE-PROD-JSON"/>
         </logger>
         <logger name="org.springframework.jdbc" level="INFO" additivity="false">
@@ -79,7 +79,7 @@
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
-        <logger name="com.yapp.demo" level="DEBUG" additivity="false">
+        <logger name="com.yapp.lettie" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
         </logger>
         <logger name="org.springframework.jdbc" level="DEBUG" additivity="false">
