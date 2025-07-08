@@ -15,13 +15,10 @@ data class TimeCapsuleLike(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-
     @Column(name = "user_id", nullable = false)
     val userId: Long,
-
     @Column(name = "capsule_id", nullable = false)
     val capsuleId: Long,
-
     @Column(name = "liked_at", nullable = false)
     val likedAt: LocalDateTime = LocalDateTime.now(),
-): BaseEntity()
+) : BaseEntity()
