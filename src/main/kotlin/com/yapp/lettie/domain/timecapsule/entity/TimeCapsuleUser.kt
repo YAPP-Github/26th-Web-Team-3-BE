@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "time_capsule_user")
-data class TimeCapsuleUser(
+class TimeCapsuleUser(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -19,6 +19,4 @@ data class TimeCapsuleUser(
     val userId: Long,
     @Column(name = "capsule_id", nullable = false)
     val capsuleId: Long,
-    @Column(name = "joined_at", nullable = false)
-    val joinedAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity()
