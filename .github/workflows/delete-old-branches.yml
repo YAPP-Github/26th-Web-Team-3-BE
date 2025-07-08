@@ -37,9 +37,9 @@ jobs:
 
           for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
             # origin/HEAD (심볼릭 링크) 제외
-              if [[ "$branch" == "origin/HEAD" ]] || [[ "$branch" == "origin" ]]; then
-                continue
-              fi
+            if [[ "$branch" == "origin/HEAD" ]] || [[ "$branch" == "origin" ]]; then
+              continue
+            fi
 
             branch_name=${branch#origin/}
 
@@ -55,8 +55,11 @@ jobs:
             age=$(( (today - last_commit) / 86400 ))
 
             if [ "$age" -ge 7 ]; then
+              # URL-safe 인코딩 (e.g., feature/#10 → feature%2F%2310)
+              encoded_branch=$(node -p "encodeURIComponent('$branch_name')")
+
               echo "Deleting branch '$branch_name' (last updated $age days ago)"
-              gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$branch_name"
+              gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$encoded_branch"
               deleted+=("$branch_name")
             fi
           done
