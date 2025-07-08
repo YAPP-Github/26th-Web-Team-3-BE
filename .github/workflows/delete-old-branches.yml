@@ -37,17 +37,21 @@ jobs:
 
           for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
             # origin/HEAD (심볼릭 링크) 제외
-            if [[ "$branch" == "origin/HEAD" ]]; then
-              continue
-            fi
+              if [[ "$branch" == "origin/HEAD" ]] || [[ "$branch" == "origin" ]]; then
+                continue
+              fi
 
             branch_name=${branch#origin/}
+
             if echo "$protected_branches" | grep -qw "$branch_name"; then
               continue
             fi
 
-            # Get latest commit timestamp
-            last_commit=$(git log -1 --format=%ct "origin/$branch_name")
+            if ! last_commit=$(git log -1 --format=%ct "origin/$branch_name" 2>/dev/null); then
+              echo "Could not get last commit for $branch_name, skipping."
+              continue
+            fi
+
             age=$(( (today - last_commit) / 86400 ))
 
             if [ "$age" -ge 7 ]; then
