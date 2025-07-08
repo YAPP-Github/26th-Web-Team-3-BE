@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 전체 브랜치 히스토리를 가져와야 커밋 시간 확인 가능
+
       - name: Set up Git
         run: |
           git config --global user.email "action@github.com"
@@ -22,12 +27,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Fetching all remote branches..."
+          git fetch --all --prune
+
           echo "Checking for branches older than 7 days..."
           today=$(date +%s)
           protected_branches="main develop"
           deleted=()
 
           for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            # origin/HEAD (심볼릭 링크) 제외
+            if [[ "$branch" == "origin/HEAD" ]]; then
+              continue
+            fi
+
             branch_name=${branch#origin/}
             if echo "$protected_branches" | grep -qw "$branch_name"; then
               continue
