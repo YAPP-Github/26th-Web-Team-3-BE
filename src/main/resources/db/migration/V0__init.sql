@@ -18,7 +18,6 @@ CREATE TABLE time_capsule_user
     id         BIGINT    NOT NULL AUTO_INCREMENT,
     user_id    BIGINT    NOT NULL,
     capsule_id BIGINT    NOT NULL,
-    joined_at  TIMESTAMP NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
@@ -56,7 +55,6 @@ CREATE TABLE time_capsule_like
     id         BIGINT    NOT NULL AUTO_INCREMENT,
     user_id    BIGINT    NOT NULL,
     capsule_id BIGINT    NOT NULL,
-    liked_at   TIMESTAMP NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
