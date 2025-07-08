@@ -1,24 +1,24 @@
 CREATE TABLE users
 (
-    id            BIGINT                 NOT NULL AUTO_INCREMENT,
+    id            BIGINT NOT NULL AUTO_INCREMENT,
     nickname      VARCHAR(255),
     email         VARCHAR(255),
     oauth_id      VARCHAR(255),
     provider      ENUM ('KAKAO'),
     role          ENUM ('ADMIN', 'USER') NOT NULL,
-    is_withdrawal BIT                    NOT NULL,
-    created_at    DATETIME(6)            NOT NULL,
-    updated_at    DATETIME(6)            NOT NULL,
+    is_withdrawal BIT    NOT NULL,
+    created_at    DATETIME(6) NOT NULL,
+    updated_at    DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
 );
 
 -- V1__initialize_schema.sql
 CREATE TABLE time_capsule_user
 (
-    id         BIGINT      NOT NULL AUTO_INCREMENT,
-    user_id    BIGINT      NOT NULL,
-    capsule_id BIGINT      NOT NULL,
-    joined_at  TIMESTAMP   NOT NULL,
+    id         BIGINT    NOT NULL AUTO_INCREMENT,
+    user_id    BIGINT    NOT NULL,
+    capsule_id BIGINT    NOT NULL,
+    joined_at  TIMESTAMP NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
@@ -27,15 +27,14 @@ CREATE TABLE time_capsule_user
 CREATE TABLE time_capsule
 (
     id          BIGINT       NOT NULL AUTO_INCREMENT,
-    uuid        CHAR(36)     NOT NULL, -- UUID 형식
-    invite_code VARCHAR(255) NOT NULL,
+    invite_code CHAR(36)     NOT NULL, -- UUID 형식
     title       VARCHAR(255) NOT NULL,
     subtitle    VARCHAR(255) NOT NULL,
-    is_public   TINYINT(1)   NOT NULL,
+    access_type VARCHAR(255) NOT NULL,
     open_at     TIMESTAMP    NOT NULL,
     closed_at   TIMESTAMP    NOT NULL,
-    created_at  DATETIME(6)  NOT NULL,
-    updated_at  DATETIME(6)  NOT NULL,
+    created_at  DATETIME(6) NOT NULL,
+    updated_at  DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -47,17 +46,17 @@ CREATE TABLE letter
     from_nickname VARCHAR(255) NOT NULL,
     content       TEXT         NOT NULL,
     background    VARCHAR(255) NOT NULL,
-    created_at    DATETIME(6)  NOT NULL,
-    updated_at    DATETIME(6)  NOT NULL,
+    created_at    DATETIME(6) NOT NULL,
+    updated_at    DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE time_capsule_like
 (
-    id         BIGINT      NOT NULL AUTO_INCREMENT,
-    user_id    BIGINT      NOT NULL,
-    capsule_id BIGINT      NOT NULL,
-    liked_at   TIMESTAMP   NOT NULL,
+    id         BIGINT    NOT NULL AUTO_INCREMENT,
+    user_id    BIGINT    NOT NULL,
+    capsule_id BIGINT    NOT NULL,
+    liked_at   TIMESTAMP NOT NULL,
     created_at DATETIME(6) NOT NULL,
     updated_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
@@ -69,7 +68,7 @@ CREATE TABLE photo
     user_id    BIGINT       NOT NULL,
     letter_id  BIGINT       NOT NULL,
     image_url  VARCHAR(255) NOT NULL,
-    created_at DATETIME(6)  NOT NULL,
-    updated_at DATETIME(6)  NOT NULL,
+    created_at DATETIME(6) NOT NULL,
+    updated_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
 );
