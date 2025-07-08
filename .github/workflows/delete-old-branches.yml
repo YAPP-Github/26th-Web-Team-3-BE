@@ -1,0 +1,53 @@
+name: Delete Old Branches
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # 매일 자정(KST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  delete_old_branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Get branches and delete those older than 7 days
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for branches older than 7 days..."
+          today=$(date +%s)
+          protected_branches="main develop"
+          deleted=()
+
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            branch_name=${branch#origin/}
+            if echo "$protected_branches" | grep -qw "$branch_name"; then
+              continue
+            fi
+
+            # Get latest commit timestamp
+            last_commit=$(git log -1 --format=%ct "origin/$branch_name")
+            age=$(( (today - last_commit) / 86400 ))
+
+            if [ "$age" -ge 7 ]; then
+              echo "Deleting branch '$branch_name' (last updated $age days ago)"
+              gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$branch_name"
+              deleted+=("$branch_name")
+            fi
+          done
+
+          echo "Deleted branches:"
+          for b in "${deleted[@]}"; do
+            echo "  - $b"
+          done
+
+      - name: Done
+        run: echo "Old branches cleanup completed!"
