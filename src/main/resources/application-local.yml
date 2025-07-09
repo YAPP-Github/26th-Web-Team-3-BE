@@ -21,6 +21,9 @@ spring:
     resources:
       add-mappings: false
 
+  flyway:
+    enabled: false
+
 logging:
   level:
     org.hibernate.SQL: debug

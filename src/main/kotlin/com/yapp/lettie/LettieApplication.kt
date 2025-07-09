@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableAsync
 
 @SpringBootApplication
 @EnableAsync
-class Application
+class LettieApplication
 
 fun main(args: Array<String>) {
-    runApplication<Application>(*args)
+    runApplication<LettieApplication>(*args)
 }
