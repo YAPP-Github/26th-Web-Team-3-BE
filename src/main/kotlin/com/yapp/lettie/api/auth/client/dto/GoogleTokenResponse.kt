@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 data class GoogleTokenResponse(
     val accessToken: String,
     val expiresIn: Int,
-    val idToken: String,
+    val idToken: String?,
     val scope: String,
     val tokenType: String,
 ) {
