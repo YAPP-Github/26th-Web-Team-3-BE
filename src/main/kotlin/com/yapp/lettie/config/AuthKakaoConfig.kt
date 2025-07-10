@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration
 import java.net.URLEncoder
 
 @Configuration
-class AuthConfig {
+class AuthKakaoConfig {
     @Value("\${oauth.kakao.client-id}")
     lateinit var clientId: String
 
@@ -19,7 +19,7 @@ class AuthConfig {
     lateinit var clientName: String
 
     @Value("\${oauth.kakao.authorization-uri}")
-    lateinit var authorizationUrl: String
+    lateinit var authorizationUri: String
 
     @Value("\${oauth.kakao.scope}")
     lateinit var scope: String
@@ -33,7 +33,7 @@ class AuthConfig {
     var grantType = "authorization_code"
 
     fun oauthUrl(): String =
-        authorizationUrl +
+        authorizationUri +
             "?client_id=$clientId" +
             "&prompt=login" +
             "&redirect_uri=${URLEncoder.encode(redirectUri, "UTF-8")}" +
