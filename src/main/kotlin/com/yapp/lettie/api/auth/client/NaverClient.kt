@@ -12,22 +12,22 @@ import org.springframework.util.LinkedMultiValueMap
 
 @Component
 class NaverClient(
-    private val authoNaverClient: AuthNaverConfig,
+    private val authNaverClient: AuthNaverConfig,
     private val restClientUtil: RestClientUtil,
 ) {
     fun login(authorizationCode: String): AuthUserInfoDto {
         val tokenRequestParams =
             LinkedMultiValueMap<String, String>().apply {
-                add("grant_type", authoNaverClient.grantType)
-                add("client_id", authoNaverClient.clientId)
-                add("client_secret", authoNaverClient.clientSecret)
-                add("state", authoNaverClient.state)
+                add("grant_type", authNaverClient.grantType)
+                add("client_id", authNaverClient.clientId)
+                add("client_secret", authNaverClient.clientSecret)
+                add("state", authNaverClient.state)
                 add("code", authorizationCode)
             }
 
         val tokenResponse =
             restClientUtil.post(
-                url = authoNaverClient.tokenUri,
+                url = authNaverClient.tokenUri,
                 query = tokenRequestParams,
                 responseType = NaverTokenResponse::class.java,
             ) ?: throw ApiErrorException(ErrorMessages.INVALID_INPUT_VALUE)
@@ -39,7 +39,7 @@ class NaverClient(
 
         val userInfoResponse =
             restClientUtil.get(
-                url = authoNaverClient.userInfoUri,
+                url = authNaverClient.userInfoUri,
                 headers = headers,
                 responseType = NaverUserInfoResponse::class.java,
             ) ?: throw ApiErrorException(ErrorMessages.INTERNAL_SERVER_ERROR)
