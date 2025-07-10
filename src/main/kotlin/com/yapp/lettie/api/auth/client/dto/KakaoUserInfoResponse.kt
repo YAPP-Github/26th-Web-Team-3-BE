@@ -2,7 +2,7 @@ package com.yapp.lettie.api.auth.client.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import com.yapp.lettie.api.auth.service.dto.KakaoUserInfoDto
+import com.yapp.lettie.api.auth.service.dto.AuthUserInfoDto
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class KakaoUserInfoResponse(
@@ -31,28 +31,10 @@ data class KakaoUserInfoResponse(
         )
     }
 
-    fun toDto(): KakaoUserInfoDto =
-        KakaoUserInfoDto(
-            id = this.id,
-            connectedAt = this.connectedAt,
-            properties =
-                KakaoUserInfoDto.Properties(
-                    nickname = this.properties?.nickname,
-                    profileImage = this.properties?.profileImage,
-                    thumbnailImage = this.properties?.thumbnailImage,
-                ),
-            kakaoAccount =
-                KakaoUserInfoDto.KakaoAccount(
-                    profileNicknameNeedsAgreement = this.kakaoAccount?.profileNicknameNeedsAgreement,
-                    profileImageNeedsAgreement = this.kakaoAccount?.profileImageNeedsAgreement,
-                    profile =
-                        KakaoUserInfoDto.KakaoAccount.Profile(
-                            nickname = this.kakaoAccount?.profile?.nickname,
-                            thumbnailImageUrl = this.kakaoAccount?.profile?.thumbnailImageUrl,
-                            profileImageUrl = this.kakaoAccount?.profile?.profileImageUrl,
-                            isDefaultImage = this.kakaoAccount?.profile?.isDefaultImage,
-                            isDefaultNickname = this.kakaoAccount?.profile?.isDefaultNickname,
-                        ),
-                ),
+    fun toDto(): AuthUserInfoDto =
+        AuthUserInfoDto(
+            id = this.id.toString(),
+            email = "",
+            name = this.properties?.nickname,
         )
 }

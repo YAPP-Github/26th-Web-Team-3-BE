@@ -1,7 +1,7 @@
 package com.yapp.lettie.api.auth.service
 
-import com.yapp.lettie.api.auth.service.dto.KakaoUserInfoDto
-import com.yapp.lettie.domain.user.entity.OAuthProvider
+import com.yapp.lettie.api.auth.service.dto.AuthUserInfoDto
+import com.yapp.lettie.domain.user.OAuthProvider
 import com.yapp.lettie.domain.user.entity.User
 import com.yapp.lettie.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -13,15 +13,16 @@ class UserLoginProcessor(
 ) {
     @Transactional
     fun loginOrRegister(
-        kakaoUserInfo: KakaoUserInfoDto,
+        authUserInfoDto: AuthUserInfoDto,
         provider: OAuthProvider,
     ): User =
-        userRepository.findByOauthIdAndProvider(kakaoUserInfo.id.toString(), provider)
+        userRepository.findByOauthIdAndProvider(authUserInfoDto.id, provider)
             ?: userRepository.save(
                 User(
-                    oauthId = kakaoUserInfo.id.toString(),
+                    oauthId = authUserInfoDto.id,
+                    email = authUserInfoDto.email,
                     provider = provider,
-                    nickname = kakaoUserInfo.kakaoAccount?.profile?.nickname,
+                    nickname = authUserInfoDto.name,
                 ),
             )
 }

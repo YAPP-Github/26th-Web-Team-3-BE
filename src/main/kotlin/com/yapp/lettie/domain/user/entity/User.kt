@@ -1,6 +1,8 @@
 package com.yapp.lettie.domain.user.entity
 
 import com.yapp.lettie.domain.BaseEntity
+import com.yapp.lettie.domain.user.OAuthProvider
+import com.yapp.lettie.domain.user.UserRole
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -19,7 +21,7 @@ class User(
     @Column(name = "oauth_id")
     val oauthId: String,
     @Column
-    val email: String? = null,
+    val email: String,
     @Column
     val nickname: String? = null,
     @Column(name = "provider")

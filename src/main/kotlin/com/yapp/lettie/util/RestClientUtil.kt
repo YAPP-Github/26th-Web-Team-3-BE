@@ -58,9 +58,7 @@ class RestClientUtil(
         restClient
             .post()
             .uri(buildUrlWithQueryParams(url, query))
-            .headers { httpHeaders ->
-                httpHeaders.contentType = MediaType.APPLICATION_FORM_URLENCODED
-            }.retrieve()
+            .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError) { _, response ->
                 handle4xxError(response.statusCode, response)
             }.onStatus(HttpStatusCode::is5xxServerError) { _, response ->
