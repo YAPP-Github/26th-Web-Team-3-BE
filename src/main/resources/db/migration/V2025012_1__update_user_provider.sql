@@ -1,3 +1,3 @@
 ALTER TABLE users
-    change provider provider ENUM ('KAKAO', 'NAVER', 'GOOGLE') NOT NULL
+    modify provider ENUM ('KAKAO', 'NAVER', 'GOOGLE') NOT NULL
 
