@@ -17,7 +17,7 @@ data class CreateTimeCapsuleRequest(
             subtitle = subtitle,
             accessType = accessType,
             openAt = openAt,
-            closedAt = closedAt
+            closedAt = closedAt,
         )
     }
 }

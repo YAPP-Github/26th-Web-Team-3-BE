@@ -1,13 +1,12 @@
 package com.yapp.lettie.api.timecapsule.service
 
-import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 class TimeCapsuleService(
