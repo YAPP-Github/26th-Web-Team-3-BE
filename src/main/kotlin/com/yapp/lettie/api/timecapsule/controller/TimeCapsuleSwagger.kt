@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Tag(name = "TimeCapsule", description = "타임캡슐 관련 API")
@@ -17,9 +16,17 @@ interface TimeCapsuleSwagger {
         summary = "타임캡슐 생성",
         description = "로그인한 사용자가 새로운 타임캡슐을 생성합니다.",
     )
-    @PostMapping
     fun create(
         @Parameter(hidden = true) userInfo: UserInfoDto,
         request: CreateTimeCapsuleRequest,
+    ): ResponseEntity<ApiResponse<Boolean>>
+
+    @Operation(
+        summary = "타임캡슐 참여",
+        description = "캡슐 ID를 통해 타임캡슐에 참여합니다.",
+    )
+    fun join(
+        @Parameter(hidden = true) userInfo: UserInfoDto,
+        capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>>
 }

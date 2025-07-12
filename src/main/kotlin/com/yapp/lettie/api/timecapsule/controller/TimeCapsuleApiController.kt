@@ -7,6 +7,8 @@ import com.yapp.lettie.api.timecapsule.swagger.TimeCapsuleSwagger
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class TimeCapsuleApiController(
     private val timeCapsuleService: TimeCapsuleService,
 ) : TimeCapsuleSwagger {
+    @PostMapping
     override fun create(
         @LoginUser userInfo: UserInfoDto,
         @RequestBody request: CreateTimeCapsuleRequest,
@@ -24,5 +27,14 @@ class TimeCapsuleApiController(
         return ResponseEntity.ok().body(
             ApiResponse.success(true),
         )
+    }
+
+    @PostMapping("/{capsuleId}/join")
+    override fun join(
+        @LoginUser userInfo: UserInfoDto,
+        @PathVariable capsuleId: Long,
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        timeCapsuleService.joinTimeCapsule(userInfo.id, capsuleId)
+        return ResponseEntity.ok(ApiResponse.success(true))
     }
 }
