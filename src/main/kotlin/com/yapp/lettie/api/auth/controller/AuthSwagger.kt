@@ -15,7 +15,23 @@ interface AuthSwagger {
     fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(summary = "카카오 로그인 요청", description = "카카오 로그인을 요청합니다.")
-    fun login(
+    fun kakaoLogin(
+        @RequestBody request: AuthorizationRequest,
+    ): ResponseEntity<ApiResponse<JwtTokenResponse>>
+
+    @Operation(summary = "구글 oauth url 조회", description = "구글 oauth url을 조회합니다.")
+    fun googleAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+
+    @Operation(summary = "구글 로그인 요청", description = "구글 로그인을 요청합니다.")
+    fun googleLogin(
+        @RequestBody request: AuthorizationRequest,
+    ): ResponseEntity<ApiResponse<JwtTokenResponse>>
+
+    @Operation(summary = "네이버 oauth url 조회", description = "네이버 oauth url을 조회합니다.")
+    fun naverAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+
+    @Operation(summary = "네이버 로그인 요청", description = "네이버 로그인을 요청합니다.")
+    fun naverLogin(
         @RequestBody request: AuthorizationRequest,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 }

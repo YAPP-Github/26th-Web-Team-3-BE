@@ -1,4 +1,4 @@
-package com.yapp.lettie.domain.user.entity
+package com.yapp.lettie.domain.user
 
 enum class UserRole(
     val key: String,
