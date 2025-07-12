@@ -1,8 +1,11 @@
 package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
+import com.yapp.lettie.common.error.ErrorMessages
+import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
@@ -12,16 +15,36 @@ import java.util.UUID
 class TimeCapsuleService(
     private val userReader: UserReader,
     private val timeCapsuleWriter: TimeCapsuleWriter,
+    private val timeCapsuleReader: TimeCapsuleReader,
 ) {
     fun createTimeCapsule(
         userId: Long,
         payload: CreateTimeCapsulePayload,
     ) {
+        val user = userReader.getById(userId)
         val capsule = TimeCapsule.of(generateInviteCode(), payload)
         val timeCapsuleUser = TimeCapsuleUser.of(userReader.getById(userId), capsule)
-        capsule.timeCapsuleUsers.add(timeCapsuleUser)
+
+        capsule.addUser(timeCapsuleUser)
+        user.addTimeCapsuleUser(timeCapsuleUser)
 
         timeCapsuleWriter.save(capsule)
+    }
+
+    fun joinTimeCapsule(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val capsule = timeCapsuleReader.getById(capsuleId)
+        val user = userReader.getById(userId)
+
+        if (capsule.timeCapsuleUsers.any { it.user.id == user.id }) {
+            throw ApiErrorException(ErrorMessages.ALREADY_JOINED)
+        }
+
+        val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
+        capsule.addUser(timeCapsuleUser)
+        user.addTimeCapsuleUser(timeCapsuleUser)
     }
 
     private fun generateInviteCode(): String {

@@ -19,4 +19,8 @@ enum class ErrorMessages(
 
     // user
     USER_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 3_001, "사용자를 찾을 수 없습니다."),
+
+    // capsule
+    CAPSULE_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 4_001, "타임캡슐을 찾을 수 없습니다."),
+    ALREADY_JOINED(ExtendedHttpStatus.BAD_REQUEST, 4_002, "이미 참여한 타임캡슐입니다."),
 }
