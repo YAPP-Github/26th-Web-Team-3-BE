@@ -9,6 +9,7 @@ import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -17,6 +18,7 @@ class TimeCapsuleService(
     private val timeCapsuleWriter: TimeCapsuleWriter,
     private val timeCapsuleReader: TimeCapsuleReader,
 ) {
+    @Transactional
     fun createTimeCapsule(
         userId: Long,
         payload: CreateTimeCapsulePayload,
@@ -31,6 +33,7 @@ class TimeCapsuleService(
         timeCapsuleWriter.save(capsule)
     }
 
+    @Transactional
     fun joinTimeCapsule(
         userId: Long,
         capsuleId: Long,
