@@ -1,5 +1,6 @@
 package com.yapp.lettie.domain.timecapsule.entity
 
+import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import jakarta.persistence.CascadeType
@@ -38,4 +39,20 @@ class TimeCapsule(
     var timeCapsuleUsers: MutableList<TimeCapsuleUser> = mutableListOf(),
     @OneToMany(mappedBy = "timeCapsule", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var timeCapsuleLikes: MutableList<TimeCapsuleLike> = mutableListOf(),
-) : BaseEntity()
+) : BaseEntity() {
+    companion object {
+        fun of(
+            inviteCode: String,
+            payload: CreateTimeCapsulePayload,
+        ): TimeCapsule {
+            return TimeCapsule(
+                inviteCode = inviteCode,
+                title = payload.title,
+                subtitle = payload.subtitle,
+                accessType = payload.accessType,
+                openAt = payload.openAt,
+                closedAt = payload.closedAt,
+            )
+        }
+    }
+}

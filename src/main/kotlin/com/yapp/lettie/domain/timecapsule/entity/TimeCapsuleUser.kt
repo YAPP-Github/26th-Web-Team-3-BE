@@ -25,4 +25,16 @@ class TimeCapsuleUser(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val timeCapsule: TimeCapsule,
-) : BaseEntity()
+) : BaseEntity() {
+    companion object {
+        fun of(
+            user: User,
+            timeCapsule: TimeCapsule,
+        ): TimeCapsuleUser {
+            return TimeCapsuleUser(
+                user = user,
+                timeCapsule = timeCapsule,
+            )
+        }
+    }
+}
