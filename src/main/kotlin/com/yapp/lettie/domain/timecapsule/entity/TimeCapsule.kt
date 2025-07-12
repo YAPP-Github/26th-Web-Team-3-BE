@@ -2,13 +2,16 @@ package com.yapp.lettie.domain.timecapsule.entity
 
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -31,4 +34,8 @@ class TimeCapsule(
     val openAt: LocalDateTime,
     @Column(name = "closed_at", nullable = false)
     var closedAt: LocalDateTime,
+    @OneToMany(mappedBy = "timeCapsule", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    var timeCapsuleUsers: MutableList<TimeCapsuleUser> = mutableListOf(),
+    @OneToMany(mappedBy = "timeCapsule", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    var timeCapsuleLikes: MutableList<TimeCapsuleLike> = mutableListOf(),
 ) : BaseEntity()
