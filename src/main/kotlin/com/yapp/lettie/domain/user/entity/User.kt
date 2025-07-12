@@ -41,4 +41,8 @@ class User(
     var timeCapsuleUsers: MutableList<TimeCapsuleUser> = mutableListOf(),
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var timeCapsuleLikes: MutableList<TimeCapsuleLike> = mutableListOf(),
-) : BaseEntity()
+) : BaseEntity() {
+    fun addTimeCapsuleUser(tcu: TimeCapsuleUser) {
+        this.timeCapsuleUsers.add(tcu)
+    }
+}

@@ -55,4 +55,8 @@ class TimeCapsule(
             )
         }
     }
+
+    fun addUser(tcu: TimeCapsuleUser) {
+        this.timeCapsuleUsers.add(tcu)
+    }
 }
