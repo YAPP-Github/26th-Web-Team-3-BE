@@ -1,2 +1,2 @@
 ALTER TABLE users
-    ALTER COLUMN email SET NOT NULL;
+    modify email VARCHAR(255) NOT NULL;
