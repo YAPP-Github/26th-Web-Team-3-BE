@@ -1,7 +1,7 @@
 package com.yapp.lettie.api.auth.resolver
 
 import com.yapp.lettie.api.auth.annotation.LoginUser
-import com.yapp.lettie.api.auth.component.JwtComponent
+import com.yapp.lettie.api.auth.filter.AuthorizationFilter
 import com.yapp.lettie.common.dto.UserInfoDto
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
@@ -14,9 +14,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
-class LoginUserArgumentResolver(
-    private val jwtComponent: JwtComponent,
-) : HandlerMethodArgumentResolver {
+class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         parameter.getParameterAnnotation(LoginUser::class.java) != null
 
@@ -27,23 +25,8 @@ class LoginUserArgumentResolver(
         binderFactory: WebDataBinderFactory?,
     ): Any? {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
-        val token = getTokenFromRequest(request) ?: throw ApiErrorException(ErrorMessages.UNAUTHORIZED)
 
-        val claims =
-            token.let { jwtComponent.verify(it) }
-
-        return UserInfoDto(
-            id = claims.id.toLong(),
-            roles = claims.roles.toList(),
-        )
-    }
-
-    private fun getTokenFromRequest(request: HttpServletRequest?): String? {
-        val bearerToken = request?.getHeader("Authorization")
-        return if (!bearerToken.isNullOrBlank() && bearerToken.startsWith("Bearer ")) {
-            bearerToken.substring(7)
-        } else {
-            null
-        }
+        return request?.getAttribute(AuthorizationFilter.CURRENT_USER_KEY) as? UserInfoDto
+            ?: throw ApiErrorException(ErrorMessages.INTERNAL_SERVER_ERROR)
     }
 }
