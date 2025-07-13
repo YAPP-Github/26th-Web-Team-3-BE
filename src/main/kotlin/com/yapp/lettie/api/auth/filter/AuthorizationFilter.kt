@@ -6,6 +6,7 @@ import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.auth.AuthType
 import com.yapp.lettie.domain.auth.repository.ApiAuthRepository
+import com.yapp.lettie.domain.user.UserRole
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -88,7 +89,7 @@ class AuthorizationFilter(
         val defaultUser =
             UserInfoDto(
                 id = 0L,
-                roles = listOf("GUEST"),
+                roles = listOf(UserRole.GUEST.name),
             )
         request.setAttribute(CURRENT_USER_KEY, defaultUser)
     }
