@@ -47,6 +47,7 @@ class AuthorizationFilter(
                 }
 
                 AuthType.NONE -> {
+                    // 인증이 필요 없는 엔드포인트는 추가 처리 없이 통과
                 }
             }
 
@@ -96,7 +97,7 @@ class AuthorizationFilter(
     private fun setDefaultUser(request: HttpServletRequest) {
         val defaultUser =
             UserInfoDto(
-                id = 0L,
+                id = -1L,
                 roles = listOf(UserRole.GUEST.name),
             )
         request.setAttribute(CURRENT_USER_KEY, defaultUser)
