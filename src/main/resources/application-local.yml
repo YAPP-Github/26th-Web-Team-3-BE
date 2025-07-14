@@ -9,7 +9,6 @@ spring:
     password: ${PASSWORD}
 
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     show-sql: true
@@ -17,7 +16,6 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
-  sql.init.mode: always
 
   web:
     resources:

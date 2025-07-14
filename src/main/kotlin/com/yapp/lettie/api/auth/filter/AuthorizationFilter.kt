@@ -1,22 +1,25 @@
 package com.yapp.lettie.api.auth.filter
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.yapp.lettie.api.ApiPath
 import com.yapp.lettie.api.auth.component.JwtComponent
+import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.auth.AuthType
-import com.yapp.lettie.domain.auth.repository.ApiAuthRepository
 import com.yapp.lettie.domain.user.UserRole
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class AuthorizationFilter(
-    private val apiAuthRepository: ApiAuthRepository,
     private val jwtComponent: JwtComponent,
+    private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
     companion object {
         const val CURRENT_USER_KEY = "currentUser"
@@ -27,27 +30,32 @@ class AuthorizationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        val requestURI = request.requestURI
-        val httpMethod = request.method
+        try {
+            val requestURI = request.requestURI
+            val httpMethod = request.method
 
-        // API 권한 정보 조회
-        val apiAuthority = apiAuthRepository.findByPathAndMethod(requestURI, httpMethod)
-        val authType = apiAuthority?.authType ?: AuthType.NONE
+            // API 권한 정보 조회
+            val authType = ApiPath.getAuthType(requestURI, httpMethod)
 
-        when (authType) {
-            AuthType.REQUIRED -> {
-                handleRequiredAuth(request)
+            when (authType) {
+                AuthType.REQUIRED -> {
+                    handleRequiredAuth(request)
+                }
+
+                AuthType.OPTIONAL -> {
+                    handleOptionalAuth(request)
+                }
+
+                AuthType.NONE -> {
+                }
             }
 
-            AuthType.OPTIONAL -> {
-                handleOptionalAuth(request)
-            }
-
-            AuthType.NONE -> {
-            }
+            filterChain.doFilter(request, response)
+        } catch (e: ApiErrorException) {
+            handleException(response, e)
+        } catch (e: Exception) {
+            handleException(response, ApiErrorException(ErrorMessages.INTERNAL_SERVER_ERROR))
         }
-
-        filterChain.doFilter(request, response)
     }
 
     private fun handleRequiredAuth(request: HttpServletRequest) {
@@ -101,5 +109,19 @@ class AuthorizationFilter(
         } else {
             null
         }
+    }
+
+    private fun handleException(
+        response: HttpServletResponse,
+        exception: ApiErrorException,
+    ) {
+        response.status = exception.error.status.code
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = "UTF-8"
+
+        val errorResponse = ApiResponse.error<Any>(exception.error)
+
+        response.writer.write(objectMapper.writeValueAsString(errorResponse))
+        response.writer.flush()
     }
 }
