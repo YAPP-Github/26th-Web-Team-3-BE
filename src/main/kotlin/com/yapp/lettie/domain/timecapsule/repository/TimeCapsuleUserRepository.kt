@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
     fun findByUserId(userId: Long): List<TimeCapsuleUser>
 
-    fun findByCapsuleId(capsuleId: Long): List<TimeCapsuleUser>
+    fun findByTimeCapsuleId(capsuleId: Long): List<TimeCapsuleUser>
 
-    fun findByUserIdAndCapsuleId(
+    fun findByUserIdAndTimeCapsuleId(
         userId: Long,
         capsuleId: Long,
     ): TimeCapsuleUser?
