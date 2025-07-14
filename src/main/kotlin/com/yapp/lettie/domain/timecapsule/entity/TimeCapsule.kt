@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -34,7 +35,7 @@ class TimeCapsule(
     @Column(name = "open_at", nullable = false)
     val openAt: LocalDateTime,
     @Column(name = "closed_at", nullable = false)
-    var closedAt: LocalDateTime,
+    var closedAt: LocalDate,
     @OneToMany(mappedBy = "timeCapsule", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var timeCapsuleUsers: MutableList<TimeCapsuleUser> = mutableListOf(),
     @OneToMany(mappedBy = "timeCapsule", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
