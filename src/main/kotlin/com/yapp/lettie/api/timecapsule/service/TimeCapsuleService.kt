@@ -25,7 +25,7 @@ class TimeCapsuleService(
     ) {
         val user = userReader.getById(userId)
         val capsule = TimeCapsule.of(generateInviteCode(), payload)
-        val timeCapsuleUser = TimeCapsuleUser.of(userReader.getById(userId), capsule)
+        val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
 
         capsule.addUser(timeCapsuleUser)
         user.addTimeCapsuleUser(timeCapsuleUser)
