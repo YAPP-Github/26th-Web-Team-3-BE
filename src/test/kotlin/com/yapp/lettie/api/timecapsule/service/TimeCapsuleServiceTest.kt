@@ -19,7 +19,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class TimeCapsuleServiceTest {
@@ -45,16 +44,23 @@ class TimeCapsuleServiceTest {
                 subtitle = "sub",
                 accessType = AccessType.PRIVATE,
                 openAt = LocalDateTime.now(),
-                closedAt = LocalDate.now().plusDays(10),
+                closedAt = LocalDateTime.now().plusDays(10),
             )
 
+        val dummyCapsule =
+            mock<TimeCapsule> {
+                on { id } doReturn 123L
+            }
+
         whenever(userReader.getById(userId)).thenReturn(user)
+        whenever(capsuleWriter.save(any())).thenReturn(dummyCapsule)
 
         // when
-        timeCapsuleService.createTimeCapsule(userId, payload)
+        val capsuleId = timeCapsuleService.createTimeCapsule(userId, payload)
 
         // then
         verify(capsuleWriter).save(any())
+        assertThat(capsuleId).isEqualTo(123L)
     }
 
     @Test
@@ -66,6 +72,7 @@ class TimeCapsuleServiceTest {
         val capsule =
             mock<TimeCapsule> {
                 on { timeCapsuleUsers } doReturn mutableListOf()
+                on { closedAt } doReturn LocalDateTime.now().plusDays(1)
             }
 
         whenever(userReader.getById(userId)).thenReturn(user)
@@ -90,6 +97,7 @@ class TimeCapsuleServiceTest {
         val capsule =
             mock<TimeCapsule> {
                 on { timeCapsuleUsers } doReturn mutableListOf(existing)
+                on { closedAt } doReturn LocalDateTime.now().plusDays(1)
             }
 
         whenever(userReader.getById(userId)).thenReturn(user)
@@ -102,5 +110,29 @@ class TimeCapsuleServiceTest {
             }
 
         assertThat(exception.error.message).isEqualTo(ErrorMessages.ALREADY_JOINED.message)
+    }
+
+    @Test
+    fun `closedAt을 지난 타임캡슐에 참여하면 예외가 발생한다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 100L
+        val user = mock<User> { on { id } doReturn userId }
+        val capsule =
+            mock<TimeCapsule> {
+                on { timeCapsuleUsers } doReturn mutableListOf()
+                on { closedAt } doReturn LocalDateTime.now().minusMinutes(1) // 마감 지남
+            }
+
+        whenever(userReader.getById(userId)).thenReturn(user)
+        whenever(capsuleReader.getById(capsuleId)).thenReturn(capsule)
+
+        // when & then
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.joinTimeCapsule(userId, capsuleId)
+            }
+
+        assertThat(exception.error.message).isEqualTo(ErrorMessages.CLOSED_TIME_CAPSULE.message)
     }
 }
