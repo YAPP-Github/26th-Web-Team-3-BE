@@ -23,7 +23,7 @@ class TimeCapsuleService(
     fun createTimeCapsule(
         userId: Long,
         payload: CreateTimeCapsulePayload,
-    ) {
+    ): Long {
         val user = userReader.getById(userId)
         val capsule = TimeCapsule.of(generateInviteCode(), payload)
         val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
@@ -31,7 +31,7 @@ class TimeCapsuleService(
         capsule.addUser(timeCapsuleUser)
         user.addTimeCapsuleUser(timeCapsuleUser)
 
-        timeCapsuleWriter.save(capsule)
+        return timeCapsuleWriter.save(capsule).id
     }
 
     @Transactional

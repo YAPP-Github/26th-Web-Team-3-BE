@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.controller
 
 import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
+import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.api.timecapsule.swagger.TimeCapsuleSwagger
 import com.yapp.lettie.common.dto.ApiResponse
@@ -22,10 +23,13 @@ class TimeCapsuleApiController(
     override fun create(
         @LoginUser userInfo: UserInfoDto,
         @RequestBody request: CreateTimeCapsuleRequest,
-    ): ResponseEntity<ApiResponse<Boolean>> {
-        timeCapsuleService.createTimeCapsule(userInfo.id, request.to())
+    ): ResponseEntity<ApiResponse<CreateTimeCapsuleResponse>> {
         return ResponseEntity.ok().body(
-            ApiResponse.success(true),
+            ApiResponse.success(
+                CreateTimeCapsuleResponse(
+                    timeCapsuleService.createTimeCapsule(userInfo.id, request.to())
+                ),
+            )
         )
     }
 

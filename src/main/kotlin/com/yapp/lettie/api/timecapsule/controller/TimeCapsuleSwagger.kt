@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
+import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import io.swagger.v3.oas.annotations.Operation
@@ -19,7 +20,7 @@ interface TimeCapsuleSwagger {
     fun create(
         @Parameter(hidden = true) userInfo: UserInfoDto,
         request: CreateTimeCapsuleRequest,
-    ): ResponseEntity<ApiResponse<Boolean>>
+    ): ResponseEntity<ApiResponse<CreateTimeCapsuleResponse>>
 
     @Operation(
         summary = "타임캡슐 참여",
