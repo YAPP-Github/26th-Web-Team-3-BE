@@ -17,11 +17,8 @@ enum class ApiPath(
     OAUTH_NAVER_LOGIN("/api/v1/auth/code/naver", HttpMethod.POST, AuthType.NONE),
 
     // 타임캡슐 관련 API
-    TIME_CAPSULE_LIST("/api/timecapsules", HttpMethod.GET, AuthType.REQUIRED),
-    TIME_CAPSULE_CREATE("/api/timecapsules", HttpMethod.POST, AuthType.REQUIRED),
-    TIME_CAPSULE_GET("/api/timecapsules/{post-id}", HttpMethod.GET, AuthType.OPTIONAL),
-    TIME_CAPSULE_UPDATE("/api/timecapsules/{post-id}", HttpMethod.PUT, AuthType.REQUIRED),
-    TIME_CAPSULE_DELETE("/api/timecapsules/{post-id}", HttpMethod.DELETE, AuthType.REQUIRED),
+    TIME_CAPSULE_CREATE("/api/v1/capsule", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_JOIN("/api/v1/capsule/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
 
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
