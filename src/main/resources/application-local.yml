@@ -23,7 +23,6 @@ spring:
 
   flyway:
     enabled: false
-
 logging:
   level:
     org.hibernate.SQL: debug
