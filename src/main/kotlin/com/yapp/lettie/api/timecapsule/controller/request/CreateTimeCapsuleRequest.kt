@@ -3,8 +3,8 @@ package com.yapp.lettie.api.timecapsule.controller.request
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Schema(description = "타임캡슐 생성 요청")
 data class CreateTimeCapsuleRequest(
@@ -16,16 +16,23 @@ data class CreateTimeCapsuleRequest(
     val accessType: AccessType,
     @Schema(description = "캡슐 오픈 시점", example = "2025-12-01T00:00:00")
     val openAt: LocalDateTime,
-    @Schema(description = "캡슐 작성 마감 시점", example = "2025-12-31")
-    val closedAt: LocalDate,
+    @Schema(description = "캡슐 작성 마감 시점", example = "2025-12-31T00:00:00")
+    val closedAt: LocalDateTime,
 ) {
     fun to(): CreateTimeCapsulePayload {
+        val closedTimeAdjusted =
+            if (closedAt.toLocalTime() == LocalTime.MIDNIGHT) {
+                closedAt.toLocalDate().atTime(LocalTime.MAX) // 23:59:59.999999999
+            } else {
+                closedAt
+            }
+
         return CreateTimeCapsulePayload(
             title = this.title,
             subtitle = this.subtitle,
             accessType = this.accessType,
             openAt = this.openAt,
-            closedAt = this.closedAt,
+            closedAt = closedTimeAdjusted,
         )
     }
 }

@@ -10,7 +10,7 @@ import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -42,7 +42,7 @@ class TimeCapsuleService(
         val capsule = timeCapsuleReader.getById(capsuleId)
         val user = userReader.getById(userId)
 
-        if (capsule.closedAt.isBefore(LocalDate.now())) {
+        if (capsule.closedAt.isBefore(LocalDateTime.now())) {
             throw ApiErrorException(ErrorMessages.CLOSED_TIME_CAPSULE)
         }
 

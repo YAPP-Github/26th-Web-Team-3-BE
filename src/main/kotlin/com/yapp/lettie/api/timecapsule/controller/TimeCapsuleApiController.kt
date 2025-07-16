@@ -27,9 +27,9 @@ class TimeCapsuleApiController(
         return ResponseEntity.ok().body(
             ApiResponse.success(
                 CreateTimeCapsuleResponse(
-                    timeCapsuleService.createTimeCapsule(userInfo.id, request.to())
+                    timeCapsuleService.createTimeCapsule(userInfo.id, request.to()),
                 ),
-            )
+            ),
         )
     }
 
