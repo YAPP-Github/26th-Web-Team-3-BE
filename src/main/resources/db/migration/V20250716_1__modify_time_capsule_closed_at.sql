@@ -1,0 +1,2 @@
+ALTER TABLE time_capsule
+    MODIFY COLUMN closed_at TIMESTAMP NOT NULL;
