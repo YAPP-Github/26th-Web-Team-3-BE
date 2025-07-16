@@ -23,4 +23,5 @@ enum class ErrorMessages(
     // capsule
     CAPSULE_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 4_001, "타임캡슐을 찾을 수 없습니다."),
     ALREADY_JOINED(ExtendedHttpStatus.BAD_REQUEST, 4_002, "이미 참여한 타임캡슐입니다."),
+    CLOSED_TIME_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_003, "닫힌 타임캡슐에는 참여할 수 없습니다."),
 }
