@@ -1,15 +1,20 @@
 package com.yapp.lettie.domain.user.entity
 
 import com.yapp.lettie.domain.BaseEntity
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.user.OAuthProvider
 import com.yapp.lettie.domain.user.UserRole
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
@@ -32,4 +37,12 @@ class User(
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     val role: UserRole = UserRole.USER,
-) : BaseEntity()
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    var timeCapsuleUsers: MutableList<TimeCapsuleUser> = mutableListOf(),
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    var timeCapsuleLikes: MutableList<TimeCapsuleLike> = mutableListOf(),
+) : BaseEntity() {
+    fun addTimeCapsuleUser(tcu: TimeCapsuleUser) {
+        this.timeCapsuleUsers.add(tcu)
+    }
+}
