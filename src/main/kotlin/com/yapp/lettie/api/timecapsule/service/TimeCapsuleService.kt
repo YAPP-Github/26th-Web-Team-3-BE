@@ -1,12 +1,15 @@
 package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleLikeWriter
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +21,8 @@ class TimeCapsuleService(
     private val userReader: UserReader,
     private val timeCapsuleWriter: TimeCapsuleWriter,
     private val timeCapsuleReader: TimeCapsuleReader,
+    private val timeCapsuleLikeWriter: TimeCapsuleLikeWriter,
+    private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
 ) {
     @Transactional
     fun createTimeCapsule(
@@ -54,6 +59,24 @@ class TimeCapsuleService(
         capsule.addUser(timeCapsuleUser)
         user.addTimeCapsuleUser(timeCapsuleUser)
     }
+
+    @Transactional
+    fun toggleLike(userId: Long, capsuleId: Long): Boolean {
+        val user = userReader.getById(userId)
+        val capsule = timeCapsuleReader.getById(capsuleId)
+        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
+
+        return if (existing != null) {
+            existing.isLiked = !existing.isLiked
+            timeCapsuleLikeWriter.save(existing)
+            existing.isLiked // true = 좋아요됨, false = 좋아요 취소됨
+        } else {
+            val like = TimeCapsuleLike.of(user, capsule)
+            timeCapsuleLikeWriter.save(like)
+            true
+        }
+    }
+
 
     private fun generateInviteCode(): String {
         return UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
