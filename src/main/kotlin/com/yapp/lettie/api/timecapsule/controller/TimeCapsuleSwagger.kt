@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
+import com.yapp.lettie.api.timecapsule.controller.response.ToggleTimeCapsuleLikeResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import io.swagger.v3.oas.annotations.Operation
@@ -30,4 +31,14 @@ interface TimeCapsuleSwagger {
         @Parameter(hidden = true) userInfo: UserInfoDto,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>>
+
+    @Operation(
+        summary = "타임캡슐 좋아요 토글",
+        description = "좋아요를 누르거나 취소합니다. 응답값이 true면 좋아요 상태, false면 좋아요 취소 상태입니다."
+    )
+    fun toggleLike(
+        @Parameter(hidden = true) userInfo: UserInfoDto,
+        capsuleId: Long,
+    ): ResponseEntity<ApiResponse<ToggleTimeCapsuleLikeResponse>>
+
 }
