@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 
-@Tag(name = "TimeCapsule", description = "타임캡슐 관련 API")
+@Tag(name = "TimeCapsule Make", description = "타임캡슐 Make API (생성, 참여, 좋아요)")
 @RequestMapping("/api/v1/capsule")
 interface TimeCapsuleSwagger {
     @Operation(
