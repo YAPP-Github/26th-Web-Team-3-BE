@@ -76,7 +76,7 @@ class TimeCapsuleService(
         } else {
             val like = TimeCapsuleLike.of(user, capsule)
             timeCapsuleLikeWriter.save(like)
-            true
+            like.isLiked
         }
     }
 
