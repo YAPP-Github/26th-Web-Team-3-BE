@@ -4,8 +4,8 @@ import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
 import com.yapp.lettie.api.timecapsule.controller.response.ToggleTimeCapsuleLikeResponse
-import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleSwagger
+import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import org.springframework.http.ResponseEntity

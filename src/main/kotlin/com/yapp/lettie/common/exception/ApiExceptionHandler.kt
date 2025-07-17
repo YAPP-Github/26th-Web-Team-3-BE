@@ -10,10 +10,10 @@ import mu.KotlinLogging
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.NoHandlerFoundException
-import org.springframework.web.HttpRequestMethodNotSupportedException
 
 @RestControllerAdvice
 class ApiExceptionHandler(
@@ -63,7 +63,8 @@ class ApiExceptionHandler(
                 path = request.requestURI,
                 httpMethod = request.method,
                 exception = ex,
-                userId = null, // TODO: userId 넣기
+                // TODO: userId 넣기
+                userId = null,
                 notify = true,
                 logId = MDC.get(RequestIdFilter.REQUEST_ID),
             ),

@@ -69,11 +69,12 @@ enum class ApiPath(
             actualPath: String,
         ): Boolean {
             // {} 패턴과 * 패턴을 정규식으로 변환
-            val regexPattern = patternPath
-                .replace(Regex("\\{[^}]+}"), "[^/]+")
-                .replace(".", "\\.") // 리터럴 점 처리
-                .replace("/*", "(/.*)?") // 경로 끝 와일드카드 대응
-                .replace("*", "[^/]*")  // 경로 내부 와일드카드 대응
+            val regexPattern =
+                patternPath
+                    .replace(Regex("\\{[^}]+}"), "[^/]+")
+                    .replace(".", "\\.") // 리터럴 점 처리
+                    .replace("/*", "(/.*)?") // 경로 끝 와일드카드 대응
+                    .replace("*", "[^/]*") // 경로 내부 와일드카드 대응
 
             return actualPath.matches(Regex("^$regexPattern$"))
         }
