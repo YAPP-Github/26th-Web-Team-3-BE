@@ -19,6 +19,7 @@ enum class ApiPath(
     // 타임캡슐 관련 API
     TIME_CAPSULE_CREATE("/api/v1/capsule", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_JOIN("/api/v1/capsule/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_LIKE("/api/v1/capsule/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
 
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
