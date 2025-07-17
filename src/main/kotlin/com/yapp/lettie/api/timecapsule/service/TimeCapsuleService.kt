@@ -61,7 +61,10 @@ class TimeCapsuleService(
     }
 
     @Transactional
-    fun toggleLike(userId: Long, capsuleId: Long): Boolean {
+    fun toggleLike(
+        userId: Long,
+        capsuleId: Long,
+    ): Boolean {
         val user = userReader.getById(userId)
         val capsule = timeCapsuleReader.getById(capsuleId)
         val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
@@ -76,7 +79,6 @@ class TimeCapsuleService(
             true
         }
     }
-
 
     private fun generateInviteCode(): String {
         return UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)

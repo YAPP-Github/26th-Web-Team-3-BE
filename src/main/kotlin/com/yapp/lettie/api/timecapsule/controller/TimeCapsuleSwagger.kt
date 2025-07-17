@@ -34,11 +34,10 @@ interface TimeCapsuleSwagger {
 
     @Operation(
         summary = "타임캡슐 좋아요 토글",
-        description = "좋아요를 누르거나 취소합니다. 응답값이 true면 좋아요 상태, false면 좋아요 취소 상태입니다."
+        description = "좋아요를 누르거나 취소합니다. 응답값이 true면 좋아요 상태, false면 좋아요 취소 상태입니다.",
     )
     fun toggleLike(
         @Parameter(hidden = true) userInfo: UserInfoDto,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<ToggleTimeCapsuleLikeResponse>>
-
 }

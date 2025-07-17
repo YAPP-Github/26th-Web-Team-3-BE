@@ -50,8 +50,8 @@ class TimeCapsuleApiController(
         ResponseEntity.ok(
             ApiResponse.success(
                 ToggleTimeCapsuleLikeResponse(
-                    timeCapsuleService.toggleLike(userInfo.id, capsuleId)
-                )
-            )
+                    timeCapsuleService.toggleLike(userInfo.id, capsuleId),
+                ),
+            ),
         )
 }

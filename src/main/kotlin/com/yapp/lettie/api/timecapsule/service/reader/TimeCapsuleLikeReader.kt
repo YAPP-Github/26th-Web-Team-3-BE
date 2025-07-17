@@ -14,13 +14,19 @@ class TimeCapsuleLikeReader(
     private val likeRepository: TimeCapsuleLikeRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getByUserAndCapsule(user: User, capsule: TimeCapsule): TimeCapsuleLike {
+    fun getByUserAndCapsule(
+        user: User,
+        capsule: TimeCapsule,
+    ): TimeCapsuleLike {
         return findByUserAndCapsule(user, capsule)
             ?: throw ApiErrorException(ErrorMessages.CAPSULE_LIKE_NOT_FOUND)
     }
 
     @Transactional(readOnly = true)
-    fun findByUserAndCapsule(user: User, capsule: TimeCapsule): TimeCapsuleLike? {
+    fun findByUserAndCapsule(
+        user: User,
+        capsule: TimeCapsule,
+    ): TimeCapsuleLike? {
         return likeRepository.findByUserAndTimeCapsule(user, capsule)
     }
 }

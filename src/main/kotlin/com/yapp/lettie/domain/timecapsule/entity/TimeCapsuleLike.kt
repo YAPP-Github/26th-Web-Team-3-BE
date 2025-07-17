@@ -1,6 +1,5 @@
 package com.yapp.lettie.domain.timecapsule.entity
 
-import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.user.entity.User
 import jakarta.persistence.Column
@@ -29,8 +28,8 @@ class TimeCapsuleLike(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val timeCapsule: TimeCapsule,
-) : BaseEntity(){
-    companion object{
+) : BaseEntity() {
+    companion object {
         fun of(
             user: User,
             timeCapsule: TimeCapsule,
