@@ -14,30 +14,33 @@ import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import com.yapp.lettie.domain.user.entity.User
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDateTime
 
+@ExtendWith(MockKExtension::class)
 class TimeCapsuleServiceTest {
-    private val userReader: UserReader = mockk()
-    private val capsuleWriter: TimeCapsuleWriter = mockk()
-    private val capsuleReader: TimeCapsuleReader = mockk()
-    private val capsuleLikeWriter: TimeCapsuleLikeWriter = mockk()
-    private val capsuleLikeReader: TimeCapsuleLikeReader = mockk()
+    @MockK lateinit var userReader: UserReader
 
-    private lateinit var timeCapsuleService: TimeCapsuleService
+    @MockK lateinit var capsuleWriter: TimeCapsuleWriter
 
-    @BeforeEach
-    fun setUp() {
-        timeCapsuleService =
-            TimeCapsuleService(userReader, capsuleWriter, capsuleReader, capsuleLikeWriter, capsuleLikeReader)
-    }
+    @MockK lateinit var capsuleReader: TimeCapsuleReader
+
+    @MockK lateinit var capsuleLikeWriter: TimeCapsuleLikeWriter
+
+    @MockK lateinit var capsuleLikeReader: TimeCapsuleLikeReader
+
+    @InjectMockKs
+    lateinit var timeCapsuleService: TimeCapsuleService
 
     @Test
     fun `타임캡슐을 생성하면 저장소에 저장된다`() {
