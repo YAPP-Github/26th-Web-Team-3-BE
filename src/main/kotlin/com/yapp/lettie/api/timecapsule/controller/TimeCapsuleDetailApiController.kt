@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/capsule")
-class TimCapsuleDetailApiController(
+class TimeCapsuleDetailApiController(
     private val timeCapsuleDetailService: TimeCapsuleDetailService,
 ) : TimeCapsuleDetailSwagger {
     @GetMapping("/{capsuleId}")
     override fun getCapsuleDetail(
-        @LoginUser UserInfo: UserInfoDto?,
+        @LoginUser userInfo: UserInfoDto?,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>> =
         ResponseEntity.ok(
@@ -27,7 +27,7 @@ class TimCapsuleDetailApiController(
                 TimeCapsuleDetailResponse.from(
                     timeCapsuleDetailService.getTimeCapsuleDetail(
                         capsuleId = capsuleId,
-                        userId = UserInfo?.id,
+                        userId = userInfo?.id,
                     ),
                 ),
             ),
