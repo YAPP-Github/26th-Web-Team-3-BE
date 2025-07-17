@@ -1,4 +1,4 @@
-package com.yapp.lettie.api.timecapsule.swagger
+package com.yapp.lettie.api.timecapsule.controller.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse

@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.controller
 
 import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleDetailResponse
+import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleDetailSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleDetailService
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
