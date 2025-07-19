@@ -1,6 +1,6 @@
 package com.yapp.lettie.api.timecapsule.controller.response
 
-import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailPayload
+import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
@@ -27,7 +27,7 @@ data class TimeCapsuleDetailResponse(
     val remainingTime: RemainingTimeResponse?,
 ) {
     companion object {
-        fun from(payload: TimeCapsuleDetailPayload): TimeCapsuleDetailResponse {
+        fun from(payload: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
             return TimeCapsuleDetailResponse(
                 id = payload.id,
                 title = payload.title,

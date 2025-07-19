@@ -1,7 +1,7 @@
 package com.yapp.lettie.api.timecapsule.service
 
-import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimePayload
-import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailPayload
+import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
+import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.user.service.reader.UserReader
@@ -19,7 +19,7 @@ class TimeCapsuleDetailService(
     fun getTimeCapsuleDetail(
         capsuleId: Long,
         userId: Long? = null,
-    ): TimeCapsuleDetailPayload {
+    ): TimeCapsuleDetailDto {
         val capsule = timeCapsuleReader.getById(capsuleId)
         val now = LocalDateTime.now()
 
@@ -32,7 +32,7 @@ class TimeCapsuleDetailService(
         val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
 
         // TODO: 편지 몇 동있는지 추가
-        return TimeCapsuleDetailPayload(
+        return TimeCapsuleDetailDto(
             id = capsule.id,
             title = capsule.title,
             subtitle = capsule.subtitle,
@@ -50,11 +50,11 @@ class TimeCapsuleDetailService(
         now: LocalDateTime,
         openAt: LocalDateTime,
         closedAt: LocalDateTime,
-    ): RemainingTimePayload {
+    ): RemainingTimeDto {
         return when (status) {
             TimeCapsuleStatus.WRITABLE -> {
                 val duration = Duration.between(now, closedAt)
-                RemainingTimePayload(
+                RemainingTimeDto(
                     days = duration.toDays(),
                     hours = duration.toHoursPart().toLong(),
                     minutes = duration.toMinutesPart().toLong(),
@@ -63,7 +63,7 @@ class TimeCapsuleDetailService(
 
             TimeCapsuleStatus.WAITING_OPEN -> {
                 val duration = Duration.between(now, openAt)
-                RemainingTimePayload(
+                RemainingTimeDto(
                     days = duration.toDays(),
                     hours = duration.toHoursPart().toLong(),
                     minutes = duration.toMinutesPart().toLong(),
@@ -71,7 +71,7 @@ class TimeCapsuleDetailService(
             }
 
             TimeCapsuleStatus.OPENED -> {
-                RemainingTimePayload(openDate = openAt.toLocalDate())
+                RemainingTimeDto(openDate = openAt.toLocalDate())
             }
         }
     }
