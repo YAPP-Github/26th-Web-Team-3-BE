@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
@@ -32,6 +33,9 @@ class TimeCapsuleDetailServiceTest {
 
     @MockK
     lateinit var likeReader: TimeCapsuleLikeReader
+
+    @MockK
+    lateinit var timeCapsuleUserReader: TimeCapsuleUserReader
 
     @InjectMockKs
     lateinit var detailService: TimeCapsuleDetailService
@@ -71,6 +75,8 @@ class TimeCapsuleDetailServiceTest {
             mockk {
                 every { isLiked } returns true
             }
+        every { likeReader.getLikeCount(capsuleId) } returns 1
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -119,6 +125,8 @@ class TimeCapsuleDetailServiceTest {
             mockk {
                 every { isLiked } returns true
             }
+        every { likeReader.getLikeCount(capsuleId) } returns 1
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -164,6 +172,8 @@ class TimeCapsuleDetailServiceTest {
             mockk {
                 every { isLiked } returns true
             }
+        every { likeReader.getLikeCount(capsuleId) } returns 1
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
