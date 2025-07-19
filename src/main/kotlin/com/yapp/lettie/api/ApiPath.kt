@@ -40,7 +40,7 @@ enum class ApiPath(
     SWAGGER_WEBJARS("/webjars/*", HttpMethod.GET, AuthType.NONE),
 
     // 공통 API
-    HEALTH_CHECK("/health", HttpMethod.GET, AuthType.NONE),
+    HEALTH_CHECK("/api/health", HttpMethod.GET, AuthType.NONE),
     API_DOCS("/api/docs", HttpMethod.GET, AuthType.NONE),
     ;
 
