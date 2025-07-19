@@ -1,12 +1,15 @@
 package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleLikeWriter
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +21,8 @@ class TimeCapsuleService(
     private val userReader: UserReader,
     private val timeCapsuleWriter: TimeCapsuleWriter,
     private val timeCapsuleReader: TimeCapsuleReader,
+    private val timeCapsuleLikeWriter: TimeCapsuleLikeWriter,
+    private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
 ) {
     @Transactional
     fun createTimeCapsule(
@@ -53,6 +58,38 @@ class TimeCapsuleService(
         val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
         capsule.addUser(timeCapsuleUser)
         user.addTimeCapsuleUser(timeCapsuleUser)
+    }
+
+    @Transactional
+    fun like(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val user = userReader.getById(userId)
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
+        val existing = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)
+        if (existing == null) {
+            val like = TimeCapsuleLike.of(user, capsule)
+            timeCapsuleLikeWriter.save(like)
+        } else if (!existing.isLiked) {
+            existing.isLiked = true
+            timeCapsuleLikeWriter.save(existing)
+        }
+    }
+
+    @Transactional
+    fun unlike(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
+        val existing = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)
+        if (existing != null && existing.isLiked) {
+            existing.isLiked = false
+            timeCapsuleLikeWriter.save(existing)
+        }
     }
 
     private fun generateInviteCode(): String {

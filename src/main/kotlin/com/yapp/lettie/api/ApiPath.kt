@@ -19,6 +19,8 @@ enum class ApiPath(
     // 타임캡슐 관련 API
     TIME_CAPSULE_CREATE("/api/v1/capsule", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_JOIN("/api/v1/capsule/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_LIKE("/api/v1/capsule/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_DETAIL("/api/v1/capsule/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
 
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
@@ -69,9 +71,10 @@ enum class ApiPath(
             // {} 패턴과 * 패턴을 정규식으로 변환
             val regexPattern =
                 patternPath
-                    .replace(Regex("\\{[^}]+}"), "[^/]+") // {변수명}을 [^/]+ (슬래시가 아닌 문자들)로 변환
-                    .replace("*", ".*") // *을 .* (모든 문자)로 변환
-                    .replace(".", "\\.") // 리터럴 점(.)을 이스케이프 (예: favicon.ico)
+                    .replace(Regex("\\{[^}]+}"), "[^/]+")
+                    .replace(".", "\\.") // 리터럴 점 처리
+                    .replace("/*", "(/.*)?") // 경로 끝 와일드카드 대응
+                    .replace("*", "[^/]*") // 경로 내부 와일드카드 대응
 
             return actualPath.matches(Regex("^$regexPattern$"))
         }
