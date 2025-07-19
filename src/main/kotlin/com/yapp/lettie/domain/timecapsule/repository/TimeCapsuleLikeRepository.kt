@@ -10,5 +10,7 @@ interface TimeCapsuleLikeRepository : JpaRepository<TimeCapsuleLike, Long> {
         capsule: Long,
     ): TimeCapsuleLike?
 
+    fun countByTimeCapsuleIdAndIsLikedTrue(capsuleId: Long): Long
+
     fun findByUserAndIsLikedTrue(user: User): List<TimeCapsuleLike>
 }

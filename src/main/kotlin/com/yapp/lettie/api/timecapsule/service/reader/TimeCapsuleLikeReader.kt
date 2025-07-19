@@ -27,4 +27,9 @@ class TimeCapsuleLikeReader(
     ): TimeCapsuleLike? {
         return likeRepository.findByUserIdAndTimeCapsuleId(userId, capsuleId)
     }
+
+    @Transactional(readOnly = true)
+    fun getLikeCount(capsuleId: Long): Long {
+        return likeRepository.countByTimeCapsuleIdAndIsLikedTrue(capsuleId)
+    }
 }
