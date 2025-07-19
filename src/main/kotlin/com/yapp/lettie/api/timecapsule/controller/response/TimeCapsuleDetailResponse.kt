@@ -27,18 +27,18 @@ data class TimeCapsuleDetailResponse(
     val remainingTime: RemainingTimeResponse?,
 ) {
     companion object {
-        fun from(payload: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
+        fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
             return TimeCapsuleDetailResponse(
-                id = payload.id,
-                title = payload.title,
-                subtitle = payload.subtitle,
-                openAt = payload.openAt,
-                participantCount = payload.participantCount,
-                likeCount = payload.likeCount,
-                isLiked = payload.isLiked,
-                status = payload.status,
+                id = dto.id,
+                title = dto.title,
+                subtitle = dto.subtitle,
+                openAt = dto.openAt,
+                participantCount = dto.participantCount,
+                likeCount = dto.likeCount,
+                isLiked = dto.isLiked,
+                status = dto.status,
                 remainingTime =
-                    payload.remainingTime?.let {
+                    dto.remainingTime?.let {
                         RemainingTimeResponse(
                             days = it.days,
                             hours = it.hours,
