@@ -19,8 +19,8 @@ data class TimeCapsuleDetailResponse(
     val participantCount: Long,
     @Schema(description = "좋아요 수", example = "31L")
     val likeCount: Long,
-    @Schema(description = "좋아요 여부 (로그인 시에만 포함)", example = "true")
-    val isLiked: Boolean? = false,
+    @Schema(description = "좋아요 여부", example = "true")
+    val isLiked: Boolean,
     @Schema(description = "캡슐 상태", example = "WRITABLE")
     val status: TimeCapsuleStatus,
     @Schema(description = "남은 시간 정보 또는 오픈 날짜")

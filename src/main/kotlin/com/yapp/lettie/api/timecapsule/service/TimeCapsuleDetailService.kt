@@ -23,7 +23,7 @@ class TimeCapsuleDetailService(
         val capsule = timeCapsuleReader.getById(capsuleId)
         val now = LocalDateTime.now()
 
-        val liked = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)?.isLiked
+        val liked = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)?.isLiked ?: false
         val status = capsule.getStatus(now)
         val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)

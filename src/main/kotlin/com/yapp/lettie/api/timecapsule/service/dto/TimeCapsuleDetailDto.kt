@@ -10,7 +10,7 @@ data class TimeCapsuleDetailDto(
     val openAt: LocalDateTime,
     val participantCount: Long,
     val likeCount: Long,
-    val isLiked: Boolean? = null,
+    val isLiked: Boolean,
     val status: TimeCapsuleStatus,
     val remainingTime: RemainingTimeDto? = null,
 )
