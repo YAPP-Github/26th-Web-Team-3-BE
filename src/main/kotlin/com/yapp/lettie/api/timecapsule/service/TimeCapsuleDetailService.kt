@@ -5,7 +5,6 @@ import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.user.service.reader.UserReader
-import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -29,8 +28,8 @@ class TimeCapsuleDetailService(
                 val user = userReader.getById(it)
                 timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)?.isLiked
             }
-        val status = calculateStatus(now, capsule)
-        val remainingTime = calculateRemainingTime(now, capsule, status)
+        val status = capsule.getStatus(now)
+        val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
 
         // TODO: 편지 몇 동있는지 추가
         return TimeCapsuleDetailPayload(
@@ -46,25 +45,15 @@ class TimeCapsuleDetailService(
         )
     }
 
-    private fun calculateStatus(
-        now: LocalDateTime,
-        capsule: TimeCapsule,
-    ): TimeCapsuleStatus {
-        return when {
-            now.isBefore(capsule.closedAt) -> TimeCapsuleStatus.WRITABLE
-            now.isBefore(capsule.openAt) -> TimeCapsuleStatus.WAITING_OPEN
-            else -> TimeCapsuleStatus.OPENED
-        }
-    }
-
-    private fun calculateRemainingTime(
-        now: LocalDateTime,
-        capsule: TimeCapsule,
+    fun calculateRemainingTime(
         status: TimeCapsuleStatus,
+        now: LocalDateTime,
+        openAt: LocalDateTime,
+        closedAt: LocalDateTime,
     ): RemainingTimePayload {
         return when (status) {
             TimeCapsuleStatus.WRITABLE -> {
-                val duration = Duration.between(now, capsule.closedAt)
+                val duration = Duration.between(now, closedAt)
                 RemainingTimePayload(
                     days = duration.toDays(),
                     hours = duration.toHoursPart().toLong(),
@@ -73,7 +62,7 @@ class TimeCapsuleDetailService(
             }
 
             TimeCapsuleStatus.WAITING_OPEN -> {
-                val duration = Duration.between(now, capsule.openAt)
+                val duration = Duration.between(now, openAt)
                 RemainingTimePayload(
                     days = duration.toDays(),
                     hours = duration.toHoursPart().toLong(),
@@ -82,7 +71,7 @@ class TimeCapsuleDetailService(
             }
 
             TimeCapsuleStatus.OPENED -> {
-                RemainingTimePayload(openDate = capsule.openAt.toLocalDate())
+                RemainingTimePayload(openDate = openAt.toLocalDate())
             }
         }
     }

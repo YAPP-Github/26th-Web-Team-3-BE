@@ -3,6 +3,7 @@ package com.yapp.lettie.domain.timecapsule.entity
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -58,5 +59,13 @@ class TimeCapsule(
 
     fun addUser(tcu: TimeCapsuleUser) {
         this.timeCapsuleUsers.add(tcu)
+    }
+
+    fun getStatus(now: LocalDateTime): TimeCapsuleStatus {
+        return when {
+            now.isBefore(closedAt) -> TimeCapsuleStatus.WRITABLE
+            now.isBefore(openAt) -> TimeCapsuleStatus.WAITING_OPEN
+            else -> TimeCapsuleStatus.OPENED
+        }
     }
 }
