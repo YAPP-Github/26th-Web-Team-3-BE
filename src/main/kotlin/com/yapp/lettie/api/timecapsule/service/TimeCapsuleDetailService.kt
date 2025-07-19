@@ -4,6 +4,7 @@ import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -13,6 +14,7 @@ import java.time.LocalDateTime
 class TimeCapsuleDetailService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
+    private val timeCapsuleUserReader: TimeCapsuleUserReader,
 ) {
     fun getTimeCapsuleDetail(
         capsuleId: Long,
@@ -25,6 +27,7 @@ class TimeCapsuleDetailService(
         val status = capsule.getStatus(now)
         val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)
+        val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
 
         // TODO: 편지 몇 동있는지 추가
         return TimeCapsuleDetailDto(
@@ -32,7 +35,7 @@ class TimeCapsuleDetailService(
             title = capsule.title,
             subtitle = capsule.subtitle,
             openAt = capsule.openAt,
-            participantCount = capsule.timeCapsuleUsers.size,
+            participantCount = participantCount,
             likeCount = likeCount,
             isLiked = liked,
             status = status,
