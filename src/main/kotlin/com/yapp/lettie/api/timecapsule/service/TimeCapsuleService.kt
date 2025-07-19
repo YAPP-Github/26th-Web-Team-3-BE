@@ -61,22 +61,35 @@ class TimeCapsuleService(
     }
 
     @Transactional
-    fun toggleLike(
+    fun like(
         userId: Long,
         capsuleId: Long,
-    ): Boolean {
+    ) {
         val user = userReader.getById(userId)
         val capsule = timeCapsuleReader.getById(capsuleId)
-        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
 
-        return if (existing != null) {
-            existing.isLiked = !existing.isLiked
-            timeCapsuleLikeWriter.save(existing)
-            existing.isLiked // true = 좋아요됨, false = 좋아요 취소됨
-        } else {
+        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
+        if (existing == null) {
             val like = TimeCapsuleLike.of(user, capsule)
             timeCapsuleLikeWriter.save(like)
-            like.isLiked
+        } else if (!existing.isLiked) {
+            existing.isLiked = true
+            timeCapsuleLikeWriter.save(existing)
+        }
+    }
+
+    @Transactional
+    fun unlike(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val user = userReader.getById(userId)
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
+        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
+        if (existing != null && existing.isLiked) {
+            existing.isLiked = false
+            timeCapsuleLikeWriter.save(existing)
         }
     }
 

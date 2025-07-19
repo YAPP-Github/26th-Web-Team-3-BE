@@ -3,14 +3,15 @@ package com.yapp.lettie.api.timecapsule.controller
 import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
-import com.yapp.lettie.api.timecapsule.controller.response.ToggleTimeCapsuleLikeResponse
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -42,16 +43,21 @@ class TimeCapsuleApiController(
         return ResponseEntity.ok(ApiResponse.success(true))
     }
 
-    @PostMapping("/{capsuleId}/like")
-    override fun toggleLike(
+    @PutMapping("/{capsuleId}/like")
+    override fun like(
         @LoginUser userInfo: UserInfoDto,
         @PathVariable capsuleId: Long,
-    ): ResponseEntity<ApiResponse<ToggleTimeCapsuleLikeResponse>> =
-        ResponseEntity.ok(
-            ApiResponse.success(
-                ToggleTimeCapsuleLikeResponse(
-                    timeCapsuleService.toggleLike(userInfo.id, capsuleId),
-                ),
-            ),
-        )
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        timeCapsuleService.like(userInfo.id, capsuleId)
+        return ResponseEntity.ok(ApiResponse.success(true))
+    }
+
+    @DeleteMapping("/{capsuleId}/like")
+    override fun unlike(
+        @LoginUser userInfo: UserInfoDto,
+        @PathVariable capsuleId: Long,
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        timeCapsuleService.unlike(userInfo.id, capsuleId)
+        return ResponseEntity.ok(ApiResponse.success(true))
+    }
 }
