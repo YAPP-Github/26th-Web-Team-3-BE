@@ -4,7 +4,6 @@ import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
-import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.stereotype.Service
 import java.time.Duration
