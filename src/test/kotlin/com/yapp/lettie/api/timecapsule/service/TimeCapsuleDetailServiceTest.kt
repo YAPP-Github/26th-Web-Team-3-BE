@@ -68,8 +68,7 @@ class TimeCapsuleDetailServiceTest {
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
-        every { userReader.getById(userId) } returns user
-        every { likeReader.findByUserAndCapsule(user, capsule) } returns
+        every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
             mockk {
                 every { isLiked } returns true
             }
@@ -94,7 +93,6 @@ class TimeCapsuleDetailServiceTest {
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 2L
         val capsuleId = 20L
-        val user = mockk<User>()
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
@@ -118,8 +116,7 @@ class TimeCapsuleDetailServiceTest {
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
-        every { userReader.getById(userId) } returns user
-        every { likeReader.findByUserAndCapsule(user, capsule) } returns
+        every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
             mockk {
                 every { isLiked } returns true
             }
@@ -140,6 +137,7 @@ class TimeCapsuleDetailServiceTest {
         // given
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val capsuleId = 30L
+        val userId = 1L
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
@@ -163,13 +161,16 @@ class TimeCapsuleDetailServiceTest {
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
+        every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
+            mockk {
+                every { isLiked } returns true
+            }
 
         // when
-        val result = detailService.getTimeCapsuleDetail(capsuleId, null) // 비로그인 사용자
+        val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
 
         // then
         assertEquals(TimeCapsuleStatus.OPENED, result.status)
-        assertNull(result.isLiked)
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
     }
 }

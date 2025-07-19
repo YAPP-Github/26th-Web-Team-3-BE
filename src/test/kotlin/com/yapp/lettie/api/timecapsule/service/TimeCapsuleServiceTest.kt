@@ -156,7 +156,7 @@ class TimeCapsuleServiceTest {
 
         every { userReader.getById(userId) } returns user
         every { capsuleReader.getById(capsuleId) } returns capsule
-        every { capsuleLikeReader.findByUserAndCapsule(user, capsule) } returns null
+        every { capsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns null
         every { capsuleLikeWriter.save(capture(likeSlot)) } answers { likeSlot.captured }
 
         // when
@@ -181,7 +181,7 @@ class TimeCapsuleServiceTest {
 
         every { userReader.getById(userId) } returns user
         every { capsuleReader.getById(capsuleId) } returns capsule
-        every { capsuleLikeReader.findByUserAndCapsule(user, capsule) } returns existingLike
+        every { capsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns existingLike
         every { capsuleLikeWriter.save(existingLike) } returns existingLike
 
         // when
@@ -204,7 +204,7 @@ class TimeCapsuleServiceTest {
 
         every { userReader.getById(userId) } returns user
         every { capsuleReader.getById(capsuleId) } returns capsule
-        every { capsuleLikeReader.findByUserAndCapsule(user, capsule) } returns existingLike
+        every { capsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns existingLike
         every { capsuleLikeWriter.save(existingLike) } returns existingLike
 
         // when
