@@ -68,7 +68,7 @@ class TimeCapsuleService(
         val user = userReader.getById(userId)
         val capsule = timeCapsuleReader.getById(capsuleId)
 
-        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
+        val existing = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)
         if (existing == null) {
             val like = TimeCapsuleLike.of(user, capsule)
             timeCapsuleLikeWriter.save(like)
@@ -83,10 +83,9 @@ class TimeCapsuleService(
         userId: Long,
         capsuleId: Long,
     ) {
-        val user = userReader.getById(userId)
         val capsule = timeCapsuleReader.getById(capsuleId)
 
-        val existing = timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)
+        val existing = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)
         if (existing != null && existing.isLiked) {
             existing.isLiked = false
             timeCapsuleLikeWriter.save(existing)

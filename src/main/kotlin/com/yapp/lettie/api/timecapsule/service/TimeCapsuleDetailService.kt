@@ -12,22 +12,17 @@ import java.time.LocalDateTime
 
 @Service
 class TimeCapsuleDetailService(
-    private val userReader: UserReader,
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
 ) {
     fun getTimeCapsuleDetail(
         capsuleId: Long,
-        userId: Long? = null,
+        userId: Long,
     ): TimeCapsuleDetailDto {
         val capsule = timeCapsuleReader.getById(capsuleId)
         val now = LocalDateTime.now()
 
-        val liked =
-            userId?.let {
-                val user = userReader.getById(it)
-                timeCapsuleLikeReader.findByUserAndCapsule(user, capsule)?.isLiked
-            }
+        val liked = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)?.isLiked
         val status = capsule.getStatus(now)
         val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
 

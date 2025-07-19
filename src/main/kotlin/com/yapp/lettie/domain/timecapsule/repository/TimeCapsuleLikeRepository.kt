@@ -6,9 +6,9 @@ import com.yapp.lettie.domain.user.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface TimeCapsuleLikeRepository : JpaRepository<TimeCapsuleLike, Long> {
-    fun findByUserAndTimeCapsule(
-        user: User,
-        capsule: TimeCapsule,
+    fun findByUserIdAndTimeCapsuleId(
+        userId: Long,
+        capsule: Long,
     ): TimeCapsuleLike?
 
     fun findByUserAndIsLikedTrue(user: User): List<TimeCapsuleLike>

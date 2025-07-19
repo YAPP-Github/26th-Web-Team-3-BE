@@ -26,7 +26,7 @@ interface TimeCapsuleDetailSwagger {
         """,
     )
     fun getCapsuleDetail(
-        @Parameter(hidden = true) userInfo: UserInfoDto?,
+        @Parameter(hidden = true) userInfo: UserInfoDto,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
 }

@@ -2,10 +2,8 @@ package com.yapp.lettie.api.timecapsule.service.reader
 
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
-import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleLikeRepository
-import com.yapp.lettie.domain.user.entity.User
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,19 +12,19 @@ class TimeCapsuleLikeReader(
     private val likeRepository: TimeCapsuleLikeRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getByUserAndCapsule(
-        user: User,
-        capsule: TimeCapsule,
+    fun getByUserIdAndCapsuleId(
+        userId: Long,
+        capsuleId: Long,
     ): TimeCapsuleLike {
-        return findByUserAndCapsule(user, capsule)
+        return findByUserIdAndCapsuleId(userId, capsuleId)
             ?: throw ApiErrorException(ErrorMessages.CAPSULE_LIKE_NOT_FOUND)
     }
 
     @Transactional(readOnly = true)
-    fun findByUserAndCapsule(
-        user: User,
-        capsule: TimeCapsule,
+    fun findByUserIdAndCapsuleId(
+        userId: Long,
+        capsuleId: Long,
     ): TimeCapsuleLike? {
-        return likeRepository.findByUserAndTimeCapsule(user, capsule)
+        return likeRepository.findByUserIdAndTimeCapsuleId(userId, capsuleId)
     }
 }
