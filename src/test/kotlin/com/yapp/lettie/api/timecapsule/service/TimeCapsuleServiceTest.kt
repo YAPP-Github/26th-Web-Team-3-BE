@@ -146,7 +146,7 @@ class TimeCapsuleServiceTest {
     }
 
     @Test
-    fun `좋아요가 없으면 새로 생성되고 true가 반환된다`() {
+    fun `좋아요가 없으면 새로 생성된다`() {
         // given
         val userId = 1L
         val capsuleId = 10L
@@ -160,10 +160,9 @@ class TimeCapsuleServiceTest {
         every { capsuleLikeWriter.save(capture(likeSlot)) } answers { likeSlot.captured }
 
         // when
-        val result = timeCapsuleService.toggleLike(userId, capsuleId)
+        timeCapsuleService.like(userId, capsuleId)
 
         // then
-        assertThat(result).isTrue()
         assertThat(likeSlot.isCaptured).isTrue()
         assertThat(likeSlot.captured.isLiked).isTrue()
         assertThat(likeSlot.captured.user).isEqualTo(user)
@@ -171,34 +170,10 @@ class TimeCapsuleServiceTest {
     }
 
     @Test
-    fun `좋아요가 이미 되어 있으면 isLiked를 false로 변경하고 false를 반환한다`() {
+    fun `좋아요가 취소된 상태면 다시 true로 바뀐다`() {
         // given
         val userId = 1L
         val capsuleId = 20L
-        val user = mockk<User>()
-        val capsule = mockk<TimeCapsule>()
-        val existingLike = spyk(TimeCapsuleLike.of(user, capsule))
-        existingLike.isLiked = true
-
-        every { userReader.getById(userId) } returns user
-        every { capsuleReader.getById(capsuleId) } returns capsule
-        every { capsuleLikeReader.findByUserAndCapsule(user, capsule) } returns existingLike
-        every { capsuleLikeWriter.save(existingLike) } returns existingLike
-
-        // when
-        val result = timeCapsuleService.toggleLike(userId, capsuleId)
-
-        // then
-        assertThat(result).isFalse()
-        assertThat(existingLike.isLiked).isFalse()
-        verify { capsuleLikeWriter.save(existingLike) }
-    }
-
-    @Test
-    fun `좋아요가 취소된 상태면 다시 true로 바꾸고 true를 반환한다`() {
-        // given
-        val userId = 1L
-        val capsuleId = 30L
         val user = mockk<User>()
         val capsule = mockk<TimeCapsule>()
         val existingLike = spyk(TimeCapsuleLike.of(user, capsule))
@@ -210,11 +185,33 @@ class TimeCapsuleServiceTest {
         every { capsuleLikeWriter.save(existingLike) } returns existingLike
 
         // when
-        val result = timeCapsuleService.toggleLike(userId, capsuleId)
+        timeCapsuleService.like(userId, capsuleId)
 
         // then
-        assertThat(result).isTrue()
         assertThat(existingLike.isLiked).isTrue()
+        verify { capsuleLikeWriter.save(existingLike) }
+    }
+
+    @Test
+    fun `좋아요가 이미 되어 있는 상태에서 unlike를 하면 false로 변경된다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 30L
+        val user = mockk<User>()
+        val capsule = mockk<TimeCapsule>()
+        val existingLike = spyk(TimeCapsuleLike.of(user, capsule))
+        existingLike.isLiked = true
+
+        every { userReader.getById(userId) } returns user
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsuleLikeReader.findByUserAndCapsule(user, capsule) } returns existingLike
+        every { capsuleLikeWriter.save(existingLike) } returns existingLike
+
+        // when
+        timeCapsuleService.unlike(userId, capsuleId)
+
+        // then
+        assertThat(existingLike.isLiked).isFalse()
         verify { capsuleLikeWriter.save(existingLike) }
     }
 }
