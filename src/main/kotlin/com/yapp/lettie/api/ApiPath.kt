@@ -42,6 +42,7 @@ enum class ApiPath(
     // 공통 API
     HEALTH_CHECK("/api/health", HttpMethod.GET, AuthType.NONE),
     API_DOCS("/api/docs", HttpMethod.GET, AuthType.NONE),
+    PROMETHEUS_EXPORTER("/api/metric/*/*", HttpMethod.GET, AuthType.NONE),
     ;
 
     companion object {
@@ -73,7 +74,9 @@ enum class ApiPath(
                 patternPath
                     .replace(Regex("\\{[^}]+}"), "[^/]+")
                     .replace(".", "\\.") // 리터럴 점 처리
-                    .replace("/*", "(/.*)?") // 경로 끝 와일드카드 대응
+                    .replace("/**", "(/.*)?") // 모든 depth 대응
+                    .replace("**", ".*")
+                    .replace("/*", "/[^/]*") // 1 depth 대응
                     .replace("*", "[^/]*") // 경로 내부 와일드카드 대응
 
             return actualPath.matches(Regex("^$regexPattern$"))
