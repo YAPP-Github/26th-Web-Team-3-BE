@@ -75,6 +75,7 @@ enum class ApiPath(
                     .replace(Regex("\\{[^}]+}"), "[^/]+")
                     .replace(".", "\\.") // 리터럴 점 처리
                     .replace("/**", "(/.*)?") // 모든 depth 대응
+                    .replace("**", ".*")
                     .replace("/*", "/[^/]*") // 1 depth 대응
                     .replace("*", "[^/]*") // 경로 내부 와일드카드 대응
 
