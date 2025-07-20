@@ -42,7 +42,7 @@ enum class ApiPath(
     // 공통 API
     HEALTH_CHECK("/api/health", HttpMethod.GET, AuthType.NONE),
     API_DOCS("/api/docs", HttpMethod.GET, AuthType.NONE),
-    PROMETHEUS_EXPORTER("/api/metric/**", HttpMethod.GET, AuthType.NONE),
+    PROMETHEUS_EXPORTER("/api/metric/*/*", HttpMethod.GET, AuthType.NONE),
     ;
 
     companion object {
