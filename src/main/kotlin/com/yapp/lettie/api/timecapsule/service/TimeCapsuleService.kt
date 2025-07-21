@@ -47,7 +47,7 @@ class TimeCapsuleService(
         val capsule = timeCapsuleReader.getById(capsuleId)
         val user = userReader.getById(userId)
 
-        if (capsule.closedAt.isBefore(LocalDateTime.now())) {
+        if (capsule.isClosed(LocalDateTime.now())) {
             throw ApiErrorException(ErrorMessages.CLOSED_TIME_CAPSULE)
         }
 
@@ -92,9 +92,7 @@ class TimeCapsuleService(
         }
     }
 
-    private fun generateInviteCode(): String {
-        return UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
-    }
+    private fun generateInviteCode(): String = UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
 
     companion object {
         private const val RANDOM_VALUE_LENGTH = 8

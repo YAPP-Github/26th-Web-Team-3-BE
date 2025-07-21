@@ -45,8 +45,8 @@ class TimeCapsule(
         fun of(
             inviteCode: String,
             payload: CreateTimeCapsulePayload,
-        ): TimeCapsule {
-            return TimeCapsule(
+        ): TimeCapsule =
+            TimeCapsule(
                 inviteCode = inviteCode,
                 title = payload.title,
                 subtitle = payload.subtitle,
@@ -54,18 +54,20 @@ class TimeCapsule(
                 openAt = payload.openAt,
                 closedAt = payload.closedAt,
             )
-        }
     }
 
     fun addUser(tcu: TimeCapsuleUser) {
         this.timeCapsuleUsers.add(tcu)
     }
 
-    fun getStatus(now: LocalDateTime): TimeCapsuleStatus {
-        return when {
+    fun getStatus(now: LocalDateTime): TimeCapsuleStatus =
+        when {
             now.isBefore(closedAt) -> TimeCapsuleStatus.WRITABLE
             now.isBefore(openAt) -> TimeCapsuleStatus.WAITING_OPEN
             else -> TimeCapsuleStatus.OPENED
         }
-    }
+
+    fun isOpen(now: LocalDateTime): Boolean = now.isAfter(openAt)
+
+    fun isClosed(now: LocalDateTime): Boolean = now.isAfter(closedAt)
 }

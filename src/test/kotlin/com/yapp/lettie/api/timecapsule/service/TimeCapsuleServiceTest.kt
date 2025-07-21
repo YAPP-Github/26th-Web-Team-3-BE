@@ -129,7 +129,7 @@ class TimeCapsuleServiceTest {
         val capsule =
             mockk<TimeCapsule> {
                 every { timeCapsuleUsers } returns mutableListOf()
-                every { closedAt } returns LocalDateTime.now().minusMinutes(1)
+                every { isClosed(any()) } returns true
             }
 
         every { userReader.getById(userId) } returns user
