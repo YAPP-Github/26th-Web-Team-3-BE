@@ -58,6 +58,8 @@ dependencies {
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    // minio
+    implementation("io.minio:minio:8.5.7")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
 
     // jwt
