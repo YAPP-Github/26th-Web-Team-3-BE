@@ -59,7 +59,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // minio
-    implementation("io.minio:minio:8.5.7")
+    implementation("software.amazon.awssdk:s3:2.25.16")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
 
     // jwt

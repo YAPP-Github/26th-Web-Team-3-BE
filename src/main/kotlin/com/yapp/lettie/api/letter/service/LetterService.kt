@@ -46,7 +46,7 @@ class LetterService(
                 ),
             )
 
-        payload.key?.let { objectKey ->
+        payload.objectKey?.let { objectKey ->
             val file =
                 fileWriter.save(
                     LetterFile.of(

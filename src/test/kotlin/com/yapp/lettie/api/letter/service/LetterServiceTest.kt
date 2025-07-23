@@ -54,7 +54,7 @@ class LetterServiceTest {
                 capsuleId = capsuleId,
                 content = content,
                 from = from,
-                key = fileKey,
+                objectKey = fileKey,
             )
 
         val user =
@@ -102,7 +102,7 @@ class LetterServiceTest {
                 capsuleId = capsuleId,
                 content = content,
                 from = from,
-                key = null,
+                objectKey = null,
             )
 
         val user =
@@ -147,7 +147,7 @@ class LetterServiceTest {
                 capsuleId = capsuleId,
                 content = content,
                 from = from,
-                key = null,
+                objectKey = null,
             )
 
         val user =
@@ -190,7 +190,7 @@ class LetterServiceTest {
                 capsuleId = capsuleId,
                 content = content,
                 from = from,
-                key = null,
+                objectKey = null,
             )
 
         val user =
@@ -240,7 +240,7 @@ class LetterServiceTest {
                 capsuleId = capsuleId,
                 content = content,
                 from = from,
-                key = null,
+                objectKey = null,
             )
 
         val user =

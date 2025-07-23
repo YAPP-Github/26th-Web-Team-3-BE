@@ -6,17 +6,21 @@ import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.file.FileType
 import com.yapp.lettie.infrastructure.minio.MinioProperties
-import io.minio.GetPresignedObjectUrlArgs
-import io.minio.MinioClient
-import io.minio.http.Method
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import software.amazon.awssdk.services.s3.presigner.S3Presigner
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 
 @Service
 class FileService(
-    private val minioClient: MinioClient,
+    private val s3Presigner: S3Presigner,
     private val minioProperties: MinioProperties,
     private val fileReader: FileReader,
 ) {
@@ -30,19 +34,25 @@ class FileService(
     ): PresignedUrlDto {
         try {
             val key = generateUniqueFileName(fileType, extension)
+            val expiresAt = LocalDateTime.now().plusMinutes(EXPIRY_IN_MINUTES.toLong())
 
-            val presignedUrl =
-                minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs
-                        .builder()
-                        .method(Method.PUT)
-                        .bucket(minioProperties.bucketName)
-                        .`object`(key)
-                        .expiry(EXPIRY_IN_MINUTES, TimeUnit.MINUTES)
-                        .build(),
-                )
+            val putObjectRequest =
+                PutObjectRequest
+                    .builder()
+                    .bucket(minioProperties.bucketName)
+                    .key(key)
+                    .build()
 
-            return PresignedUrlDto(presignedUrl, key, EXPIRY_IN_MINUTES)
+            val presignRequest =
+                PutObjectPresignRequest
+                    .builder()
+                    .signatureDuration(Duration.ofMinutes(EXPIRY_IN_MINUTES.toLong()))
+                    .putObjectRequest(putObjectRequest)
+                    .build()
+
+            val presigned: PresignedPutObjectRequest = s3Presigner.presignPutObject(presignRequest)
+
+            return PresignedUrlDto(presigned.url().toString(), key, expiresAt)
         } catch (e: Exception) {
             throw ApiErrorException(ErrorMessages.CAN_NOT_GET_PRESIGNED_URL)
         }
@@ -52,18 +62,25 @@ class FileService(
         val file = fileReader.getById(fileId)
 
         try {
-            val presignedUrl =
-                minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs
-                        .builder()
-                        .method(Method.GET)
-                        .bucket(minioProperties.bucketName)
-                        .`object`(file.objectKey)
-                        .expiry(EXPIRY_IN_MINUTES, TimeUnit.MINUTES)
-                        .build(),
-                )
+            val expiresAt = LocalDateTime.now().plusMinutes(EXPIRY_IN_MINUTES.toLong())
 
-            return PresignedUrlDto(presignedUrl, file.objectKey, EXPIRY_IN_MINUTES)
+            val getObjectRequest =
+                GetObjectRequest
+                    .builder()
+                    .bucket(minioProperties.bucketName)
+                    .key(file.objectKey)
+                    .build()
+
+            val presignRequest =
+                GetObjectPresignRequest
+                    .builder()
+                    .signatureDuration(Duration.ofMinutes(EXPIRY_IN_MINUTES.toLong()))
+                    .getObjectRequest(getObjectRequest)
+                    .build()
+
+            val presigned: PresignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest)
+
+            return PresignedUrlDto(presigned.url().toString(), file.objectKey, expiresAt)
         } catch (e: Exception) {
             throw ApiErrorException(ErrorMessages.CAN_NOT_GET_PRESIGNED_URL)
         }
@@ -77,6 +94,6 @@ class FileService(
         val today = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         val timestamp = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
 
-        return "$today/${fileType.name}__$timestamp.$extension"
+        return "${fileType.name}/$today/${fileType.name}__$timestamp.$extension"
     }
 }
