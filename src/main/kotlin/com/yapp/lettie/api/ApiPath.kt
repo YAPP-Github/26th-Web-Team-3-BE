@@ -22,6 +22,10 @@ enum class ApiPath(
     TIME_CAPSULE_LIKE("/api/v1/capsule/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_DETAIL("/api/v1/capsule/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
 
+    // 파일 관련 API
+    FILE_PRESIGNED_UPLOAD("/api/v1/files/presigned-url", HttpMethod.GET, AuthType.REQUIRED),
+    FILE_PRESIGNED_GET("/api/v1/files/{file-id}/presigned-url", HttpMethod.GET, AuthType.NONE),
+
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
     STATIC_JS("/js/*", HttpMethod.GET, AuthType.NONE),

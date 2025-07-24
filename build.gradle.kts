@@ -58,6 +58,8 @@ dependencies {
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    // minio
+    implementation("software.amazon.awssdk:s3:2.25.16")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.4")
 
     // jwt
