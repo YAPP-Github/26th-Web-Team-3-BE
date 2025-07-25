@@ -9,7 +9,7 @@ class TimeCapsuleUserReader(
     private val timeCapsuleUserRepository: TimeCapsuleUserRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getParticipantCount(capsuleId: Long): Long {
+    fun getParticipantCount(capsuleId: Long): Int {
         return timeCapsuleUserRepository.countByTimeCapsuleId(capsuleId)
     }
 }

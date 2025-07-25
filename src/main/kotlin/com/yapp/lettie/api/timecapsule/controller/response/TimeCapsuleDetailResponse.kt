@@ -15,8 +15,8 @@ data class TimeCapsuleDetailResponse(
     val subtitle: String?,
     @Schema(description = "오픈 시각", example = "2025-07-01T13:00:00")
     val openAt: LocalDateTime,
-    @Schema(description = "참여자 수", example = "8L")
-    val participantCount: Long,
+    @Schema(description = "참여자 수", example = "8")
+    val participantCount: Int,
     @Schema(description = "좋아요 수", example = "31L")
     val likeCount: Long,
     @Schema(description = "좋아요 여부", example = "true")
