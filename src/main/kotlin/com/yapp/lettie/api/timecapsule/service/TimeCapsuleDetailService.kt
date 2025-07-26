@@ -72,6 +72,24 @@ class TimeCapsuleDetailService(
         }
     }
 
+    fun getPopularTimeCapsules(
+        limit: Int,
+    ): List<TimeCapsuleSummaryDto> {
+        val pageable = PageRequest.of(0, limit)
+        val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
+
+        return capsules.map { capsule ->
+            val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
+            TimeCapsuleSummaryDto(
+                id = capsule.id,
+                title = capsule.title,
+                participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
+                letterCount = letterCount,
+                remainingStatus = getRemainingStatus(capsule.openAt, LocalDateTime.now()),
+            )
+        }
+    }
+
     private fun calculateRemainingTime(
         status: TimeCapsuleStatus,
         now: LocalDateTime,
