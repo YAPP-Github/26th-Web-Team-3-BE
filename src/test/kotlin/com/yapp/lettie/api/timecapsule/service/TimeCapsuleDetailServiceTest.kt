@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.timecapsule.service
 
+import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
@@ -37,6 +38,9 @@ class TimeCapsuleDetailServiceTest {
     @MockK
     lateinit var timeCapsuleUserReader: TimeCapsuleUserReader
 
+    @MockK
+    lateinit var letterReader: LetterReader
+
     @InjectMockKs
     lateinit var detailService: TimeCapsuleDetailService
 
@@ -59,6 +63,7 @@ class TimeCapsuleDetailServiceTest {
         val capsule =
             TimeCapsule(
                 id = capsuleId,
+                creator = user,
                 inviteCode = "ABC123",
                 title = "캡슐 제목",
                 subtitle = "부제목",
@@ -77,6 +82,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -98,6 +104,8 @@ class TimeCapsuleDetailServiceTest {
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 2L
         val capsuleId = 20L
+
+        val user = mockk<User>()
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
@@ -109,6 +117,7 @@ class TimeCapsuleDetailServiceTest {
         val capsule =
             TimeCapsule(
                 id = capsuleId,
+                creator = user,
                 inviteCode = "WAIT123",
                 title = "대기 중 캡슐",
                 subtitle = "기다림의 미학",
@@ -127,6 +136,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -145,6 +155,8 @@ class TimeCapsuleDetailServiceTest {
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val capsuleId = 30L
         val userId = 1L
+
+        val user = mockk<User>()
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
@@ -156,6 +168,7 @@ class TimeCapsuleDetailServiceTest {
         val capsule =
             TimeCapsule(
                 id = capsuleId,
+                creator = user,
                 inviteCode = "OPEN123",
                 title = "오픈된 캡슐",
                 subtitle = "이제 읽어보세요",
@@ -174,6 +187,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
