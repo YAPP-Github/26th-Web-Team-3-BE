@@ -41,4 +41,14 @@ class TimeCapsuleDetailApiController(
                     .map { TimeCapsuleSummaryResponse.from(it) },
             ),
         )
+
+    @GetMapping("/popular")
+    override fun getPopularTimeCapsules(
+        @RequestParam limit: Int,
+    ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
+        ResponseEntity.ok(
+            ApiResponse.success(timeCapsuleDetailService.getPopularTimeCapsules(limit)
+                .map { TimeCapsuleSummaryResponse.from(it) }
+            )
+        )
 }
