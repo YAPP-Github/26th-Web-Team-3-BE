@@ -51,7 +51,10 @@ class TimeCapsuleDetailServiceTest {
         val capsuleId = 1L
         val userId = 10L
 
-        val user = mockk<User>()
+        val user =
+            mockk<User> {
+                every { id } returns userId
+            }
         val users = listOf(mockk<TimeCapsuleUser>(), mockk())
         val likes =
             listOf(
@@ -105,7 +108,10 @@ class TimeCapsuleDetailServiceTest {
         val userId = 2L
         val capsuleId = 20L
 
-        val user = mockk<User>()
+        val user =
+            mockk<User> {
+                every { id } returns userId
+            }
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
@@ -156,7 +162,10 @@ class TimeCapsuleDetailServiceTest {
         val capsuleId = 30L
         val userId = 1L
 
-        val user = mockk<User>()
+        val user =
+            mockk<User> {
+                every { id } returns userId
+            }
         val users = listOf(mockk<TimeCapsuleUser>())
         val likes =
             listOf(
