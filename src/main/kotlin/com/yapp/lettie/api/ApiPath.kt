@@ -26,6 +26,11 @@ enum class ApiPath(
     FILE_PRESIGNED_UPLOAD("/api/v1/files/presigned-url", HttpMethod.GET, AuthType.REQUIRED),
     FILE_PRESIGNED_GET("/api/v1/files/{file-id}/presigned-url", HttpMethod.GET, AuthType.NONE),
 
+    // 편지 관련 API
+    LETTER_CREATE("/api/v1/letters", HttpMethod.POST, AuthType.REQUIRED),
+    LETTER_LIST("/api/v1/letters", HttpMethod.GET, AuthType.OPTIONAL),
+    LETTER_DETAIL("/api/v1/letters/{letterId}", HttpMethod.GET, AuthType.OPTIONAL),
+
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
     STATIC_JS("/js/*", HttpMethod.GET, AuthType.NONE),

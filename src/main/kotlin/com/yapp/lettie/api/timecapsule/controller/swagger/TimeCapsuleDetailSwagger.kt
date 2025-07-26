@@ -2,7 +2,7 @@ package com.yapp.lettie.api.timecapsule.controller.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleDetailResponse
 import com.yapp.lettie.common.dto.ApiResponse
-import com.yapp.lettie.common.dto.UserInfoDto
+import com.yapp.lettie.common.dto.UserInfoPayload
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -26,7 +26,7 @@ interface TimeCapsuleDetailSwagger {
         """,
     )
     fun getCapsuleDetail(
-        @Parameter(hidden = true) userInfo: UserInfoDto,
+        @Parameter(hidden = true) userInfo: UserInfoPayload,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
 }
