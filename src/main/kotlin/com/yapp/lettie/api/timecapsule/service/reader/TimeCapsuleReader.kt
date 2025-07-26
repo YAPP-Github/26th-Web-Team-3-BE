@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class TimeCapsuleReader(
@@ -30,5 +31,10 @@ class TimeCapsuleReader(
     ): List<TimeCapsule> {
         return timeCapsuleRepository.findByCreatorIdOrderByCreatedAtDesc(creatorId, pageable)
             ?: throw ApiErrorException(ErrorMessages.CAPSULE_NOT_FOUND)
+    }
+
+    @Transactional(readOnly = true)
+    fun getPopularTimeCapsules(pageable: Pageable): List<TimeCapsule> {
+        return timeCapsuleRepository.findPopularTimeCapsules(pageable)
     }
 }
