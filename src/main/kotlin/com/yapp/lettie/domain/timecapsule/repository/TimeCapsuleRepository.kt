@@ -11,7 +11,7 @@ interface TimeCapsuleRepository : JpaRepository<TimeCapsule, Long> {
     fun findByCreatorIdOrderByCreatedAtDesc(
         creatorId: Long,
         pageable: Pageable,
-    ): List<TimeCapsule>?
+    ): List<TimeCapsule>
 
     @Query(
         """

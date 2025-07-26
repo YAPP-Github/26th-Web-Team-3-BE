@@ -28,8 +28,9 @@ class TimeCapsuleReader(
         creatorId: Long,
         pageable: Pageable,
     ): List<TimeCapsule> {
-        return timeCapsuleRepository.findByCreatorIdOrderByCreatedAtDesc(creatorId, pageable)
-            ?: throw ApiErrorException(ErrorMessages.CAPSULE_NOT_FOUND)
+        return timeCapsuleRepository
+            .findByCreatorIdOrderByCreatedAtDesc(creatorId, pageable)
+            .orEmpty()
     }
 
     @Transactional(readOnly = true)
