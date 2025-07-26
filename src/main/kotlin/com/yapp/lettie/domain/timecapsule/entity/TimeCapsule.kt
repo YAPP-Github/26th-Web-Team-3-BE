@@ -23,6 +23,8 @@ class TimeCapsule(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    @Column(name = "creator_id", nullable = false)
+    var creatorId: Long,
     @Column(name = "invite_code", nullable = false, unique = true)
     var inviteCode: String,
     @Column(name = "title", nullable = false)
@@ -43,10 +45,12 @@ class TimeCapsule(
 ) : BaseEntity() {
     companion object {
         fun of(
+            userId: Long,
             inviteCode: String,
             payload: CreateTimeCapsulePayload,
         ): TimeCapsule =
             TimeCapsule(
+                creatorId = userId,
                 inviteCode = inviteCode,
                 title = payload.title,
                 subtitle = payload.subtitle,
