@@ -3,6 +3,7 @@ package com.yapp.lettie.api.letter.service
 import com.yapp.lettie.api.file.service.writer.FileWriter
 import com.yapp.lettie.api.letter.service.dto.CreateLetterPayload
 import com.yapp.lettie.api.letter.service.dto.GetLettersPayload
+import com.yapp.lettie.api.letter.service.dto.LetterDto
 import com.yapp.lettie.api.letter.service.dto.LettersDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.letter.service.writer.LetterWriter
@@ -66,21 +67,41 @@ class LetterService(
     }
 
     @Transactional(readOnly = true)
-    fun readLetter(
+    fun readLetters(
         user: UserInfoPayload,
         payload: GetLettersPayload,
     ): LettersDto {
         val capsule = timeCapsuleReader.getById(payload.capsuleId)
 
+        validateTimeCapsuleRead(capsule.id, user.id)
+
+        val letters = letterReader.findByCapsuleId(payload.capsuleId, payload.pageable)
+        return LettersDto.of(user.id, letters)
+    }
+
+    @Transactional(readOnly = true)
+    fun readLetter(
+        user: UserInfoPayload,
+        letterId: Long,
+    ): LetterDto {
+        val letter = letterReader.getById(letterId)
+        validateTimeCapsuleRead(letter.timeCapsule.id, user.id)
+
+        return LetterDto.of(user.id, letter)
+    }
+
+    private fun validateTimeCapsuleRead(
+        capsuleId: Long,
+        userId: Long,
+    ) {
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
         if (capsule.isNotOpen(LocalDateTime.now())) {
             throw ApiErrorException(ErrorMessages.NOT_OPENED_CAPSULE)
         }
 
-        if (capsule.isPrivate() && capsule.timeCapsuleUsers.none { it.user.id == user.id }) {
+        if (capsule.isPrivate() && capsule.timeCapsuleUsers.none { it.user.id == userId }) {
             throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
         }
-
-        val letters = letterReader.findByCapsuleId(payload.capsuleId, payload.pageable)
-        return LettersDto.of(user.id, letters)
     }
 }

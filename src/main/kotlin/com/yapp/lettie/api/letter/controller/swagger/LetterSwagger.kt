@@ -2,6 +2,7 @@ package com.yapp.lettie.api.letter.controller.swagger
 
 import com.yapp.lettie.api.letter.controller.request.CreateLetterRequest
 import com.yapp.lettie.api.letter.controller.response.CreateLetterResponse
+import com.yapp.lettie.api.letter.controller.response.LetterResponse
 import com.yapp.lettie.api.letter.controller.response.LettersResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
@@ -24,8 +25,8 @@ interface LetterSwagger {
     ): ResponseEntity<ApiResponse<CreateLetterResponse>>
 
     @Operation(
-        summary = "타임캡슐 편지 조회",
-        description = "타임캡슐에 작성된 편지를 조회합니다.",
+        summary = "타임캡슐 편지 리스트 조회",
+        description = "타임캡슐에 작성된 편지들을 조회합니다.",
     )
     @Parameters(
         Parameter(
@@ -44,9 +45,18 @@ interface LetterSwagger {
             `in` = ParameterIn.QUERY,
         ),
     )
-    fun readLetter(
+    fun readLetters(
         userInfo: UserInfoPayload,
         capsuleId: Long,
         @ParameterObject pageable: Pageable,
     ): ResponseEntity<ApiResponse<LettersResponse>>
+
+    @Operation(
+        summary = "타임캡슐 편지 상세 조회",
+        description = "타임캡슐에 작성된 편지를 조회합니다.",
+    )
+    fun readLetter(
+        userInfo: UserInfoPayload,
+        letterId: Long,
+    ): ResponseEntity<ApiResponse<LetterResponse>>
 }

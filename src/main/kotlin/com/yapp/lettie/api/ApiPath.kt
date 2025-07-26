@@ -29,6 +29,7 @@ enum class ApiPath(
     // 편지 관련 API
     LETTER_CREATE("/api/v1/letters", HttpMethod.POST, AuthType.REQUIRED),
     LETTER_LIST("/api/v1/letters", HttpMethod.GET, AuthType.OPTIONAL),
+    LETTER_DETAIL("/api/v1/letters/{letterId}", HttpMethod.GET, AuthType.OPTIONAL),
 
     // Static 리소스 (로그인 불필요)
     STATIC_CSS("/css/*", HttpMethod.GET, AuthType.NONE),
