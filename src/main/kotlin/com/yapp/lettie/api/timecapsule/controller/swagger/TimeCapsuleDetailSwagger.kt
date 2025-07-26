@@ -39,4 +39,16 @@ interface TimeCapsuleDetailSwagger {
         @Parameter(hidden = true) userInfo: UserInfoDto,
         @Parameter(description = "불러올 개수 (default: 10)") limit: Int = 10,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
+
+    @Operation(
+        summary = "메인페이지 인기 캡슐 조회 (비로그인 가능)",
+        description = """
+            메인페이지 인기 캡슐 조회
+            1. limit을 12로 지정하여 메인페이지 인기 캡슐을 조회한다.
+            2.<더보기> 버튼을 눌렀을 때 limit을 60으로 지정하여 인기 캡슐을 조회한다.
+        """,
+    )
+    fun getPopularTimeCapsules(
+        @Parameter(description = "불러올 개수 (default: 12)") limit: Int = 12,
+    ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 }
