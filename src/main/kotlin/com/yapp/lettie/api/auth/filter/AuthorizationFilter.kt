@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.yapp.lettie.api.ApiPath
 import com.yapp.lettie.api.auth.component.JwtComponent
 import com.yapp.lettie.common.dto.ApiResponse
-import com.yapp.lettie.common.dto.UserInfoDto
+import com.yapp.lettie.common.dto.UserInfoPayload
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.auth.AuthType
@@ -64,7 +64,7 @@ class AuthorizationFilter(
         val claims = jwtComponent.verify(token)
 
         val userInfo =
-            UserInfoDto(
+            UserInfoPayload(
                 id = claims.id.toLong(),
                 roles = claims.roles.toList(),
             )
@@ -79,7 +79,7 @@ class AuthorizationFilter(
             try {
                 val claims = jwtComponent.verify(token)
                 val userInfo =
-                    UserInfoDto(
+                    UserInfoPayload(
                         id = claims.id.toLong(),
                         roles = claims.roles.toList(),
                     )
@@ -96,7 +96,7 @@ class AuthorizationFilter(
 
     private fun setDefaultUser(request: HttpServletRequest) {
         val defaultUser =
-            UserInfoDto(
+            UserInfoPayload(
                 id = -1L,
                 roles = listOf(UserRole.GUEST.name),
             )

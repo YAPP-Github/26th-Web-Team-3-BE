@@ -6,7 +6,7 @@ import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResp
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.common.dto.ApiResponse
-import com.yapp.lettie.common.dto.UserInfoDto
+import com.yapp.lettie.common.dto.UserInfoPayload
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,7 +23,7 @@ class TimeCapsuleApiController(
 ) : TimeCapsuleSwagger {
     @PostMapping
     override fun create(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @RequestBody request: CreateTimeCapsuleRequest,
     ): ResponseEntity<ApiResponse<CreateTimeCapsuleResponse>> =
         ResponseEntity.ok().body(
@@ -36,7 +36,7 @@ class TimeCapsuleApiController(
 
     @PostMapping("/{capsuleId}/join")
     override fun join(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
         timeCapsuleService.joinTimeCapsule(userInfo.id, capsuleId)
@@ -45,7 +45,7 @@ class TimeCapsuleApiController(
 
     @PutMapping("/{capsuleId}/like")
     override fun like(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
         timeCapsuleService.like(userInfo.id, capsuleId)
@@ -54,7 +54,7 @@ class TimeCapsuleApiController(
 
     @DeleteMapping("/{capsuleId}/like")
     override fun unlike(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
         timeCapsuleService.unlike(userInfo.id, capsuleId)

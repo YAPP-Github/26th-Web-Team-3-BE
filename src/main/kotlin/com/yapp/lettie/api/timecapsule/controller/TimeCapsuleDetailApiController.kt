@@ -6,7 +6,7 @@ import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryRes
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleDetailSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleDetailService
 import com.yapp.lettie.common.dto.ApiResponse
-import com.yapp.lettie.common.dto.UserInfoDto
+import com.yapp.lettie.common.dto.UserInfoPayload
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,7 +21,7 @@ class TimeCapsuleDetailApiController(
 ) : TimeCapsuleDetailSwagger {
     @GetMapping("/{capsuleId}")
     override fun getCapsuleDetail(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>> {
         val detailDto = timeCapsuleDetailService.getTimeCapsuleDetail(capsuleId, userInfo.id)
@@ -47,8 +47,9 @@ class TimeCapsuleDetailApiController(
         @RequestParam limit: Int,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
         ResponseEntity.ok(
-            ApiResponse.success(timeCapsuleDetailService.getPopularTimeCapsules(limit)
-                .map { TimeCapsuleSummaryResponse.from(it) }
-            )
+            ApiResponse.success(
+                timeCapsuleDetailService.getPopularTimeCapsules(limit)
+                    .map { TimeCapsuleSummaryResponse.from(it) },
+            ),
         )
 }

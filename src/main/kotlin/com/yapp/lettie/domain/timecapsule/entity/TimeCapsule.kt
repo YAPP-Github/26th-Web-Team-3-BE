@@ -73,5 +73,9 @@ class TimeCapsule(
 
     fun isOpen(now: LocalDateTime): Boolean = now.isAfter(openAt)
 
+    fun isNotOpen(now: LocalDateTime): Boolean = !isOpen(now)
+
     fun isClosed(now: LocalDateTime): Boolean = now.isAfter(closedAt)
+
+    fun isPrivate(): Boolean = accessType == AccessType.PRIVATE
 }

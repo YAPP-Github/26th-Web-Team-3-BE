@@ -1,6 +1,6 @@
 package com.yapp.lettie.api.letter.controller.request
 
-import com.yapp.lettie.api.timecapsule.service.dto.CreateLetterPayload
+import com.yapp.lettie.api.letter.service.dto.CreateLetterPayload
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class CreateLetterRequest(

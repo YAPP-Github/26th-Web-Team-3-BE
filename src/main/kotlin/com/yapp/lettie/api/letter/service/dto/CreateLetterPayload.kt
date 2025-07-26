@@ -1,4 +1,4 @@
-package com.yapp.lettie.api.timecapsule.service.dto
+package com.yapp.lettie.api.letter.service.dto
 
 data class CreateLetterPayload(
     val capsuleId: Long,

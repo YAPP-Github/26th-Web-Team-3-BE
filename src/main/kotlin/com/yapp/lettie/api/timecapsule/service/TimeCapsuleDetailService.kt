@@ -72,9 +72,7 @@ class TimeCapsuleDetailService(
         }
     }
 
-    fun getPopularTimeCapsules(
-        limit: Int,
-    ): List<TimeCapsuleSummaryDto> {
+    fun getPopularTimeCapsules(limit: Int): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
 

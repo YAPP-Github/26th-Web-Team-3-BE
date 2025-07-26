@@ -54,4 +54,6 @@ class Letter(
     fun addFile(file: LetterFile) {
         letterFiles.add(file)
     }
+
+    fun isMine(userId: Long): Boolean = user.id == userId
 }

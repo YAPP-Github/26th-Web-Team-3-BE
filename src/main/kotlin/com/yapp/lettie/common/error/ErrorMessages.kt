@@ -25,13 +25,15 @@ enum class ErrorMessages(
     // capsule
     CAPSULE_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 4_001, "타임캡슐을 찾을 수 없습니다."),
     ALREADY_JOINED(ExtendedHttpStatus.BAD_REQUEST, 4_002, "이미 참여한 타임캡슐입니다."),
-    CLOSED_TIME_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_003, "닫힌 타임캡슐에는 참여할 수 없습니다."),
+    CLOSED_TIME_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_003, "닫힌 타임캡슐입니다."),
     CAPSULE_LIKE_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 4_004, "좋아요된 캡슐을 찾을 수 없습니다."),
+    NOT_OPENED_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_005, "타임캡슐이 열리지 않았습니다."),
+    NOT_JOINED_TIME_CAPSULE(ExtendedHttpStatus.FORBIDDEN, 4_006, "타임캡슐에 참여하지 않았습니다."),
 
     // file
     CAN_NOT_GET_PRESIGNED_URL(ExtendedHttpStatus.INTERNAL_SERVER_ERROR, 5_001, "Presigned URL을 가져올 수 없습니다."),
     FILE_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 5_002, "파일을 찾을 수 없습니다."),
 
     // letter
-    NOT_JOINED_TIME_CAPSULE(ExtendedHttpStatus.FORBIDDEN, 6_001, "타임캡슐에 참여하지 않았습니다."),
+    LETTER_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 6_001, "편지를 찾을 수 없습니다."),
 }

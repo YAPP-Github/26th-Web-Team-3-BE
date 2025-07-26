@@ -1,10 +1,15 @@
 package com.yapp.lettie.api.letter.service
 
 import com.yapp.lettie.api.file.service.writer.FileWriter
+import com.yapp.lettie.api.letter.service.dto.CreateLetterPayload
+import com.yapp.lettie.api.letter.service.dto.GetLettersPayload
+import com.yapp.lettie.api.letter.service.dto.LetterDto
+import com.yapp.lettie.api.letter.service.dto.LettersDto
+import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.letter.service.writer.LetterWriter
-import com.yapp.lettie.api.timecapsule.service.dto.CreateLetterPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.user.service.reader.UserReader
+import com.yapp.lettie.common.dto.UserInfoPayload
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.file.entity.LetterFile
@@ -18,6 +23,7 @@ class LetterService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val userReader: UserReader,
     private val letterWriter: LetterWriter,
+    private val letterReader: LetterReader,
     private val fileWriter: FileWriter,
 ) {
     @Transactional
@@ -58,5 +64,44 @@ class LetterService(
         }
 
         return letter.id
+    }
+
+    @Transactional(readOnly = true)
+    fun readLetters(
+        user: UserInfoPayload,
+        payload: GetLettersPayload,
+    ): LettersDto {
+        val capsule = timeCapsuleReader.getById(payload.capsuleId)
+
+        validateTimeCapsuleRead(capsule.id, user.id)
+
+        val letters = letterReader.findByCapsuleId(payload.capsuleId, payload.pageable)
+        return LettersDto.of(user.id, letters)
+    }
+
+    @Transactional(readOnly = true)
+    fun readLetter(
+        user: UserInfoPayload,
+        letterId: Long,
+    ): LetterDto {
+        val letter = letterReader.getById(letterId)
+        validateTimeCapsuleRead(letter.timeCapsule.id, user.id)
+
+        return LetterDto.of(user.id, letter)
+    }
+
+    private fun validateTimeCapsuleRead(
+        capsuleId: Long,
+        userId: Long,
+    ) {
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
+        if (capsule.isNotOpen(LocalDateTime.now())) {
+            throw ApiErrorException(ErrorMessages.NOT_OPENED_CAPSULE)
+        }
+
+        if (capsule.isPrivate() && capsule.timeCapsuleUsers.none { it.user.id == userId }) {
+            throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
+        }
     }
 }

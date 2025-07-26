@@ -2,7 +2,7 @@ package com.yapp.lettie.api.auth.resolver
 
 import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.auth.filter.AuthorizationFilter
-import com.yapp.lettie.common.dto.UserInfoDto
+import com.yapp.lettie.common.dto.UserInfoPayload
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import jakarta.servlet.http.HttpServletRequest
@@ -26,7 +26,7 @@ class LoginUserArgumentResolver : HandlerMethodArgumentResolver {
     ): Any? {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
 
-        return request?.getAttribute(AuthorizationFilter.CURRENT_USER_KEY) as? UserInfoDto
+        return request?.getAttribute(AuthorizationFilter.CURRENT_USER_KEY) as? UserInfoPayload
             ?: throw ApiErrorException(ErrorMessages.INTERNAL_SERVER_ERROR)
     }
 }
