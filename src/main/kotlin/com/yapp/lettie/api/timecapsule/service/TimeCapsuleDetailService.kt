@@ -1,11 +1,14 @@
 package com.yapp.lettie.api.timecapsule.service
 
+import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
+import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.LocalDateTime
@@ -15,6 +18,7 @@ class TimeCapsuleDetailService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
+    private val letterReader: LetterReader,
 ) {
     fun getTimeCapsuleDetail(
         capsuleId: Long,
@@ -43,7 +47,30 @@ class TimeCapsuleDetailService(
         )
     }
 
-    fun calculateRemainingTime(
+    fun getMyTimeCapsules(
+        userId: Long,
+        limit: Int,
+    ): List<TimeCapsuleSummaryDto> {
+        val pageable = PageRequest.of(0, limit)
+        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
+        val now = LocalDateTime.now()
+
+        return capsules.map { capsule ->
+            val participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id)
+            val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
+            val remainingStatus = getRemainingStatus(capsule.openAt, now)
+
+            TimeCapsuleSummaryDto(
+                id = capsule.id,
+                title = capsule.title,
+                participantCount = participantCount,
+                letterCount = letterCount,
+                remainingStatus = remainingStatus,
+            )
+        }
+    }
+
+    private fun calculateRemainingTime(
         status: TimeCapsuleStatus,
         now: LocalDateTime,
         openAt: LocalDateTime,
@@ -71,6 +98,22 @@ class TimeCapsuleDetailService(
             TimeCapsuleStatus.OPENED -> {
                 RemainingTimeDto(openDate = openAt.toLocalDate())
             }
+        }
+    }
+
+    private fun getRemainingStatus(
+        openAt: LocalDateTime,
+        now: LocalDateTime,
+    ): String {
+        return if (now.isBefore(openAt)) {
+            val daysLeft =
+                Duration.between(
+                    now.toLocalDate().atStartOfDay(),
+                    openAt.toLocalDate().atStartOfDay(),
+                ).toDays()
+            "D-$daysLeft"
+        } else {
+            "오픈 완료"
         }
     }
 }
