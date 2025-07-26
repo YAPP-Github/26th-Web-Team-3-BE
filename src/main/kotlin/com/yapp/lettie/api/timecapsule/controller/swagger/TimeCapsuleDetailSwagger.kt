@@ -27,7 +27,7 @@ interface TimeCapsuleDetailSwagger {
         """,
     )
     fun getCapsuleDetail(
-        @Parameter(hidden = true) userInfo: UserInfoPayload,
+        userInfo: UserInfoPayload,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
 
@@ -36,7 +36,7 @@ interface TimeCapsuleDetailSwagger {
         description = "내가 가장 최근에 만든 타임 캡슐 리스트를 불러온다.",
     )
     fun getMyTimeCapsules(
-        @Parameter(hidden = true) userInfo: UserInfoPayload,
+        userInfo: UserInfoPayload,
         @Parameter(description = "불러올 개수 (default: 10)") limit: Int = 10,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 
