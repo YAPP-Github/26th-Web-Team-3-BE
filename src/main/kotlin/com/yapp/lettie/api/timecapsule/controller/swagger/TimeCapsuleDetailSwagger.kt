@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.controller.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleDetailResponse
+import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoDto
 import io.swagger.v3.oas.annotations.Operation
@@ -29,4 +30,13 @@ interface TimeCapsuleDetailSwagger {
         @Parameter(hidden = true) userInfo: UserInfoDto,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
+
+    @Operation(
+        summary = "메인페이지 내가 만든 캡슐 조회 (로그인 시에만)",
+        description = "내가 가장 최근에 만든 타임 캡슐 리스트를 불러온다.",
+    )
+    fun getMyTimeCapsules(
+        @Parameter(hidden = true) userInfo: UserInfoDto,
+        @Parameter(description = "불러올 개수 (default: 10)") limit: Int = 10,
+    ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 }
