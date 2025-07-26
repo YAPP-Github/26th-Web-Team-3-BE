@@ -32,7 +32,7 @@ class TimeCapsuleDetailApiController(
 
     @GetMapping("/my")
     override fun getMyTimeCapsules(
-        @LoginUser userInfo: UserInfoDto,
+        @LoginUser userInfo: UserInfoPayload,
         @RequestParam limit: Int,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
         ResponseEntity.ok(
