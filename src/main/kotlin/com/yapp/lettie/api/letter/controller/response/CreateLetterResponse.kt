@@ -3,7 +3,7 @@ package com.yapp.lettie.api.letter.controller.response
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class CreateLetterResponse(
-    @Schema(description = "letter Id", example = "1L")
+    @Schema(description = "편지 ID", example = "1")
     val id: Long,
 ) {
     companion object {
