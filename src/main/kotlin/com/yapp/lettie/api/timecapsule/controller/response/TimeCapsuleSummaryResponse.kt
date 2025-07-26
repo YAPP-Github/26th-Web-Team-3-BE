@@ -16,7 +16,7 @@ data class TimeCapsuleSummaryResponse(
     val letterCount: Int,
     @Schema(
         description = "캡슐 오픈까지 남은 시간 또는 오픈 상태",
-        implementation = RemainingStatusDto::class
+        implementation = RemainingStatusDto::class,
     )
     val remainingStatus: RemainingStatusDto,
     // TODO: 썸네일 이미지 objectkey 추가
