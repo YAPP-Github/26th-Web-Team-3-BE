@@ -1,0 +1,10 @@
+package com.yapp.lettie.api.timecapsule.service.dto
+
+data class TimeCapsuleSummaryDto(
+    val id: Long,
+    val title: String,
+    val participantCount: Int,
+    val letterCount: Int,
+    val remainingStatus: String,
+    // TODO: 썸네일 이미지 object key 추가
+)
