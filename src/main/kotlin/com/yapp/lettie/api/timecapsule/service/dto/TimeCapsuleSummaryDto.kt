@@ -5,6 +5,6 @@ data class TimeCapsuleSummaryDto(
     val title: String,
     val participantCount: Int,
     val letterCount: Int,
-    val remainingStatus: String,
+    val remainingStatus: RemainingStatusDto,
     // TODO: 썸네일 이미지 object key 추가
 )

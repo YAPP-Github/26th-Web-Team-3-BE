@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.RemainingStatusDto
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
@@ -33,6 +34,7 @@ class TimeCapsuleDetailService(
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)
         val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
         val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
+        val isMine = capsule.creator.id == userId
 
         // TODO: 편지 몇 동있는지 추가
         return TimeCapsuleDetailDto(
@@ -46,6 +48,7 @@ class TimeCapsuleDetailService(
             isLiked = liked,
             status = status,
             remainingTime = remainingTime,
+            isMine = isMine,
         )
     }
 
@@ -55,19 +58,14 @@ class TimeCapsuleDetailService(
     ): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
-        val now = LocalDateTime.now()
 
         return capsules.map { capsule ->
-            val participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id)
-            val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
-            val remainingStatus = getRemainingStatus(capsule.openAt, now)
-
             TimeCapsuleSummaryDto(
                 id = capsule.id,
                 title = capsule.title,
-                participantCount = participantCount,
-                letterCount = letterCount,
-                remainingStatus = remainingStatus,
+                participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
+                letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
+                remainingStatus = RemainingStatusDto.of(capsule.openAt, LocalDateTime.now()),
             )
         }
     }
@@ -77,13 +75,12 @@ class TimeCapsuleDetailService(
         val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
 
         return capsules.map { capsule ->
-            val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
             TimeCapsuleSummaryDto(
                 id = capsule.id,
                 title = capsule.title,
                 participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
-                letterCount = letterCount,
-                remainingStatus = getRemainingStatus(capsule.openAt, LocalDateTime.now()),
+                letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
+                remainingStatus = RemainingStatusDto.of(capsule.openAt, LocalDateTime.now()),
             )
         }
     }
@@ -116,22 +113,6 @@ class TimeCapsuleDetailService(
             TimeCapsuleStatus.OPENED -> {
                 RemainingTimeDto(openDate = openAt.toLocalDate())
             }
-        }
-    }
-
-    private fun getRemainingStatus(
-        openAt: LocalDateTime,
-        now: LocalDateTime,
-    ): String {
-        return if (now.isBefore(openAt)) {
-            val daysLeft =
-                Duration.between(
-                    now.toLocalDate().atStartOfDay(),
-                    openAt.toLocalDate().atStartOfDay(),
-                ).toDays()
-            "D-$daysLeft"
-        } else {
-            "오픈 완료"
         }
     }
 }

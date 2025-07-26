@@ -27,6 +27,8 @@ data class TimeCapsuleDetailResponse(
     val status: TimeCapsuleStatus,
     @Schema(description = "남은 시간 정보 또는 오픈 날짜")
     val remainingTime: RemainingTimeResponse?,
+    @Schema(description = "내가 만든 타임캡슐 여부", example = "false")
+    val isMine: Boolean,
 ) {
     companion object {
         fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
@@ -49,6 +51,7 @@ data class TimeCapsuleDetailResponse(
                             openDate = it.openDate,
                         )
                     },
+                isMine = dto.isMine,
             )
         }
     }

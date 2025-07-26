@@ -14,4 +14,5 @@ data class TimeCapsuleDetailDto(
     val isLiked: Boolean,
     val status: TimeCapsuleStatus,
     val remainingTime: RemainingTimeDto? = null,
+    val isMine: Boolean,
 )

@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.timecapsule.controller.response
 
+import com.yapp.lettie.api.timecapsule.service.dto.RemainingStatusDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -13,8 +14,11 @@ data class TimeCapsuleSummaryResponse(
     val participantCount: Int,
     @Schema(description = "작성된 편지 수", example = "6")
     val letterCount: Int,
-    @Schema(description = "캡슐 오픈까지 남은 시간 또는 오픈 상태", example = "D-3 / 캡슐 오픈")
-    val remainingStatus: String,
+    @Schema(
+        description = "캡슐 오픈까지 남은 시간 또는 오픈 상태",
+        implementation = RemainingStatusDto::class
+    )
+    val remainingStatus: RemainingStatusDto,
     // TODO: 썸네일 이미지 objectkey 추가
 ) {
     companion object {
