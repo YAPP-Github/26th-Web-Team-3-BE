@@ -16,7 +16,7 @@ interface TimeCapsuleRepository : JpaRepository<TimeCapsule, Long> {
     @Query(
         """
     SELECT tc FROM TimeCapsule tc
-    LEFT JOIN Letter l ON l.timeCapsule = tc
+    LEFT JOIN Letter l ON l.timeCapsule.id = tc.id
     WHERE  tc.accessType = 'PUBLIC'
     GROUP BY tc.id
     ORDER BY COUNT(l.id) DESC, tc.createdAt DESC
