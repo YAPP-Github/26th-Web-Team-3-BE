@@ -58,6 +58,7 @@ class TimeCapsuleDetailService(
     ): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
+        val now = LocalDateTime.now()
 
         return capsules.map { capsule ->
             TimeCapsuleSummaryDto(
@@ -65,7 +66,7 @@ class TimeCapsuleDetailService(
                 title = capsule.title,
                 participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
                 letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
-                remainingStatus = RemainingStatusDto.of(capsule.openAt, LocalDateTime.now()),
+                remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
             )
         }
     }
@@ -73,6 +74,7 @@ class TimeCapsuleDetailService(
     fun getPopularTimeCapsules(limit: Int): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
+        val now = LocalDateTime.now()
 
         return capsules.map { capsule ->
             TimeCapsuleSummaryDto(
@@ -80,7 +82,7 @@ class TimeCapsuleDetailService(
                 title = capsule.title,
                 participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
                 letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
-                remainingStatus = RemainingStatusDto.of(capsule.openAt, LocalDateTime.now()),
+                remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
             )
         }
     }
