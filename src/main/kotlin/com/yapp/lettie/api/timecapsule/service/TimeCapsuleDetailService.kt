@@ -32,6 +32,7 @@ class TimeCapsuleDetailService(
         val remainingTime = calculateRemainingTime(status, now, capsule.openAt, capsule.closedAt)
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)
         val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
+        val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
 
         // TODO: 편지 몇 동있는지 추가
         return TimeCapsuleDetailDto(
@@ -40,6 +41,7 @@ class TimeCapsuleDetailService(
             subtitle = capsule.subtitle,
             openAt = capsule.openAt,
             participantCount = participantCount,
+            letterCount = letterCount,
             likeCount = likeCount,
             isLiked = liked,
             status = status,

@@ -17,6 +17,8 @@ data class TimeCapsuleDetailResponse(
     val openAt: LocalDateTime,
     @Schema(description = "참여자 수", example = "8")
     val participantCount: Int,
+    @Schema(description = "편지 수", example = "4")
+    val letterCount: Int,
     @Schema(description = "좋아요 수", example = "31L")
     val likeCount: Long,
     @Schema(description = "좋아요 여부", example = "true")
@@ -34,6 +36,7 @@ data class TimeCapsuleDetailResponse(
                 subtitle = dto.subtitle,
                 openAt = dto.openAt,
                 participantCount = dto.participantCount,
+                letterCount = dto.letterCount,
                 likeCount = dto.likeCount,
                 isLiked = dto.isLiked,
                 status = dto.status,
