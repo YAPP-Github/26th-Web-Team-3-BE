@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface LetterRepository : JpaRepository<Letter, Long> {
     fun countByTimeCapsuleId(capsuleId: Long): Int
+
     fun findByTimeCapsuleId(
         capsuleId: Long,
         pageable: Pageable,
