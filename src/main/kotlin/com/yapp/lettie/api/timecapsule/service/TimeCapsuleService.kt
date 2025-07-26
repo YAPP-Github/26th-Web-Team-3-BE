@@ -30,7 +30,7 @@ class TimeCapsuleService(
         payload: CreateTimeCapsulePayload,
     ): Long {
         val user = userReader.getById(userId)
-        val capsule = TimeCapsule.of(userId, generateInviteCode(), payload)
+        val capsule = TimeCapsule.of(user, generateInviteCode(), payload)
         val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
 
         capsule.addUser(timeCapsuleUser)
@@ -83,8 +83,6 @@ class TimeCapsuleService(
         userId: Long,
         capsuleId: Long,
     ) {
-        val capsule = timeCapsuleReader.getById(capsuleId)
-
         val existing = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)
         if (existing != null && existing.isLiked) {
             existing.isLiked = false
