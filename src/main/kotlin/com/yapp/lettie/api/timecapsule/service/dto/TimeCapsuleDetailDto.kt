@@ -10,9 +10,10 @@ data class TimeCapsuleDetailDto(
     val openAt: LocalDateTime,
     val participantCount: Int,
     val letterCount: Int,
-    val likeCount: Long,
+    val likeCount: Int,
     val isLiked: Boolean,
     val status: TimeCapsuleStatus,
     val remainingTime: RemainingTimeDto? = null,
     val isMine: Boolean,
+    val inviteCode: String,
 )

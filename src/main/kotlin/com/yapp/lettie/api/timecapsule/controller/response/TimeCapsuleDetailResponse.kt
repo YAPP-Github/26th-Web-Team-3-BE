@@ -19,8 +19,8 @@ data class TimeCapsuleDetailResponse(
     val participantCount: Int,
     @Schema(description = "편지 수", example = "4")
     val letterCount: Int,
-    @Schema(description = "좋아요 수", example = "31L")
-    val likeCount: Long,
+    @Schema(description = "좋아요 수", example = "31")
+    val likeCount: Int,
     @Schema(description = "좋아요 여부", example = "true")
     val isLiked: Boolean,
     @Schema(description = "캡슐 상태", example = "WRITABLE")
@@ -29,6 +29,8 @@ data class TimeCapsuleDetailResponse(
     val remainingTime: RemainingTimeResponse?,
     @Schema(description = "내가 만든 타임캡슐 여부", example = "false")
     val isMine: Boolean,
+    @Schema(description = "타임캡슐 고유 식별자(공유 링크용)", example = "abc123xy")
+    val inviteCode: String,
 ) {
     companion object {
         fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
@@ -52,6 +54,7 @@ data class TimeCapsuleDetailResponse(
                         )
                     },
                 isMine = dto.isMine,
+                inviteCode = dto.inviteCode,
             )
         }
     }

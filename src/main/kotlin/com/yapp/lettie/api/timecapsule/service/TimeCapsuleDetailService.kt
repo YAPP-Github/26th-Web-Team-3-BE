@@ -34,7 +34,6 @@ class TimeCapsuleDetailService(
         val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
         val isMine = capsule.creator.id == userId
 
-        // TODO: 편지 몇 동있는지 추가
         return TimeCapsuleDetailDto(
             id = capsule.id,
             title = capsule.title,
@@ -47,6 +46,7 @@ class TimeCapsuleDetailService(
             status = status,
             remainingTime = remainingTime,
             isMine = isMine,
+            inviteCode = capsule.inviteCode,
         )
     }
 
