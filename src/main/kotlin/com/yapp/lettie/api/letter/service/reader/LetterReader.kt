@@ -28,4 +28,14 @@ class LetterReader(
     fun getLetterCountByCapsuleId(capsuleId: Long): Int {
         return letterRepository.countByTimeCapsuleId(capsuleId)
     }
+
+    @Transactional(readOnly = true)
+    fun getLetterCountMap(capsuleIds: List<Long>): Map<Long, Int> {
+        return letterRepository.getCountGroupedByCapsuleIds(capsuleIds)
+            .associate { row ->
+                val capsuleId = row[0] as Long
+                val count = (row[1] as Long).toInt()
+                capsuleId to count
+            }
+    }
 }

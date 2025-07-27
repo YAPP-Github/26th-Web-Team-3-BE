@@ -8,6 +8,7 @@ import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -56,30 +57,29 @@ class TimeCapsuleDetailService(
     ): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
-        val now = LocalDateTime.now()
-
-        return capsules.map { capsule ->
-            TimeCapsuleSummaryDto(
-                id = capsule.id,
-                title = capsule.title,
-                participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
-                letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
-                remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
-            )
-        }
+        return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
     fun getPopularTimeCapsules(limit: Int): List<TimeCapsuleSummaryDto> {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
-        val now = LocalDateTime.now()
+        return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
+    }
+
+    private fun getTimeCapsuleSummaries(
+        capsules: List<TimeCapsule>,
+        now: LocalDateTime,
+    ): List<TimeCapsuleSummaryDto> {
+        val capsuleIds = capsules.map { it.id }
+        val participantCountMap = timeCapsuleUserReader.getParticipantCountMap(capsuleIds)
+        val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
         return capsules.map { capsule ->
             TimeCapsuleSummaryDto(
                 id = capsule.id,
                 title = capsule.title,
-                participantCount = timeCapsuleUserReader.getParticipantCount(capsule.id),
-                letterCount = letterReader.getLetterCountByCapsuleId(capsule.id),
+                participantCount = participantCountMap[capsule.id] ?: 0,
+                letterCount = letterCountMap[capsule.id] ?: 0,
                 remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
             )
         }
