@@ -205,4 +205,99 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(TimeCapsuleStatus.OPENED, result.status)
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
     }
+
+    @Test
+    fun `내 캡슐 목록을 가져올 때 요약 정보들이 정확히 반환된다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val userId = 1L
+
+        val capsules = listOf(
+            TimeCapsule(
+                id = 1L,
+                creator = mockk { every { id } returns userId },
+                inviteCode = "CODE1",
+                title = "내 첫 캡슐",
+                subtitle = "서브1",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(3),
+                closedAt = now.plusDays(1)
+            ),
+            TimeCapsule(
+                id = 2L,
+                creator = mockk { every { id } returns userId },
+                inviteCode = "CODE2",
+                title = "내 두 번째 캡슐",
+                subtitle = "서브2",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(5),
+                closedAt = now.plusDays(2)
+            )
+        )
+
+        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns capsules
+        every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 3, 2L to 5)
+        every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns mapOf(1L to 10, 2L to 15)
+
+        // when
+        val result = detailService.getMyTimeCapsules(userId, limit = 2)
+
+        // then
+        assertEquals(2, result.size)
+        val first = result[0]
+        assertEquals(1L, first.id)
+        assertEquals("내 첫 캡슐", first.title)
+        assertEquals(3, first.participantCount)
+        assertEquals(10, first.letterCount)
+
+        val second = result[1]
+        assertEquals(2L, second.id)
+        assertEquals(5, second.participantCount)
+        assertEquals(15, second.letterCount)
+    }
+
+    @Test
+    fun `인기 캡슐 목록을 가져올 때 요약 정보들이 정확히 반환된다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+
+        val capsules = listOf(
+            TimeCapsule(
+                id = 100L,
+                creator = mockk(),
+                inviteCode = "POPULAR1",
+                title = "인기 캡슐1",
+                subtitle = "sub1",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(1),
+                closedAt = now.minusDays(1)
+            ),
+            TimeCapsule(
+                id = 101L,
+                creator = mockk(),
+                inviteCode = "POPULAR2",
+                title = "인기 캡슐2",
+                subtitle = "sub2",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(2),
+                closedAt = now
+            )
+        )
+
+        every { capsuleReader.getPopularTimeCapsules(any()) } returns capsules
+        every { timeCapsuleUserReader.getParticipantCountMap(listOf(100L, 101L)) } returns mapOf(100L to 7, 101L to 9)
+        every { letterReader.getLetterCountMap(listOf(100L, 101L)) } returns mapOf(100L to 20, 101L to 30)
+
+        // when
+        val result = detailService.getPopularTimeCapsules(limit = 2)
+
+        // then
+        assertEquals(2, result.size)
+        assertEquals(100L, result[0].id)
+        assertEquals(7, result[0].participantCount)
+        assertEquals(20, result[0].letterCount)
+        assertEquals(101L, result[1].id)
+        assertEquals(9, result[1].participantCount)
+        assertEquals(30, result[1].letterCount)
+    }
 }
