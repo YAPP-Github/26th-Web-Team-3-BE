@@ -4,15 +4,20 @@ import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
+import com.yapp.lettie.domain.user.entity.User
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
+import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
+import jakarta.persistence.ForeignKey
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
@@ -23,6 +28,9 @@ class TimeCapsule(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    var creator: User,
     @Column(name = "invite_code", nullable = false, unique = true)
     var inviteCode: String,
     @Column(name = "title", nullable = false)
@@ -43,10 +51,12 @@ class TimeCapsule(
 ) : BaseEntity() {
     companion object {
         fun of(
+            creator: User,
             inviteCode: String,
             payload: CreateTimeCapsulePayload,
         ): TimeCapsule =
             TimeCapsule(
+                creator = creator,
                 inviteCode = inviteCode,
                 title = payload.title,
                 subtitle = payload.subtitle,

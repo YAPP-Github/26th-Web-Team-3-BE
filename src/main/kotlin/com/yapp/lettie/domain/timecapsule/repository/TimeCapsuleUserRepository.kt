@@ -2,7 +2,21 @@ package com.yapp.lettie.domain.timecapsule.repository
 
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
-    fun countByTimeCapsuleId(capsuleId: Long): Long
+    fun countByTimeCapsuleId(capsuleId: Long): Int
+
+    @Query(
+        """
+        SELECT tcu.timeCapsule.id, COUNT(tcu)
+        FROM TimeCapsuleUser tcu
+        WHERE tcu.timeCapsule.id IN :capsuleIds
+        GROUP BY tcu.timeCapsule.id
+    """,
+    )
+    fun getCountGroupedByCapsuleIds(
+        @Param("capsuleIds") capsuleIds: List<Long>,
+    ): List<Array<Any>>
 }

@@ -7,10 +7,10 @@ import com.yapp.lettie.domain.letter.repository.LetterRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 class LetterReader(
     private val letterRepository: LetterRepository,
 ) {
@@ -23,4 +23,19 @@ class LetterReader(
     @Transactional(readOnly = true)
     fun getById(letterId: Long): Letter =
         letterRepository.findByIdOrNull(letterId) ?: throw ApiErrorException(ErrorMessages.LETTER_NOT_FOUND)
+
+    @Transactional(readOnly = true)
+    fun getLetterCountByCapsuleId(capsuleId: Long): Int {
+        return letterRepository.countByTimeCapsuleId(capsuleId)
+    }
+
+    @Transactional(readOnly = true)
+    fun getLetterCountMap(capsuleIds: List<Long>): Map<Long, Int> {
+        return letterRepository.getCountGroupedByCapsuleIds(capsuleIds)
+            .associate { row ->
+                val capsuleId = row[0] as Long
+                val count = (row[1] as Long).toInt()
+                capsuleId to count
+            }
+    }
 }

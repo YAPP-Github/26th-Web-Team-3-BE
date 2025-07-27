@@ -9,7 +9,17 @@ class TimeCapsuleUserReader(
     private val timeCapsuleUserRepository: TimeCapsuleUserRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getParticipantCount(capsuleId: Long): Long {
+    fun getParticipantCount(capsuleId: Long): Int {
         return timeCapsuleUserRepository.countByTimeCapsuleId(capsuleId)
+    }
+
+    @Transactional(readOnly = true)
+    fun getParticipantCountMap(capsuleIds: List<Long>): Map<Long, Int> {
+        return timeCapsuleUserRepository.getCountGroupedByCapsuleIds(capsuleIds)
+            .associate { row ->
+                val capsuleId = row[0] as Long
+                val count = (row[1] as Long).toInt()
+                capsuleId to count
+            }
     }
 }
