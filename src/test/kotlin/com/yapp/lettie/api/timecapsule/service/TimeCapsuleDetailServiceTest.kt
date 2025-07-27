@@ -212,28 +212,29 @@ class TimeCapsuleDetailServiceTest {
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 1L
 
-        val capsules = listOf(
-            TimeCapsule(
-                id = 1L,
-                creator = mockk { every { id } returns userId },
-                inviteCode = "CODE1",
-                title = "내 첫 캡슐",
-                subtitle = "서브1",
-                accessType = AccessType.PUBLIC,
-                openAt = now.plusDays(3),
-                closedAt = now.plusDays(1)
-            ),
-            TimeCapsule(
-                id = 2L,
-                creator = mockk { every { id } returns userId },
-                inviteCode = "CODE2",
-                title = "내 두 번째 캡슐",
-                subtitle = "서브2",
-                accessType = AccessType.PUBLIC,
-                openAt = now.plusDays(5),
-                closedAt = now.plusDays(2)
+        val capsules =
+            listOf(
+                TimeCapsule(
+                    id = 1L,
+                    creator = mockk { every { id } returns userId },
+                    inviteCode = "CODE1",
+                    title = "내 첫 캡슐",
+                    subtitle = "서브1",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(3),
+                    closedAt = now.plusDays(1),
+                ),
+                TimeCapsule(
+                    id = 2L,
+                    creator = mockk { every { id } returns userId },
+                    inviteCode = "CODE2",
+                    title = "내 두 번째 캡슐",
+                    subtitle = "서브2",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(5),
+                    closedAt = now.plusDays(2),
+                ),
             )
-        )
 
         every { capsuleReader.getMyTimeCapsules(userId, any()) } returns capsules
         every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 3, 2L to 5)
@@ -261,28 +262,29 @@ class TimeCapsuleDetailServiceTest {
         // given
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
 
-        val capsules = listOf(
-            TimeCapsule(
-                id = 100L,
-                creator = mockk(),
-                inviteCode = "POPULAR1",
-                title = "인기 캡슐1",
-                subtitle = "sub1",
-                accessType = AccessType.PUBLIC,
-                openAt = now.plusDays(1),
-                closedAt = now.minusDays(1)
-            ),
-            TimeCapsule(
-                id = 101L,
-                creator = mockk(),
-                inviteCode = "POPULAR2",
-                title = "인기 캡슐2",
-                subtitle = "sub2",
-                accessType = AccessType.PUBLIC,
-                openAt = now.plusDays(2),
-                closedAt = now
+        val capsules =
+            listOf(
+                TimeCapsule(
+                    id = 100L,
+                    creator = mockk(),
+                    inviteCode = "POPULAR1",
+                    title = "인기 캡슐1",
+                    subtitle = "sub1",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(1),
+                    closedAt = now.minusDays(1),
+                ),
+                TimeCapsule(
+                    id = 101L,
+                    creator = mockk(),
+                    inviteCode = "POPULAR2",
+                    title = "인기 캡슐2",
+                    subtitle = "sub2",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(2),
+                    closedAt = now,
+                ),
             )
-        )
 
         every { capsuleReader.getPopularTimeCapsules(any()) } returns capsules
         every { timeCapsuleUserReader.getParticipantCountMap(listOf(100L, 101L)) } returns mapOf(100L to 7, 101L to 9)
