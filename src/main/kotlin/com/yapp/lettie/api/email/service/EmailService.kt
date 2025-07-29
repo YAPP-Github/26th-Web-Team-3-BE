@@ -52,4 +52,29 @@ class EmailService(
             }
         }
     }
+
+    fun sendTestEmail(to: String) {
+        ioScope.launch {
+            try {
+                val message = SimpleMailMessage().apply {
+                    setTo(to)
+                    setSubject("테스트 메일입니다")
+                    setText(
+                        """
+                        Lettie 이메일 전송 테스트입니다.
+
+                        이 메일이 정상적으로 도착했다면 메일 설정이 올바르게 작동하고 있는 것입니다.
+
+                        - Lettie 팀 드림
+                        """.trimIndent()
+                    )
+                }
+
+                mailSender.send(message)
+                logger.info { "테스트 메일 전송 성공: $to" }
+            } catch (e: Exception) {
+                logger.error(e) { "테스트 메일 전송 실패: $to" }
+            }
+        }
+    }
 }

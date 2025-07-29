@@ -52,6 +52,9 @@ enum class ApiPath(
     SWAGGER_RESOURCES("/swagger-resources/*", HttpMethod.GET, AuthType.NONE),
     SWAGGER_WEBJARS("/webjars/*", HttpMethod.GET, AuthType.NONE),
 
+    // 메일 관련
+    MAIL_TEST("/api/v1/mail/test", HttpMethod.POST, AuthType.NONE),
+
     // 공통 API
     HEALTH_CHECK("/api/health", HttpMethod.GET, AuthType.NONE),
     API_DOCS("/api/docs", HttpMethod.GET, AuthType.NONE),
