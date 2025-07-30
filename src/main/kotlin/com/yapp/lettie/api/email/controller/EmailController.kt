@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController
 class EmailController(
     private val emailService: EmailService,
 ) {
-
     @PostMapping("/test")
-    fun testEmail(@RequestParam email: String): ResponseEntity<ApiResponse<Boolean>> {
+    fun testEmail(
+        @RequestParam email: String,
+    ): ResponseEntity<ApiResponse<Boolean>> {
         emailService.sendTestEmail(email)
         return ResponseEntity.ok(ApiResponse.success(true))
     }
