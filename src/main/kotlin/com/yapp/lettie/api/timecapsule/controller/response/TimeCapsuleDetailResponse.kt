@@ -31,6 +31,8 @@ data class TimeCapsuleDetailResponse(
     val isMine: Boolean,
     @Schema(description = "타임캡슐 고유 식별자(공유 링크용)", example = "abc123xy")
     val inviteCode: String,
+    @Schema(description = "구슬 영상 URL", example = "https://example.com/bead-video.mp4")
+    val beadVideoUrl: String,
 ) {
     companion object {
         fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
@@ -55,6 +57,7 @@ data class TimeCapsuleDetailResponse(
                     },
                 isMine = dto.isMine,
                 inviteCode = dto.inviteCode,
+                beadVideoUrl = dto.beadVideoUrl,
             )
         }
     }

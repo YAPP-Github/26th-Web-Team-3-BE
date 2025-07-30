@@ -16,4 +16,5 @@ data class TimeCapsuleDetailDto(
     val remainingTime: RemainingTimeDto? = null,
     val isMine: Boolean,
     val inviteCode: String,
+    val beadVideoUrl: String,
 )

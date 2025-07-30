@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.timecapsule.service
 
+import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingStatusDto
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
@@ -15,6 +16,7 @@ import java.time.LocalDateTime
 
 @Service
 class TimeCapsuleDetailService(
+    private val fileService: FileService,
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
@@ -34,6 +36,8 @@ class TimeCapsuleDetailService(
         val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
         val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
         val isMine = capsule.creator.id == userId
+        val objectKey = getBeadObjectKey(letterCount)
+        val beadVideoUrl = fileService.generatePresignedDownloadUrlByObjectKey(objectKey).url
 
         return TimeCapsuleDetailDto(
             id = capsule.id,
@@ -48,6 +52,7 @@ class TimeCapsuleDetailService(
             remainingTime = remainingTime,
             isMine = isMine,
             inviteCode = capsule.inviteCode,
+            beadVideoUrl = beadVideoUrl,
         )
     }
 
@@ -83,5 +88,10 @@ class TimeCapsuleDetailService(
                 remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
             )
         }
+    }
+
+    private fun getBeadObjectKey(letterCount: Int): String {
+        val beadIndex = if (letterCount >= 100) 10 else letterCount / 10
+        return "CAPSULE/detail_bead$beadIndex.mp4"
     }
 }
