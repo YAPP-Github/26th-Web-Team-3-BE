@@ -90,15 +90,17 @@ class FileService(
         try {
             val expiresAt = LocalDateTime.now().plusMinutes(EXPIRY_IN_MINUTES.toLong())
 
-            val getObjectRequest = GetObjectRequest.builder()
-                .bucket(minioProperties.bucketName)
-                .key(objectKey)
-                .build()
+            val getObjectRequest =
+                GetObjectRequest.builder()
+                    .bucket(minioProperties.bucketName)
+                    .key(objectKey)
+                    .build()
 
-            val presignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(EXPIRY_IN_MINUTES.toLong()))
-                .getObjectRequest(getObjectRequest)
-                .build()
+            val presignRequest =
+                GetObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofMinutes(EXPIRY_IN_MINUTES.toLong()))
+                    .getObjectRequest(getObjectRequest)
+                    .build()
 
             val presigned = s3Presigner.presignGetObject(presignRequest)
 

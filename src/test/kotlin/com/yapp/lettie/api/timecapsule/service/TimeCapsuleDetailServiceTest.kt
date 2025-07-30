@@ -93,11 +93,12 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
-        } returns PresignedUrlDto(
-            url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
-            key = "CAPSULE/detail_bead0.mp4",
-            expireAt = now.plusMinutes(5)
-        )
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -158,11 +159,12 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
-        } returns PresignedUrlDto(
-            url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
-            key = "CAPSULE/detail_bead0.mp4",
-            expireAt = now.plusMinutes(5)
-        )
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -220,11 +222,12 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
-        } returns PresignedUrlDto(
-            url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
-            key = "CAPSULE/detail_bead0.mp4",
-            expireAt = now.plusMinutes(5)
-        )
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
