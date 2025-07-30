@@ -86,6 +86,28 @@ class FileService(
         }
     }
 
+    fun generatePresignedDownloadUrlByObjectKey(objectKey: String): PresignedUrlDto {
+        try {
+            val expiresAt = LocalDateTime.now().plusMinutes(EXPIRY_IN_MINUTES.toLong())
+
+            val getObjectRequest = GetObjectRequest.builder()
+                .bucket(minioProperties.bucketName)
+                .key(objectKey)
+                .build()
+
+            val presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(EXPIRY_IN_MINUTES.toLong()))
+                .getObjectRequest(getObjectRequest)
+                .build()
+
+            val presigned = s3Presigner.presignGetObject(presignRequest)
+
+            return PresignedUrlDto(presigned.url().toString(), objectKey, expiresAt)
+        } catch (e: Exception) {
+            throw ApiErrorException(ErrorMessages.CAN_NOT_GET_PRESIGNED_URL)
+        }
+    }
+
     private fun generateUniqueFileName(
         fileType: FileType,
         extension: String,
