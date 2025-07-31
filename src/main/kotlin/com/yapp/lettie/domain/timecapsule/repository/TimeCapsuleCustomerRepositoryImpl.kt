@@ -26,15 +26,15 @@ class TimeCapsuleCustomerRepositoryImpl(
 
         when (type) {
             TimeCapsuleStatus.OPENED -> {
-                builder.and(timeCapsule.openAt.after(now))
+                builder.and(timeCapsule.openAt.before(now))
             }
 
             TimeCapsuleStatus.WAITING_OPEN -> {
-                builder.and(timeCapsule.openAt.before(now).and(timeCapsule.closedAt.after(now)))
+                builder.and(timeCapsule.openAt.after(now).and(timeCapsule.closedAt.before(now)))
             }
 
             TimeCapsuleStatus.WRITABLE -> {
-                builder.and(timeCapsule.closedAt.before(now))
+                builder.and(timeCapsule.closedAt.after(now))
             }
 
             null -> {
