@@ -2,14 +2,15 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.letter.service.reader.LetterReader
-import com.yapp.lettie.api.timecapsule.service.dto.RemainingStatusDto
+import com.yapp.lettie.api.timecapsule.service.dto.GetExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
-import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
+import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummariesDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -60,35 +61,38 @@ class TimeCapsuleDetailService(
     fun getMyTimeCapsules(
         userId: Long,
         limit: Int,
-    ): List<TimeCapsuleSummaryDto> {
+    ): TimeCapsuleSummariesDto {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
-    fun getPopularTimeCapsules(limit: Int): List<TimeCapsuleSummaryDto> {
+    fun getPopularTimeCapsules(limit: Int): TimeCapsuleSummariesDto {
         val pageable = PageRequest.of(0, limit)
         val capsules = timeCapsuleReader.getPopularTimeCapsules(pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
+    fun getExploreTimeCapsules(payload: GetExploreTimeCapsulesPayload): TimeCapsuleSummariesDto {
+        val now = LocalDateTime.now()
+        val capsules = timeCapsuleReader.getExploreTimeCapsules(payload.type, now, payload.pageable)
+        return getTimeCapsuleSummaries(capsules, now)
+    }
+
     private fun getTimeCapsuleSummaries(
-        capsules: List<TimeCapsule>,
+        capsules: Page<TimeCapsule>,
         now: LocalDateTime,
-    ): List<TimeCapsuleSummaryDto> {
-        val capsuleIds = capsules.map { it.id }
+    ): TimeCapsuleSummariesDto {
+        val capsuleIds = capsules.content.map { it.id }
         val participantCountMap = timeCapsuleUserReader.getParticipantCountMap(capsuleIds)
         val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
-        return capsules.map { capsule ->
-            TimeCapsuleSummaryDto(
-                id = capsule.id,
-                title = capsule.title,
-                participantCount = participantCountMap[capsule.id] ?: 0,
-                letterCount = letterCountMap[capsule.id] ?: 0,
-                remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
-            )
-        }
+        return TimeCapsuleSummariesDto.of(
+            capsules = capsules,
+            participantCountMap = participantCountMap,
+            letterCountMap = letterCountMap,
+            now = now,
+        )
     }
 
     private fun getBeadObjectKey(letterCount: Int): String {

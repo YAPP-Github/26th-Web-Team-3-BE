@@ -1,12 +1,18 @@
 package com.yapp.lettie.api.timecapsule.controller.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleDetailResponse
+import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummariesResponse
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springdoc.core.annotations.ParameterObject
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 
@@ -67,4 +73,39 @@ interface TimeCapsuleDetailSwagger {
     fun getPopularTimeCapsules(
         @Parameter(description = "불러올 개수 (default: 12)") limit: Int = 12,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
+
+    @Operation(
+        summary = "타임캡슐 리스트 조회 (비로그인 가능)",
+        description =
+            """
+        타임캡슐 리스트를 조회합니다. 타입에 따라 필터링이 가능합니다.
+        페이지네이션과 정렬 기능을 지원합니다.
+
+        <타입별 필터링>
+        - WRITABLE: 작성 가능한 캡슐
+        - WAITING_OPEN: 오픈 대기 중인 캡슐
+        - OPENED: 오픈된 캡슐
+        """,
+    )
+    @Parameters(
+        Parameter(
+            name = "page",
+            description = "페이지 번호 (0부터 시작)",
+            `in` = ParameterIn.QUERY,
+        ),
+        Parameter(
+            name = "size",
+            description = "페이지 크기",
+            `in` = ParameterIn.QUERY,
+        ),
+        Parameter(
+            name = "sort",
+            description = "정렬 조건 (예: id,desc 또는 id,asc)",
+            `in` = ParameterIn.QUERY,
+        ),
+    )
+    fun getExploreTimeCapsules(
+        type: TimeCapsuleStatus?,
+        @ParameterObject pageable: Pageable,
+    ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 }
