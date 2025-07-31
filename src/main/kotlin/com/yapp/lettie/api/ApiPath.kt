@@ -17,14 +17,15 @@ enum class ApiPath(
     OAUTH_NAVER_LOGIN("/api/v1/auth/code/naver", HttpMethod.POST, AuthType.NONE),
 
     // 타임캡슐 관련 API
-    TIME_CAPSULE_CREATE("/api/v1/capsule", HttpMethod.POST, AuthType.REQUIRED),
-    TIME_CAPSULE_JOIN("/api/v1/capsule/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
-    TIME_CAPSULE_LIKE("/api/v1/capsule/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
-    TIME_CAPSULE_DETAIL("/api/v1/capsule/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
+    TIME_CAPSULE_CREATE("/api/v1/capsules", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_JOIN("/api/v1/capsules/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_LIKE("/api/v1/capsules/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_DETAIL("/api/v1/capsules/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
 
     // 메인페이지 조회 API
-    TIME_CAPSULE_MAIN_MY_LIST("/api/v1/capsule/main/my", HttpMethod.GET, AuthType.REQUIRED),
-    TIME_CAPSULE_POPULAR_LIST("/api/v1/capsule/main/popular", HttpMethod.GET, AuthType.OPTIONAL),
+    TIME_CAPSULE_MAIN_MY_LIST("/api/v1/capsules/my", HttpMethod.GET, AuthType.REQUIRED),
+    TIME_CAPSULE_POPULAR_LIST("/api/v1/capsules/popular", HttpMethod.GET, AuthType.OPTIONAL),
+    TIME_CAPSULE_EXPLORE_LIST("/api/v1/capsules/explore", HttpMethod.GET, AuthType.NONE),
 
     // 파일 관련 API
     FILE_PRESIGNED_UPLOAD("/api/v1/files/presigned-url", HttpMethod.GET, AuthType.REQUIRED),
