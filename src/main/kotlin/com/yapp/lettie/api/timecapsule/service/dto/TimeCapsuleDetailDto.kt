@@ -8,6 +8,7 @@ data class TimeCapsuleDetailDto(
     val title: String,
     val subtitle: String?,
     val openAt: LocalDateTime,
+    val closedAt: LocalDateTime,
     val participantCount: Int,
     val letterCount: Int,
     val likeCount: Int,
@@ -16,4 +17,5 @@ data class TimeCapsuleDetailDto(
     val remainingTime: RemainingTimeDto? = null,
     val isMine: Boolean,
     val inviteCode: String,
+    val beadVideoUrl: String,
 )

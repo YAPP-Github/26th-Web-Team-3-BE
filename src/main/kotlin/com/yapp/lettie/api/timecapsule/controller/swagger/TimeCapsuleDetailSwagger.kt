@@ -51,10 +51,10 @@ interface TimeCapsuleDetailSwagger {
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 
     @Operation(
-        summary = "메인페이지 인기 캡슐 조회 (비로그인 가능)",
+        summary = "<< 보류 >> 편지 수 인기 캡슐 조회 (비로그인 가능)",
         description = """
-            [메인페이지 인기 캡슐 조회 호출 방식]
-            1. limit을 12로 지정하여 메인페이지 인기 캡슐을 조회한다.
+            [탐색페이지 인기 캡슐 조회 호출 방식]
+            1. limit을 12로 지정하여 탐색페이지 인기 캡슐을 조회한다.
             2. <더보기> 버튼을 눌렀을 때 limit을 60으로 넘겨서 인기 캡슐을 조회한다.
             3. 정렬 방식은 편지 수 -> 생성일자 (최근)순으로 정렬하여 반환한다.
 

@@ -16,7 +16,7 @@ data class CreateTimeCapsuleRequest(
     val accessType: AccessType,
     @Schema(description = "캡슐 오픈 시점", example = "2025-12-01T00:00:00")
     val openAt: LocalDateTime,
-    @Schema(description = "캡슐 작성 마감 시점", example = "2025-12-31T00:00:00")
+    @Schema(description = "캡슐 작성 마감 시점", example = "2025-11-05T00:00:00")
     val closedAt: LocalDateTime,
 ) {
     fun to(): CreateTimeCapsulePayload {

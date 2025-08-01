@@ -1,5 +1,7 @@
 package com.yapp.lettie.api.timecapsule.service
 
+import com.yapp.lettie.api.file.service.FileService
+import com.yapp.lettie.api.file.service.dto.PresignedUrlDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
@@ -26,6 +28,9 @@ import java.time.temporal.ChronoUnit
 
 @ExtendWith(MockKExtension::class)
 class TimeCapsuleDetailServiceTest {
+    @MockK
+    lateinit var fileService: FileService
+
     @MockK
     lateinit var userReader: UserReader
 
@@ -86,6 +91,14 @@ class TimeCapsuleDetailServiceTest {
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -99,6 +112,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(2, result.participantCount)
         assertNotNull(result.remainingTime)
         assertEquals(1, result.remainingTime?.days)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
     }
 
     @Test
@@ -143,6 +157,14 @@ class TimeCapsuleDetailServiceTest {
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -153,6 +175,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(2, result.remainingTime?.days)
         assertEquals(23, result.remainingTime?.hours)
         assertEquals(59, result.remainingTime?.minutes)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
     }
 
     @Test
@@ -197,6 +220,14 @@ class TimeCapsuleDetailServiceTest {
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.mp4",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
@@ -204,6 +235,7 @@ class TimeCapsuleDetailServiceTest {
         // then
         assertEquals(TimeCapsuleStatus.OPENED, result.status)
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
     }
 
     @Test

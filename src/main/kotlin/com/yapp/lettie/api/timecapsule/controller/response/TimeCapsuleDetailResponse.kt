@@ -15,6 +15,8 @@ data class TimeCapsuleDetailResponse(
     val subtitle: String?,
     @Schema(description = "오픈 시각", example = "2025-07-01T13:00:00")
     val openAt: LocalDateTime,
+    @Schema(description = "편지 작성 종료 시각", example = "2025-06-01T13:00:00")
+    val closedAt: LocalDateTime,
     @Schema(description = "참여자 수", example = "8")
     val participantCount: Int,
     @Schema(description = "편지 수", example = "4")
@@ -31,6 +33,8 @@ data class TimeCapsuleDetailResponse(
     val isMine: Boolean,
     @Schema(description = "타임캡슐 고유 식별자(공유 링크용)", example = "abc123xy")
     val inviteCode: String,
+    @Schema(description = "구슬 영상 URL", example = "https://example.com/bead-video.mp4")
+    val beadVideoUrl: String,
 ) {
     companion object {
         fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
@@ -39,6 +43,7 @@ data class TimeCapsuleDetailResponse(
                 title = dto.title,
                 subtitle = dto.subtitle,
                 openAt = dto.openAt,
+                closedAt = dto.closedAt,
                 participantCount = dto.participantCount,
                 letterCount = dto.letterCount,
                 likeCount = dto.likeCount,
@@ -55,6 +60,7 @@ data class TimeCapsuleDetailResponse(
                     },
                 isMine = dto.isMine,
                 inviteCode = dto.inviteCode,
+                beadVideoUrl = dto.beadVideoUrl,
             )
         }
     }
