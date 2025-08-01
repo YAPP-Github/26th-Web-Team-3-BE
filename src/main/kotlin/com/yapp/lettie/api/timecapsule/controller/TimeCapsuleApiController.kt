@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/capsule")
+@RequestMapping("/api/v1/capsules")
 class TimeCapsuleApiController(
     private val timeCapsuleService: TimeCapsuleService,
 ) : TimeCapsuleSwagger {

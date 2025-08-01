@@ -1,5 +1,6 @@
 package com.yapp.lettie.config
 
+import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import org.springframework.context.annotation.Bean
@@ -12,3 +13,5 @@ class QuerydslConfig(
     @Bean
     fun queryFactory(): JPAQueryFactory = JPAQueryFactory(entityManager)
 }
+
+fun <T> JPAQuery<T>.limit(pageSize: Int): JPAQuery<T> = this.limit(pageSize.toLong())

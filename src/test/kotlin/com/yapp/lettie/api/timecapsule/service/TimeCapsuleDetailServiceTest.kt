@@ -6,7 +6,6 @@ import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
-import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
@@ -23,6 +22,8 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -30,9 +31,6 @@ import java.time.temporal.ChronoUnit
 class TimeCapsuleDetailServiceTest {
     @MockK
     lateinit var fileService: FileService
-
-    @MockK
-    lateinit var userReader: UserReader
 
     @MockK
     lateinit var capsuleReader: TimeCapsuleReader
@@ -107,7 +105,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(capsuleId, result.id)
         assertEquals("캡슐 제목", result.title)
         assertEquals(TimeCapsuleStatus.WRITABLE, result.status)
-        assertTrue(result.isLiked!!)
+        assertTrue(result.isLiked)
         assertEquals(1, result.likeCount)
         assertEquals(2, result.participantCount)
         assertNotNull(result.remainingTime)
@@ -239,11 +237,10 @@ class TimeCapsuleDetailServiceTest {
     }
 
     @Test
-    fun `내 캡슐 목록을 가져올 때 요약 정보들이 정확히 반환된다`() {
+    fun `내 캡슐 목록을 가져올 때 페이지 정보와 요약 정보들이 정확히 반환된다`() {
         // given
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 1L
-
         val capsules =
             listOf(
                 TimeCapsule(
@@ -267,8 +264,9 @@ class TimeCapsuleDetailServiceTest {
                     closedAt = now.plusDays(2),
                 ),
             )
-
-        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns capsules
+        val pageable = PageRequest.of(0, 2)
+        val page = PageImpl(capsules, pageable, 2)
+        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns page
         every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 3, 2L to 5)
         every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns mapOf(1L to 10, 2L to 15)
 
@@ -276,24 +274,41 @@ class TimeCapsuleDetailServiceTest {
         val result = detailService.getMyTimeCapsules(userId, limit = 2)
 
         // then
-        assertEquals(2, result.size)
-        val first = result[0]
+        assertEquals(2, result.timeCapsules.size)
+        assertEquals(2L, result.totalCount)
+        val first = result.timeCapsules[0]
         assertEquals(1L, first.id)
         assertEquals("내 첫 캡슐", first.title)
         assertEquals(3, first.participantCount)
         assertEquals(10, first.letterCount)
-
-        val second = result[1]
+        val second = result.timeCapsules[1]
         assertEquals(2L, second.id)
         assertEquals(5, second.participantCount)
         assertEquals(15, second.letterCount)
     }
 
     @Test
-    fun `인기 캡슐 목록을 가져올 때 요약 정보들이 정확히 반환된다`() {
+    fun `내 캡슐 목록이 비어있을 때 빈 페이지가 반환된다`() {
+        // given
+        val userId = 1L
+        val pageable = PageRequest.of(0, 2)
+        val page = PageImpl(listOf<TimeCapsule>(), pageable, 0)
+        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(emptyList()) } returns emptyMap()
+        every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
+
+        // when
+        val result = detailService.getMyTimeCapsules(userId, limit = 2)
+
+        // then
+        assertTrue(result.timeCapsules.isEmpty())
+        assertEquals(0L, result.totalCount)
+    }
+
+    @Test
+    fun `인기 캡슐 목록을 가져올 때 페이지 정보와 요약 정보들이 정확히 반환된다`() {
         // given
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-
         val capsules =
             listOf(
                 TimeCapsule(
@@ -317,8 +332,9 @@ class TimeCapsuleDetailServiceTest {
                     closedAt = now,
                 ),
             )
-
-        every { capsuleReader.getPopularTimeCapsules(any()) } returns capsules
+        val pageable = PageRequest.of(0, 2)
+        val page = PageImpl(capsules, pageable, 2)
+        every { capsuleReader.getPopularTimeCapsules(any()) } returns page
         every { timeCapsuleUserReader.getParticipantCountMap(listOf(100L, 101L)) } returns mapOf(100L to 7, 101L to 9)
         every { letterReader.getLetterCountMap(listOf(100L, 101L)) } returns mapOf(100L to 20, 101L to 30)
 
@@ -326,12 +342,30 @@ class TimeCapsuleDetailServiceTest {
         val result = detailService.getPopularTimeCapsules(limit = 2)
 
         // then
-        assertEquals(2, result.size)
-        assertEquals(100L, result[0].id)
-        assertEquals(7, result[0].participantCount)
-        assertEquals(20, result[0].letterCount)
-        assertEquals(101L, result[1].id)
-        assertEquals(9, result[1].participantCount)
-        assertEquals(30, result[1].letterCount)
+        assertEquals(2, result.timeCapsules.size)
+        assertEquals(2L, result.totalCount)
+        assertEquals(100L, result.timeCapsules[0].id)
+        assertEquals(7, result.timeCapsules[0].participantCount)
+        assertEquals(20, result.timeCapsules[0].letterCount)
+        assertEquals(101L, result.timeCapsules[1].id)
+        assertEquals(9, result.timeCapsules[1].participantCount)
+        assertEquals(30, result.timeCapsules[1].letterCount)
+    }
+
+    @Test
+    fun `인기 캡슐 목록이 비어있을 때 빈 페이지가 반환된다`() {
+        // given
+        val pageable = PageRequest.of(0, 2)
+        val page = PageImpl(listOf<TimeCapsule>(), pageable, 0)
+        every { capsuleReader.getPopularTimeCapsules(any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(emptyList()) } returns emptyMap()
+        every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
+
+        // when
+        val result = detailService.getPopularTimeCapsules(limit = 2)
+
+        // then
+        assertTrue(result.timeCapsules.isEmpty())
+        assertEquals(0L, result.totalCount)
     }
 }
