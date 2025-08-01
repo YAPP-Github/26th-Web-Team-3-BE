@@ -8,6 +8,7 @@ data class TimeCapsuleDetailDto(
     val title: String,
     val subtitle: String?,
     val openAt: LocalDateTime,
+    val closedAt: LocalDateTime,
     val participantCount: Int,
     val letterCount: Int,
     val likeCount: Int,

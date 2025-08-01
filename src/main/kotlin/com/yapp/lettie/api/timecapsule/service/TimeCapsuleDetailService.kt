@@ -44,6 +44,7 @@ class TimeCapsuleDetailService(
             title = capsule.title,
             subtitle = capsule.subtitle,
             openAt = capsule.openAt,
+            closedAt = capsule.closedAt,
             participantCount = participantCount,
             letterCount = letterCount,
             likeCount = likeCount,
