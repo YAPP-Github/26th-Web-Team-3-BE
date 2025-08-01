@@ -30,6 +30,15 @@ class TimeCapsuleService(
         payload: CreateTimeCapsulePayload,
     ): Long {
         val user = userReader.getById(userId)
+
+        if (payload.openAt.isBefore(LocalDateTime.now())) {
+            throw ApiErrorException(ErrorMessages.INVALID_OPEN_AT)
+        }
+
+        if (payload.closedAt.isAfter(payload.openAt)) {
+            throw ApiErrorException(ErrorMessages.INVALID_CLOSED_AT)
+        }
+
         val capsule = TimeCapsule.of(user, generateInviteCode(), payload)
         val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
 
