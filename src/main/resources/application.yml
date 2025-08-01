@@ -58,3 +58,18 @@ llm:
 
 discord:
   webhook-url: ${DISCORD_WEBHOOK_URL}
+
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
+  properties:
+    mail:
+      smtp:
+        auth: true
+        timeout: 5000
+        connectiontimeout: 5000
+        writetimeout: 5000
+        starttls:
+          enable: true
