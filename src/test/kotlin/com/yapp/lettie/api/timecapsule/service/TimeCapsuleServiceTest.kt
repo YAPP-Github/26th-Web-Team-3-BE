@@ -52,8 +52,8 @@ class TimeCapsuleServiceTest {
                 title = "title",
                 subtitle = "sub",
                 accessType = AccessType.PRIVATE,
-                openAt = LocalDateTime.now(),
-                closedAt = LocalDateTime.now().plusDays(10),
+                openAt = LocalDateTime.now().plusDays(10),
+                closedAt = LocalDateTime.now(),
             )
 
         val dummyCapsule =
