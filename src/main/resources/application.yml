@@ -4,6 +4,11 @@ spring:
 
   profiles:
     active: local
+  data:
+    redis:
+      lettuce:
+        pool:
+          time-between-eviction-runs:
 
 logging:
   pattern:
@@ -69,7 +74,11 @@ mail:
       smtp:
         auth: true
         timeout: 5000
-        connectiontimeout: 5000
-        writetimeout: 5000
+        connection-timeout: 5000
+        write-timeout: 5000
         starttls:
           enable: true
+
+lettie:
+  domain:
+    name: ${LETTIE_DOMAIN_NAME}
