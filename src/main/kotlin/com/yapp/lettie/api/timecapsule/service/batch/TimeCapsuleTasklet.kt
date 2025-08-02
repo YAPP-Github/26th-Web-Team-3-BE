@@ -40,7 +40,7 @@ class TimeCapsuleTasklet(
             emailService.sendTimeCapsuleOpenedEmail(
                 recipients = recipients,
                 capsuleTitle = capsule.title,
-                openDate = capsule.openAt.toLocalDate().toString(),
+                openDate = capsule.openAt,
                 capsuleLink = generateCapsuleLink(capsule.inviteCode),
             )
 

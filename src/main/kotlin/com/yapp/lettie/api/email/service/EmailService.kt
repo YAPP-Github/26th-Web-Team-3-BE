@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.email.service
 
+import jakarta.mail.internet.MimeMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,7 +11,10 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class EmailService(
@@ -26,39 +30,90 @@ class EmailService(
     fun sendTimeCapsuleOpenedEmail(
         recipients: List<String>,
         capsuleTitle: String,
-        openDate: String,
+        openDate: LocalDateTime,
         capsuleLink: String,
     ) {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val formattedDate = openDate.format(formatter)
+
         recipients.chunked(10).forEach { batch ->
             batch.forEach { recipient ->
                 ioScope.launch {
                     delay(100)
                     try {
-                        val message =
-                            SimpleMailMessage().apply {
-                                setTo(recipient)
-                                setSubject("💌 타임캡슐이 열렸습니다! - $capsuleTitle")
-                                setText(
-                                    """
-                                    안녕하세요!
+                        val mimeMessage: MimeMessage = mailSender.createMimeMessage()
+                        val helper = MimeMessageHelper(mimeMessage, false, "UTF-8")
 
-                                    당신이 참여한 타임캡슐이 드디어 열렸습니다 🎉
+                        helper.setTo(recipient)
+                        helper.setSubject("💌 당신의 타임캡슐이 열렸습니다! - $capsuleTitle")
 
-                                    📬 캡슐 제목: $capsuleTitle
-                                    📅 오픈 날짜: $openDate
-                                    🔗 바로가기: $capsuleLink
+                        val htmlContent =
+                            """
+                            <html>
+                            <head>
+                              <style>
+                                body {
+                                  font-family: 'Arial', sans-serif;
+                                  background-color: #f9f9f9;
+                                  padding: 20px;
+                                  color: #333;
+                                }
+                                .card {
+                                  background: #fff;
+                                  padding: 20px;
+                                  border-radius: 10px;
+                                  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                                  max-width: 600px;
+                                  margin: auto;
+                                }
+                                .title {
+                                  font-size: 20px;
+                                  font-weight: bold;
+                                  margin-bottom: 16px;
+                                  color: #3f51b5;
+                                }
+                                .label {
+                                  font-weight: bold;
+                                  margin-top: 10px;
+                                }
+                                .button {
+                                  margin-top: 20px;
+                                  display: inline-block;
+                                  padding: 10px 20px;
+                                  background-color: #3f51b5;
+                                  color: white;
+                                  text-decoration: none;
+                                  border-radius: 6px;
+                                  font-weight: bold;
+                                }
+                                .footer {
+                                  margin-top: 30px;
+                                  font-size: 12px;
+                                  color: #777;
+                                }
+                              </style>
+                            </head>
+                            <body>
+                              <div class="card">
+                                <div class="title">🎉 타임캡슐이 열렸어요!</div>
+                                <div><span class="label">📬 캡슐 제목:</span> $capsuleTitle</div>
+                                <div><span class="label">📅 오픈 시간:</span> $formattedDate</div>
+                                <a class="button" href="$capsuleLink" target="_blank">캡슐 바로 확인하기</a>
+                                <div class="footer">
+                                  함께한 추억을 되돌아보는 따뜻한 시간 되세요 💌<br/>
+                                  - Lettie 팀 드림
+                                </div>
+                              </div>
+                            </body>
+                            </html>
+                            """.trimIndent()
 
-                                    추억을 확인하러 지금 바로 방문해보세요!
+                        helper.setText(htmlContent, true) // true: HTML
 
-                                    감사합니다.
-                                    """.trimIndent(),
-                                )
-                            }
-
-                        mailSender.send(message)
-                        logger.info { "이메일 전송 성공 $recipient" }
+                        mailSender.send(mimeMessage)
+                        logger.info { "이메일 전송 성공: $recipient" }
                     } catch (e: Exception) {
-                        logger.error(e) { "이메일 전송 실패 $recipient" }
+                        logger.error(e) { "메일 전송 실패: $recipient" }
                     }
                 }
             }
