@@ -22,4 +22,9 @@ class TimeCapsuleUserReader(
                 capsuleId to count
             }
     }
+
+    @Transactional(readOnly = true)
+    fun getEmailsByCapsuleId(capsuleId: Long): List<String> =
+        timeCapsuleUserRepository.findAllByTimeCapsuleId(capsuleId)
+            .map { it.user.email }
 }
