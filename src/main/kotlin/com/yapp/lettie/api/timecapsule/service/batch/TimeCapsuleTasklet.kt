@@ -21,7 +21,10 @@ class TimeCapsuleTasklet(
 ) : Tasklet {
     private val logger = KotlinLogging.logger {}
 
-    override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
+    override fun execute(
+        contribution: StepContribution,
+        chunkContext: ChunkContext,
+    ): RepeatStatus {
         val now = LocalDateTime.now().withSecond(0).withNano(0)
         val previousCheckTime = now.minusMinutes(CHECK_INTERVAL_MINUTES)
 
@@ -47,8 +50,7 @@ class TimeCapsuleTasklet(
         return RepeatStatus.FINISHED
     }
 
-    private fun generateCapsuleLink(inviteCode: String): String =
-        "$domainName/capsules/$inviteCode"
+    private fun generateCapsuleLink(inviteCode: String): String = "$domainName/capsules/$inviteCode"
 
     companion object {
         private const val CHECK_INTERVAL_MINUTES = 5L

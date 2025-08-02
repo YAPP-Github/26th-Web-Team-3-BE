@@ -44,6 +44,8 @@ class TimeCapsuleReader(
             .getTimeCapsulesByStatus(timeCapsuleStatus, now, pageable)
 
     @Transactional(readOnly = true)
-    fun findCapsulesToOpen(previousCheckTime: LocalDateTime, now: LocalDateTime): List<TimeCapsule> =
-        timeCapsuleRepository.findAllCapsulesToOpen(previousCheckTime, now)
+    fun findCapsulesToOpen(
+        previousCheckTime: LocalDateTime,
+        now: LocalDateTime,
+    ): List<TimeCapsule> = timeCapsuleRepository.findAllCapsulesToOpen(previousCheckTime, now)
 }

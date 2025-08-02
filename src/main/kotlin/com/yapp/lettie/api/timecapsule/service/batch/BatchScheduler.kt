@@ -13,14 +13,14 @@ class BatchScheduler(
     private val jobLauncher: JobLauncher,
     private val openTimeCapsuleJob: Job,
 ) {
-
     private val logger = KotlinLogging.logger {}
 
     @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") // 매 5분 정각에 실행
     fun launchJob() {
-        val jobParameters = JobParametersBuilder()
-            .addLocalDateTime("launchTime", LocalDateTime.now())
-            .toJobParameters()
+        val jobParameters =
+            JobParametersBuilder()
+                .addLocalDateTime("launchTime", LocalDateTime.now())
+                .toJobParameters()
 
         try {
             jobLauncher.run(openTimeCapsuleJob, jobParameters)

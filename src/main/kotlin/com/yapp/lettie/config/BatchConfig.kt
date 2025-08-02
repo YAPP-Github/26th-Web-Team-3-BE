@@ -18,7 +18,6 @@ class BatchConfig(
     private val transactionManager: PlatformTransactionManager,
     private val timeCapsuleTasklet: TimeCapsuleTasklet,
 ) {
-
     @Bean
     fun openTimeCapsuleJob(): Job =
         JobBuilder("openTimeCapsuleJob", jobRepository)

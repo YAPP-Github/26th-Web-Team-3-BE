@@ -33,7 +33,7 @@ interface TimeCapsuleRepository :
         """
         SELECT tc FROM TimeCapsule tc
         WHERE tc.openAt <= :now AND tc.openAt > :previousCheckTime
-        """
+        """,
     )
     fun findAllCapsulesToOpen(
         @Param("previousCheckTime") previousCheckTime: LocalDateTime,

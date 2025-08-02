@@ -27,7 +27,9 @@ interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
         SELECT tcu FROM TimeCapsuleUser tcu
         JOIN FETCH tcu.user
         WHERE tcu.timeCapsule.id IN :capsuleIds
-        """
+        """,
     )
-    fun findAllByCapsuleIdsFetchUser(@Param("capsuleIds") capsuleIds: List<Long>): List<TimeCapsuleUser>
+    fun findAllByCapsuleIdsFetchUser(
+        @Param("capsuleIds") capsuleIds: List<Long>,
+    ): List<TimeCapsuleUser>
 }
