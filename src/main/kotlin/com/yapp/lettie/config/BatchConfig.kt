@@ -1,6 +1,6 @@
 package com.yapp.lettie.config
 
-import com.yapp.lettie.api.timecapsule.service.TimeCapsuleTasklet
+import com.yapp.lettie.api.timecapsule.service.batch.TimeCapsuleTasklet
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
