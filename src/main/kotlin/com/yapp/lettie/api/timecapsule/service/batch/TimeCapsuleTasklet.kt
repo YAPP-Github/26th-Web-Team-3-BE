@@ -28,8 +28,11 @@ class TimeCapsuleTasklet(
         val capsulesToOpen =
             timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
 
+        val capsuleIds = capsulesToOpen.map { it.id }
+        val emailMap = timeCapsuleUserReader.getEmailsGroupByCapsuleId(capsuleIds)
+
         capsulesToOpen.forEach { capsule ->
-            val recipients = timeCapsuleUserReader.getEmailsByCapsuleId(capsule.id)
+            val recipients = emailMap[capsule.id] ?: emptyList()
 
             emailService.sendTimeCapsuleOpenedEmail(
                 recipients = recipients,

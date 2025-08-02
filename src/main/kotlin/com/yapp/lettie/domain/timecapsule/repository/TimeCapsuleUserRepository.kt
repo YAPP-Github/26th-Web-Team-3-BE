@@ -21,4 +21,13 @@ interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
     fun getCountGroupedByCapsuleIds(
         @Param("capsuleIds") capsuleIds: List<Long>,
     ): List<Array<Any>>
+
+    @Query(
+        """
+        SELECT tcu FROM TimeCapsuleUser tcu
+        JOIN FETCH tcu.user
+        WHERE tcu.timeCapsule.id IN :capsuleIds
+        """
+    )
+    fun findAllByCapsuleIdsFetchUser(@Param("capsuleIds") capsuleIds: List<Long>): List<TimeCapsuleUser>
 }
