@@ -33,8 +33,7 @@ class EmailService(
         openDate: LocalDateTime,
         capsuleLink: String,
     ) {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val formattedDate = openDate.format(formatter)
+        val formattedDate = openDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
 
         recipients.chunked(10).forEach { batch ->
             batch.forEach { recipient ->
@@ -42,74 +41,57 @@ class EmailService(
                     delay(100)
                     try {
                         val mimeMessage: MimeMessage = mailSender.createMimeMessage()
-                        val helper = MimeMessageHelper(mimeMessage, false, "UTF-8")
+                        val helper = MimeMessageHelper(mimeMessage, true, "UTF-8")
 
                         helper.setTo(recipient)
                         helper.setSubject("💌 당신의 타임캡슐이 열렸습니다! - $capsuleTitle")
 
                         val htmlContent =
                             """
-                            <html>
-                            <head>
-                              <style>
-                                body {
-                                  font-family: 'Arial', sans-serif;
-                                  background-color: #f9f9f9;
-                                  padding: 20px;
-                                  color: #333;
-                                }
-                                .card {
-                                  background: #fff;
-                                  padding: 20px;
-                                  border-radius: 10px;
-                                  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                                  max-width: 600px;
-                                  margin: auto;
-                                }
-                                .title {
-                                  font-size: 20px;
-                                  font-weight: bold;
-                                  margin-bottom: 16px;
-                                  color: #3f51b5;
-                                }
-                                .label {
-                                  font-weight: bold;
-                                  margin-top: 10px;
-                                }
-                                .button {
-                                  margin-top: 20px;
-                                  display: inline-block;
-                                  padding: 10px 20px;
-                                  background-color: #3f51b5;
-                                  color: white;
-                                  text-decoration: none;
-                                  border-radius: 6px;
-                                  font-weight: bold;
-                                }
-                                .footer {
-                                  margin-top: 30px;
-                                  font-size: 12px;
-                                  color: #777;
-                                }
-                              </style>
-                            </head>
-                            <body>
-                              <div class="card">
-                                <div class="title">🎉 타임캡슐이 열렸어요!</div>
-                                <div><span class="label">📬 캡슐 제목:</span> $capsuleTitle</div>
-                                <div><span class="label">📅 오픈 시간:</span> $formattedDate</div>
-                                <a class="button" href="$capsuleLink" target="_blank">캡슐 바로 확인하기</a>
-                                <div class="footer">
-                                  함께한 추억을 되돌아보는 따뜻한 시간 되세요 💌<br/>
-                                  - Lettie 팀 드림
+                            <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
+                              <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 48px 32px; text-align: center;">
+
+                                <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">🎉 당신의 타임캡슐이 열렸습니다!</h2>
+
+                                <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
+                                  오래 기다린 타임캡슐, 이제 한 번 열어봐요.
+                                </p>
+
+                                <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
+                                  📬 $capsuleTitle
                                 </div>
+
+                                <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
+                                  오픈 시각: <strong>$formattedDate</strong>
+                                </p>
+
+                                <a href="$capsuleLink" target="_blank"
+                                   style="
+                                     display: inline-block;
+                                     padding: 14px 28px;
+                                     background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+                                     color: white;
+                                     border-radius: 8px;
+                                     text-decoration: none;
+                                     font-weight: 600;
+                                     font-size: 15px;
+                                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                                     transition: background 0.3s ease;
+                                   "
+                                   onmouseover="this.style.background='linear-gradient(135deg,#5c6bc0,#3f51b5)'"
+                                   onmouseout="this.style.background='linear-gradient(135deg,#3f51b5,#5c6bc0)'">
+                                   캡슐 확인하러 가기
+                                </a>
+
+                                <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
+                                  함께한 추억을 되돌아보는 따뜻한 시간이 되시길 바랍니다 💌<br/>
+                                  - Lettie 팀 드림
+                                </p>
                               </div>
-                            </body>
-                            </html>
+                            </div>
                             """.trimIndent()
 
-                        helper.setText(htmlContent, true) // true: HTML
-
+                        helper.setText(htmlContent, true)
                         mailSender.send(mimeMessage)
                         logger.info { "이메일 전송 성공: $recipient" }
                     } catch (e: Exception) {
