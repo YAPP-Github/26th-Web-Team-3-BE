@@ -36,7 +36,7 @@ class TimeCapsuleTasklet(
 
         capsulesToOpen.forEach { capsule ->
             val recipients = emailMap[capsule.id] ?: emptyList()
-            try{
+            try {
                 emailService.sendTimeCapsuleOpenedEmail(
                     recipients = recipients,
                     capsuleTitle = capsule.title,
@@ -44,7 +44,7 @@ class TimeCapsuleTasklet(
                     capsuleLink = generateCapsuleLink(capsule.inviteCode),
                 )
                 logger.info { "Capsule(${capsule.id}) 오픈 처리 완료, 이메일 전송 완료 (${recipients.size}명)" }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 logger.error(e) { "Capsule(${capsule.id}) 오픈 처리 중 이메일 전송 실패" }
             }
         }
