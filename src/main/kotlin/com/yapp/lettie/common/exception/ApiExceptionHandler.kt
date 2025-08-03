@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.servlet.NoHandlerFoundException
 
 @RestControllerAdvice
@@ -49,6 +50,17 @@ class ApiExceptionHandler(
         return ResponseEntity
             .status(HttpStatus.METHOD_NOT_ALLOWED)
             .body(ApiResponse.error(ApiError.of(ErrorMessages.METHOD_NOT_ALLOWED)))
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException::class)
+    fun handleHandlerMethodValidationException(
+        ex: HandlerMethodValidationException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ApiResponse<Nothing>> {
+        log.warn { "ValidationException: ${request.method} ${request.requestURI} - ${ex.message}" }
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.error(ApiError.of(ErrorMessages.INVALID_INPUT_VALUE)))
     }
 
     @ExceptionHandler(Exception::class)
