@@ -24,7 +24,7 @@ class TimeCapsuleUserReader(
     }
 
     @Transactional(readOnly = true)
-    fun getEmailsByCapsuleId(capsuleId: Long): List<String> =
+    fun findEmailsByCapsuleId(capsuleId: Long): List<String> =
         timeCapsuleUserRepository.findAllByTimeCapsuleId(capsuleId)
             .map { it.user.email }
 
