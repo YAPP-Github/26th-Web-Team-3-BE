@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -37,12 +36,12 @@ class TimeCapsuleDetailApiController(
     @GetMapping("/my")
     override fun getMyTimeCapsules(
         @LoginUser userInfo: UserInfoPayload,
-        @RequestParam limit: Int,
+        pageable: Pageable,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
         ResponseEntity.ok(
             ApiResponse.success(
                 timeCapsuleDetailService
-                    .getMyTimeCapsules(userInfo.id, limit)
+                    .getMyTimeCapsules(userInfo.id, pageable)
                     .timeCapsules
                     .map { TimeCapsuleSummaryResponse.from(it) },
             ),
@@ -50,12 +49,12 @@ class TimeCapsuleDetailApiController(
 
     @GetMapping("/popular")
     override fun getPopularTimeCapsules(
-        @RequestParam limit: Int,
+        pageable: Pageable,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
         ResponseEntity.ok(
             ApiResponse.success(
                 timeCapsuleDetailService
-                    .getPopularTimeCapsules(limit)
+                    .getPopularTimeCapsules(pageable)
                     .timeCapsules
                     .map { TimeCapsuleSummaryResponse.from(it) },
             ),

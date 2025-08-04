@@ -22,6 +22,7 @@ data class TimeCapsuleSummariesDto(
                 capsules.content.map { capsule ->
                     TimeCapsuleSummaryDto(
                         id = capsule.id,
+                        inviteCode = capsule.inviteCode,
                         title = capsule.title,
                         participantCount = participantCountMap[capsule.id] ?: 0,
                         letterCount = letterCountMap[capsule.id] ?: 0,
