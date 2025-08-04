@@ -264,14 +264,15 @@ class TimeCapsuleDetailServiceTest {
                     closedAt = now.plusDays(2),
                 ),
             )
+
         val pageable = PageRequest.of(0, 2)
-        val page = PageImpl(capsules, pageable, 2)
+        val page = PageImpl(capsules, pageable, 0)
         every { capsuleReader.getMyTimeCapsules(userId, any()) } returns page
         every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 3, 2L to 5)
         every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns mapOf(1L to 10, 2L to 15)
 
         // when
-        val result = detailService.getMyTimeCapsules(userId, limit = 2)
+        val result = detailService.getMyTimeCapsules(userId, pageable)
 
         // then
         assertEquals(2, result.timeCapsules.size)
@@ -298,7 +299,7 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
 
         // when
-        val result = detailService.getMyTimeCapsules(userId, limit = 2)
+        val result = detailService.getMyTimeCapsules(userId, pageable)
 
         // then
         assertTrue(result.timeCapsules.isEmpty())
@@ -339,7 +340,7 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountMap(listOf(100L, 101L)) } returns mapOf(100L to 20, 101L to 30)
 
         // when
-        val result = detailService.getPopularTimeCapsules(limit = 2)
+        val result = detailService.getPopularTimeCapsules(pageable)
 
         // then
         assertEquals(2, result.timeCapsules.size)
@@ -362,7 +363,7 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
 
         // when
-        val result = detailService.getPopularTimeCapsules(limit = 2)
+        val result = detailService.getPopularTimeCapsules(pageable)
 
         // then
         assertTrue(result.timeCapsules.isEmpty())
