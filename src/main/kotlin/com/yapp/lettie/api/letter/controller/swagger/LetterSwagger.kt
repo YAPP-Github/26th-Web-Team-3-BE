@@ -16,8 +16,8 @@ import org.springframework.http.ResponseEntity
 
 interface LetterSwagger {
     @Operation(
-        summary = "타임캡슐 편지 작성",
-        description = "캡슐에 편지를 작성합니다.",
+        summary = "타임캡슐 참여 및 편지 작성",
+        description = "첫 편지를 작성하면 캡슐에 참여됩니다.",
     )
     fun writeLetter(
         userInfo: UserInfoPayload,
