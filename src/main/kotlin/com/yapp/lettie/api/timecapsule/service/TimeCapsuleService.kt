@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.timecapsule.service
 
+import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsuleDto
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
@@ -28,7 +29,7 @@ class TimeCapsuleService(
     fun createTimeCapsule(
         userId: Long,
         payload: CreateTimeCapsulePayload,
-    ): Long {
+    ): CreateTimeCapsuleDto {
         val user = userReader.getById(userId)
 
         if (payload.openAt.isBefore(LocalDateTime.now())) {
@@ -45,7 +46,11 @@ class TimeCapsuleService(
         capsule.addUser(timeCapsuleUser)
         user.addTimeCapsuleUser(timeCapsuleUser)
 
-        return timeCapsuleWriter.save(capsule).id
+        val savedCapsule = timeCapsuleWriter.save(capsule)
+        return CreateTimeCapsuleDto.of(
+            id = savedCapsule.id,
+            inviteCode = savedCapsule.inviteCode,
+        )
     }
 
     @Transactional
