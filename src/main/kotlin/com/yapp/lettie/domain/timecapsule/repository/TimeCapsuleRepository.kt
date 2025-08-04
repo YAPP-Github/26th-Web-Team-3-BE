@@ -1,6 +1,7 @@
 package com.yapp.lettie.domain.timecapsule.repository
 
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -39,4 +40,10 @@ interface TimeCapsuleRepository :
         @Param("previousCheckTime") previousCheckTime: LocalDateTime,
         @Param("now") now: LocalDateTime,
     ): List<TimeCapsule>
+
+    fun findTimeCapsuleByTitleContainingAndAccessType(
+        title: String,
+        accessType: AccessType,
+        pageable: Pageable,
+    ): Page<TimeCapsule>
 }

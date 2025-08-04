@@ -3,6 +3,7 @@ package com.yapp.lettie.api.timecapsule.service
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.file.service.dto.PresignedUrlDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
@@ -364,6 +365,138 @@ class TimeCapsuleDetailServiceTest {
 
         // when
         val result = detailService.getPopularTimeCapsules(pageable)
+
+        // then
+        assertTrue(result.timeCapsules.isEmpty())
+        assertEquals(0L, result.totalCount)
+    }
+
+    @Test
+    fun `캡슐을 키워드로 검색할 때 PUBLIC 타입만 검색되고 페이지 정보가 정확히 반환된다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val keyword = "테스트"
+        val capsules =
+            listOf(
+                TimeCapsule(
+                    id = 1L,
+                    creator = mockk(),
+                    inviteCode = "SEARCH1",
+                    title = "테스트 캡슐 1",
+                    subtitle = "검색 테스트용",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(1),
+                    closedAt = now.minusDays(1),
+                ),
+                TimeCapsule(
+                    id = 2L,
+                    creator = mockk(),
+                    inviteCode = "SEARCH2",
+                    title = "테스트 캡슐 2",
+                    subtitle = "또 다른 검색 테스트",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(2),
+                    closedAt = now.minusDays(2),
+                ),
+            )
+        val pageable = PageRequest.of(0, 10)
+        val page = PageImpl(capsules, pageable, 2)
+        every { capsuleReader.searchTimeCapsules(keyword, any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 5, 2L to 8)
+        every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns mapOf(1L to 12, 2L to 25)
+
+        // when
+        val payload = SearchTimeCapsulesPayload(keyword = keyword, pageable = pageable)
+        val result = detailService.searchTimeCapsules(payload)
+
+        // then
+        assertEquals(2, result.timeCapsules.size)
+        assertEquals(2L, result.totalCount)
+        assertEquals(0, result.page)
+        assertEquals(1, result.totalPages)
+
+        val first = result.timeCapsules[0]
+        assertEquals(1L, first.id)
+        assertEquals("테스트 캡슐 1", first.title)
+        assertEquals(5, first.participantCount)
+        assertEquals(12, first.letterCount)
+
+        val second = result.timeCapsules[1]
+        assertEquals(2L, second.id)
+        assertEquals("테스트 캡슐 2", second.title)
+        assertEquals(8, second.participantCount)
+        assertEquals(25, second.letterCount)
+    }
+
+    @Test
+    fun `키워드로 검색했을 때 결과가 없으면 빈 페이지가 반환된다`() {
+        // given
+        val keyword = "존재하지않는키워드"
+        val pageable = PageRequest.of(0, 10)
+        val page = PageImpl(listOf<TimeCapsule>(), pageable, 0)
+        every { capsuleReader.searchTimeCapsules(keyword, any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(emptyList()) } returns emptyMap()
+        every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
+
+        // when
+        val payload = SearchTimeCapsulesPayload(keyword = keyword, pageable = pageable)
+        val result = detailService.searchTimeCapsules(payload)
+
+        // then
+        assertTrue(result.timeCapsules.isEmpty())
+        assertEquals(0L, result.totalCount)
+        assertEquals(0, result.page)
+        assertEquals(0, result.totalPages)
+    }
+
+    @Test
+    fun `키워드로 검색할 때 페이지네이션이 올바르게 동작한다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val keyword = "캡슐"
+        val capsules =
+            listOf(
+                TimeCapsule(
+                    id = 10L,
+                    creator = mockk(),
+                    inviteCode = "PAGE1",
+                    title = "페이지 캡슐 1",
+                    subtitle = "첫 번째 페이지",
+                    accessType = AccessType.PUBLIC,
+                    openAt = now.plusDays(1),
+                    closedAt = now.minusDays(1),
+                ),
+            )
+        val pageable = PageRequest.of(1, 5) // 두 번째 페이지, 5개씩
+        val page = PageImpl(capsules, pageable, 15) // 전체 15개 중 두 번째 페이지
+        every { capsuleReader.searchTimeCapsules(keyword, any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(listOf(10L)) } returns mapOf(10L to 3)
+        every { letterReader.getLetterCountMap(listOf(10L)) } returns mapOf(10L to 7)
+
+        // when
+        val payload = SearchTimeCapsulesPayload(keyword = keyword, pageable = pageable)
+        val result = detailService.searchTimeCapsules(payload)
+
+        // then
+        assertEquals(1, result.timeCapsules.size) // 현재 페이지의 컨텐츠
+        assertEquals(15L, result.totalCount) // 전체 개수
+        assertEquals(1, result.page) // 현재 페이지 (0-based)
+        assertEquals(3, result.totalPages) // 전체 페이지 수 (15/5 = 3)
+    }
+
+    @Test
+    fun `빈 키워드로 검색할 때도 정상적으로 처리된다`() {
+        // given
+        val keyword = ""
+        val pageable = PageRequest.of(0, 10)
+        val page = PageImpl(listOf<TimeCapsule>(), pageable, 0)
+        every { capsuleReader.searchTimeCapsules(keyword, any()) } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(emptyList()) } returns emptyMap()
+        every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
+
+        // when
+        val payload = SearchTimeCapsulesPayload(keyword = keyword, pageable = pageable)
+        val result = detailService.searchTimeCapsules(payload)
 
         // then
         assertTrue(result.timeCapsules.isEmpty())

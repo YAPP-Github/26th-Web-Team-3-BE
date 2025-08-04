@@ -2,8 +2,9 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.letter.service.reader.LetterReader
-import com.yapp.lettie.api.timecapsule.service.dto.GetExploreTimeCapsulesPayload
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
+import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummariesDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
@@ -71,10 +72,15 @@ class TimeCapsuleDetailService(
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
-    fun getExploreTimeCapsules(payload: GetExploreTimeCapsulesPayload): TimeCapsuleSummariesDto {
+    fun exploreTimeCapsules(payload: ExploreTimeCapsulesPayload): TimeCapsuleSummariesDto {
         val now = LocalDateTime.now()
-        val capsules = timeCapsuleReader.getExploreTimeCapsules(payload.type, now, payload.pageable)
+        val capsules = timeCapsuleReader.exploreTimeCapsules(payload.type, now, payload.pageable)
         return getTimeCapsuleSummaries(capsules, now)
+    }
+
+    fun searchTimeCapsules(payload: SearchTimeCapsulesPayload): TimeCapsuleSummariesDto {
+        val capsules = timeCapsuleReader.searchTimeCapsules(payload.keyword, payload.pageable)
+        return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
     private fun getTimeCapsuleSummaries(

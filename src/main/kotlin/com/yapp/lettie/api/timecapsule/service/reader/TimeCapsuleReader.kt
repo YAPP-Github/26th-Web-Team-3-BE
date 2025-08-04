@@ -3,6 +3,7 @@ package com.yapp.lettie.api.timecapsule.service.reader
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleRepository
 import org.springframework.data.domain.Page
@@ -35,7 +36,7 @@ class TimeCapsuleReader(
         timeCapsuleRepository.findPopularTimeCapsules(pageable)
 
     @Transactional(readOnly = true)
-    fun getExploreTimeCapsules(
+    fun exploreTimeCapsules(
         timeCapsuleStatus: TimeCapsuleStatus?,
         now: LocalDateTime,
         pageable: Pageable,
@@ -48,4 +49,11 @@ class TimeCapsuleReader(
         previousCheckTime: LocalDateTime,
         now: LocalDateTime,
     ): List<TimeCapsule> = timeCapsuleRepository.findAllCapsulesToOpen(previousCheckTime, now)
+
+    @Transactional(readOnly = true)
+    fun searchTimeCapsules(
+        keyword: String,
+        pageable: Pageable,
+    ): Page<TimeCapsule> =
+        timeCapsuleRepository.findTimeCapsuleByTitleContainingAndAccessType(keyword, AccessType.PUBLIC, pageable)
 }

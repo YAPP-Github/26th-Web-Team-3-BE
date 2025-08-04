@@ -26,6 +26,7 @@ enum class ApiPath(
     TIME_CAPSULE_MAIN_MY_LIST("/api/v1/capsules/my", HttpMethod.GET, AuthType.REQUIRED),
     TIME_CAPSULE_POPULAR_LIST("/api/v1/capsules/popular", HttpMethod.GET, AuthType.OPTIONAL),
     TIME_CAPSULE_EXPLORE_LIST("/api/v1/capsules/explore", HttpMethod.GET, AuthType.NONE),
+    TIME_CAPSULE_SEARCH_LIST("/api/v1/capsules/search", HttpMethod.GET, AuthType.NONE),
 
     // 파일 관련 API
     FILE_PRESIGNED_UPLOAD("/api/v1/files/presigned-url", HttpMethod.GET, AuthType.REQUIRED),

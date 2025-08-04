@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.constraints.NotBlank
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -138,8 +139,38 @@ interface TimeCapsuleDetailSwagger {
             `in` = ParameterIn.QUERY,
         ),
     )
-    fun getExploreTimeCapsules(
+    fun exploreTimeCapsules(
         type: TimeCapsuleStatus?,
+        @ParameterObject pageable: Pageable,
+    ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
+
+    @Operation(
+        summary = "타임캡슐 검색 (비로그인 가능)",
+        description =
+            """
+        타임캡슐을 키워드로 검색합니다. 페이지네이션과 정렬 기능을 지원합니다.
+        검색어는 타임캡슐 제목을 포함합니다.
+        """,
+    )
+    @Parameters(
+        Parameter(
+            name = "page",
+            description = "페이지 번호 (0부터 시작)",
+            `in` = ParameterIn.QUERY,
+        ),
+        Parameter(
+            name = "size",
+            description = "페이지 크기",
+            `in` = ParameterIn.QUERY,
+        ),
+        Parameter(
+            name = "sort",
+            description = "정렬 조건 (예: id,desc 또는 id,asc)",
+            `in` = ParameterIn.QUERY,
+        ),
+    )
+    fun searchTimeCapsules(
+        @NotBlank keyword: String,
         @ParameterObject pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 }
