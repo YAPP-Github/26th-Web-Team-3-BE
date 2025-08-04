@@ -6,7 +6,8 @@ import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummariesR
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleDetailSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleDetailService
-import com.yapp.lettie.api.timecapsule.service.dto.GetExploreTimeCapsulesPayload
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
+import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
@@ -61,17 +62,37 @@ class TimeCapsuleDetailApiController(
         )
 
     @GetMapping("/explore")
-    override fun getExploreTimeCapsules(
-        type: TimeCapsuleStatus?,
+    override fun exploreTimeCapsules(
+        @RequestParam type: TimeCapsuleStatus?,
         pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
         val payload =
-            GetExploreTimeCapsulesPayload(
+            ExploreTimeCapsulesPayload(
                 type = type,
                 pageable = pageable,
             )
 
-        val capsules = timeCapsuleDetailService.getExploreTimeCapsules(payload)
+        val capsules = timeCapsuleDetailService.exploreTimeCapsules(payload)
+
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                TimeCapsuleSummariesResponse.from(capsules),
+            ),
+        )
+    }
+
+    @GetMapping("/search")
+    override fun searchTimeCapsules(
+        @RequestParam keyword: String,
+        pageable: Pageable,
+    ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
+        val payload =
+            SearchTimeCapsulesPayload(
+                keyword = keyword,
+                pageable = pageable,
+            )
+
+        val capsules = timeCapsuleDetailService.searchTimeCapsules(payload)
 
         return ResponseEntity.ok(
             ApiResponse.success(
