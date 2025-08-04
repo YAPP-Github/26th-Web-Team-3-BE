@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class TimeCapsuleSummaryResponse(
     @Schema(description = "타임캡슐 ID", example = "1")
     val id: Long,
+    @Schema(description = "타임캡슐 고유 식별자(공유 링크용)", example = "abc123xy")
+    val inviteCode: String,
     @Schema(description = "타임캡슐 제목", example = "2025 새해 타임캡슐")
     val title: String,
     @Schema(description = "참여 인원 수", example = "4")
@@ -25,6 +27,7 @@ data class TimeCapsuleSummaryResponse(
         fun from(dto: TimeCapsuleSummaryDto): TimeCapsuleSummaryResponse =
             TimeCapsuleSummaryResponse(
                 id = dto.id,
+                inviteCode = dto.inviteCode,
                 title = dto.title,
                 participantCount = dto.participantCount,
                 letterCount = dto.letterCount,
