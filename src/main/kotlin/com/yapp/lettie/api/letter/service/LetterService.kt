@@ -8,12 +8,14 @@ import com.yapp.lettie.api.letter.service.dto.LettersDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.letter.service.writer.LetterWriter
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.common.dto.UserInfoPayload
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.file.entity.LetterFile
 import com.yapp.lettie.domain.letter.entity.Letter
+import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -21,6 +23,7 @@ import java.time.LocalDateTime
 @Service
 class LetterService(
     private val timeCapsuleReader: TimeCapsuleReader,
+    private val timeCapsuleUserReader: TimeCapsuleUserReader,
     private val userReader: UserReader,
     private val letterWriter: LetterWriter,
     private val letterReader: LetterReader,
@@ -38,8 +41,11 @@ class LetterService(
             throw ApiErrorException(ErrorMessages.CLOSED_TIME_CAPSULE)
         }
 
-        if (capsule.timeCapsuleUsers.none { it.user.id == user.id }) {
-            throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
+        val alreadyJoined = timeCapsuleUserReader.hasUserJoinedCapsule(user.id, capsule.id)
+        if (!alreadyJoined) {
+            val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
+            capsule.addUser(timeCapsuleUser)
+            user.addTimeCapsuleUser(timeCapsuleUser)
         }
 
         val letter =
