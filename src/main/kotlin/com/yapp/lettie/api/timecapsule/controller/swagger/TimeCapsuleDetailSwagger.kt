@@ -149,7 +149,7 @@ interface TimeCapsuleDetailSwagger {
         description =
             """
         타임캡슐을 키워드로 검색합니다. 페이지네이션과 정렬 기능을 지원합니다.
-        검색어는 타임캡슐 제목, 설명, 작성자 이름 등을 포함합니다.
+        검색어는 타임캡슐 제목을 포함합니다.
         """,
     )
     @Parameters(
