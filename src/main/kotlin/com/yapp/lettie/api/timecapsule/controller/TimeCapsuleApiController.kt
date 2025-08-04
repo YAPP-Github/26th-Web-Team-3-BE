@@ -28,9 +28,7 @@ class TimeCapsuleApiController(
     ): ResponseEntity<ApiResponse<CreateTimeCapsuleResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                CreateTimeCapsuleResponse(
-                    timeCapsuleService.createTimeCapsule(userInfo.id, request.to()),
-                ),
+                CreateTimeCapsuleResponse.from(timeCapsuleService.createTimeCapsule(userInfo.id, request.to())),
             ),
         )
 

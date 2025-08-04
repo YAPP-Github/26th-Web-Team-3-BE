@@ -43,7 +43,7 @@ class TimeCapsuleServiceTest {
     lateinit var timeCapsuleService: TimeCapsuleService
 
     @Test
-    fun `타임캡슐을 생성하면 저장소에 저장된다`() {
+    fun `타임캡슐을 생성하면 저장소에 저장되고 dto를 반환한다`() {
         // given
         val userId = 1L
         val user = mockk<User>(relaxed = true)
@@ -59,17 +59,19 @@ class TimeCapsuleServiceTest {
         val dummyCapsule =
             mockk<TimeCapsule> {
                 every { id } returns 123L
+                every { inviteCode } returns "abcd1234"
             }
 
         every { userReader.getById(userId) } returns user
         every { capsuleWriter.save(any()) } returns dummyCapsule
 
         // when
-        val capsuleId = timeCapsuleService.createTimeCapsule(userId, payload)
+        val result = timeCapsuleService.createTimeCapsule(userId, payload)
 
         // then
         verify { capsuleWriter.save(any()) }
-        assertThat(capsuleId).isEqualTo(123L)
+        assertThat(result.id).isEqualTo(123L)
+        assertThat(result.inviteCode).isEqualTo("abcd1234")
     }
 
     @Test
