@@ -2,7 +2,6 @@ package com.yapp.lettie.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import java.net.URLEncoder
 
 @Configuration
 class AuthGoogleConfig {
@@ -11,9 +10,6 @@ class AuthGoogleConfig {
 
     @Value("\${oauth.google.client-secret}")
     lateinit var clientSecret: String
-
-    @Value("\${oauth.google.redirect-uri}")
-    lateinit var redirectUri: String
 
     @Value("\${oauth.google.client-name}")
     lateinit var clientName: String
@@ -32,10 +28,10 @@ class AuthGoogleConfig {
 
     var grantType = "authorization_code"
 
-    fun oauthUrl(): String =
+    fun oauthUrl(url: String): String =
         authorizationUri +
             "?client_id=$clientId" +
-            "&redirect_uri=${URLEncoder.encode(redirectUri, "UTF-8")}" +
+            "&redirect_uri=$url" +
             "&response_type=code" +
             "&scope=${scope.replace(",", "%20")}"
 }

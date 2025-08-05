@@ -5,6 +5,7 @@ import com.yapp.lettie.api.auth.controller.response.JwtTokenResponse
 import com.yapp.lettie.api.auth.controller.response.OAuthUrlResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody
 @Tag(name = "auth", description = "인증 API")
 interface AuthSwagger {
     @Operation(summary = "카카오 oauth url 조회", description = "카카오 oauth url을 조회합니다.")
-    fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+    fun kakaoAuth(
+        @Schema(description = "카카오 로그인 후 리다이렉트될 URL (URL 인코딩 필요)")
+        redirectUrl: String,
+    ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(summary = "카카오 로그인 요청", description = "카카오 로그인을 요청합니다.")
     fun kakaoLogin(
@@ -20,7 +24,10 @@ interface AuthSwagger {
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 
     @Operation(summary = "구글 oauth url 조회", description = "구글 oauth url을 조회합니다.")
-    fun googleAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+    fun googleAuth(
+        @Schema(description = "구글 로그인 후 리다이렉트될 URL (URL 인코딩 필요)")
+        redirectUrl: String,
+    ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(summary = "구글 로그인 요청", description = "구글 로그인을 요청합니다.")
     fun googleLogin(
@@ -28,7 +35,10 @@ interface AuthSwagger {
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 
     @Operation(summary = "네이버 oauth url 조회", description = "네이버 oauth url을 조회합니다.")
-    fun naverAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>>
+    fun naverAuth(
+        @Schema(description = "네이버 로그인 후 리다이렉트될 URL (URL 인코딩 필요)")
+        redirectUrl: String,
+    ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(summary = "네이버 로그인 요청", description = "네이버 로그인을 요청합니다.")
     fun naverLogin(

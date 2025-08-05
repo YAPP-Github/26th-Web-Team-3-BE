@@ -2,7 +2,6 @@ package com.yapp.lettie.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import java.net.URLEncoder
 
 @Configuration
 class AuthKakaoConfig {
@@ -11,9 +10,6 @@ class AuthKakaoConfig {
 
     @Value("\${oauth.kakao.client-secret}")
     lateinit var clientSecret: String
-
-    @Value("\${oauth.kakao.redirect-uri}")
-    lateinit var redirectUri: String
 
     @Value("\${oauth.kakao.client-name}")
     lateinit var clientName: String
@@ -32,11 +28,11 @@ class AuthKakaoConfig {
 
     var grantType = "authorization_code"
 
-    fun oauthUrl(): String =
+    fun oauthUrl(url: String): String =
         authorizationUri +
             "?client_id=$clientId" +
             "&prompt=login" +
-            "&redirect_uri=${URLEncoder.encode(redirectUri, "UTF-8")}" +
+            "&redirect_uri=$url" +
             "&response_type=code" +
             "&scope=${scope.replace(",", "%20")}"
 }

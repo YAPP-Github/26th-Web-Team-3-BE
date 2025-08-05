@@ -5,6 +5,8 @@ import com.yapp.lettie.api.auth.controller.response.JwtTokenResponse
 import com.yapp.lettie.api.auth.controller.response.OAuthUrlResponse
 import com.yapp.lettie.api.auth.service.AuthService
 import com.yapp.lettie.common.dto.ApiResponse
+import com.yapp.lettie.common.error.ErrorMessages
+import com.yapp.lettie.common.exception.ApiErrorException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,43 +20,53 @@ class AuthApiController(
 ) : AuthSwagger {
     @Deprecated("Use google or naver instead", ReplaceWith("googleAuth(), naverAuth()"))
     @GetMapping("/oauth/kakao")
-    override fun kakaoAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun kakaoAuth(redirectUrl: String): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                OAuthUrlResponse(authService.getKakaoLoginUrl()),
+                OAuthUrlResponse(authService.getKakaoLoginUrl(redirectUrl)),
             ),
         )
 
     @Deprecated("Use google or naver instead", ReplaceWith("googleLogin(), naverLogin()"))
     @PostMapping("/code/kakao")
-    override fun kakaoLogin(request: AuthorizationRequest): ResponseEntity<ApiResponse<JwtTokenResponse>> =
-        ResponseEntity.ok().body(
+    override fun kakaoLogin(request: AuthorizationRequest): ResponseEntity<ApiResponse<JwtTokenResponse>> {
+        if (request.redirectUrl == null) {
+            throw ApiErrorException(ErrorMessages.REDIRECT_URL_REQUIRED)
+        }
+
+        return ResponseEntity.ok().body(
             ApiResponse.success(
-                JwtTokenResponse.of(authService.kakaoLogin(request.authorizationCode)),
+                JwtTokenResponse.of(authService.kakaoLogin(request.authorizationCode, request.redirectUrl)),
             ),
         )
+    }
 
     @GetMapping("/oauth/google")
-    override fun googleAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun googleAuth(redirectUrl: String): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                OAuthUrlResponse(authService.getGoogleLoginUrl()),
+                OAuthUrlResponse(authService.getGoogleLoginUrl(redirectUrl)),
             ),
         )
 
     @PostMapping("/code/google")
-    override fun googleLogin(request: AuthorizationRequest): ResponseEntity<ApiResponse<JwtTokenResponse>> =
-        ResponseEntity.ok().body(
+    override fun googleLogin(request: AuthorizationRequest): ResponseEntity<ApiResponse<JwtTokenResponse>> {
+        if (request.redirectUrl == null) {
+            throw ApiErrorException(ErrorMessages.REDIRECT_URL_REQUIRED)
+        }
+
+        return ResponseEntity.ok().body(
             ApiResponse.success(
-                JwtTokenResponse.of(authService.googleLogin(request.authorizationCode)),
+                JwtTokenResponse.of(authService.googleLogin(request.authorizationCode, request.redirectUrl)),
             ),
         )
+    }
 
     @GetMapping("/oauth/naver")
-    override fun naverAuth(): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun naverAuth(redirectUrl: String): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                OAuthUrlResponse(authService.getNaverLoginUrl()),
+                OAuthUrlResponse(authService.getNaverLoginUrl(redirectUrl)),
             ),
         )
 
