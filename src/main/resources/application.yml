@@ -24,7 +24,6 @@ oauth:
   kakao:
     client-id: ${KAKAO_CLIENT_ID}
     client-secret: ${KAKAO_CLIENT_SECRET}
-    redirect-uri: ${OAUTH_REDIRECT_URI}
     client-name: kakao
     authorization-uri: https://kauth.kakao.com/oauth/authorize
     token-uri: https://kauth.kakao.com/oauth/token
@@ -33,7 +32,6 @@ oauth:
   google:
     client-id: ${GOOGLE_CLIENT_ID}
     client-secret: ${GOOGLE_CLIENT_SECRET}
-    redirect-uri: ${OAUTH_REDIRECT_URI}
     client-name: Google
     authorization-uri: https://accounts.google.com/o/oauth2/auth
     token-uri: https://oauth2.googleapis.com/token
@@ -42,7 +40,6 @@ oauth:
   naver:
     client-id: ${NAVER_CLIENT_ID}
     client-secret: ${NAVER_CLIENT_SECRET}
-    redirect-uri: ${OAUTH_REDIRECT_URI}
     client-name: naver
     authorization-uri: https://nid.naver.com/oauth2.0/authorize
     token-uri: https://nid.naver.com/oauth2.0/token
