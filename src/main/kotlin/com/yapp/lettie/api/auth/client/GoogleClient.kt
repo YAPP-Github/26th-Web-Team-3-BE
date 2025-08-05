@@ -17,13 +17,16 @@ class GoogleClient(
     private val authoGoogleClient: AuthGoogleConfig,
     private val restClientUtil: RestClientUtil,
 ) {
-    fun login(authorizationCode: String): AuthUserInfoDto {
+    fun login(
+        authorizationCode: String,
+        redirectUrl: String,
+    ): AuthUserInfoDto {
         val tokenRequestParams =
             LinkedMultiValueMap<String, String>().apply {
                 add("grant_type", authoGoogleClient.grantType)
                 add("client_id", authoGoogleClient.clientId)
                 add("client_secret", authoGoogleClient.clientSecret)
-                add("redirect_uri", authoGoogleClient.redirectUri)
+                add("redirect_uri", redirectUrl)
                 add("code", URLDecoder.decode(authorizationCode, StandardCharsets.UTF_8))
             }
 

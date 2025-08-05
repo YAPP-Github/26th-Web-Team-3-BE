@@ -15,12 +15,15 @@ class KakaoClient(
     private val authKakaoConfig: AuthKakaoConfig,
     private val restClientUtil: RestClientUtil,
 ) {
-    fun login(authorizationCode: String): AuthUserInfoDto {
+    fun login(
+        authorizationCode: String,
+        redirectUrl: String,
+    ): AuthUserInfoDto {
         val tokenRequestParams =
             LinkedMultiValueMap<String, String>().apply {
                 add("grant_type", authKakaoConfig.grantType)
                 add("client_id", authKakaoConfig.clientId)
-                add("redirect_uri", authKakaoConfig.redirectUri)
+                add("redirect_uri", redirectUrl)
                 add("code", authorizationCode)
             }
 

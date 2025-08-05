@@ -18,6 +18,7 @@ enum class ErrorMessages(
     // auth
     INVALID_TOKEN(ExtendedHttpStatus.UNAUTHORIZED, 2_001, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(ExtendedHttpStatus.UNAUTHORIZED, 2_002, "토큰이 만료되었습니다."),
+    REDIRECT_URL_REQUIRED(ExtendedHttpStatus.BAD_REQUEST, 2_003, "리다이렉트 URL이 필요합니다."),
 
     // user
     USER_NOT_FOUND(ExtendedHttpStatus.NOT_FOUND, 3_001, "사용자를 찾을 수 없습니다."),
