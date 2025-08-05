@@ -32,4 +32,12 @@ class TimeCapsuleUserReader(
     fun getEmailsGroupByCapsuleId(capsuleIds: List<Long>): Map<Long, List<String>> =
         timeCapsuleUserRepository.findAllByCapsuleIdsFetchUser(capsuleIds)
             .groupBy({ it.timeCapsule.id }, { it.user.email })
+
+    @Transactional(readOnly = true)
+    fun hasUserJoinedCapsule(
+        userId: Long,
+        capsuleId: Long,
+    ): Boolean {
+        return timeCapsuleUserRepository.existsByUserIdAndTimeCapsuleId(userId, capsuleId)
+    }
 }

@@ -32,4 +32,9 @@ interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
     fun findAllByCapsuleIdsFetchUser(
         @Param("capsuleIds") capsuleIds: List<Long>,
     ): List<TimeCapsuleUser>
+
+    fun existsByUserIdAndTimeCapsuleId(
+        userId: Long,
+        capsuleId: Long,
+    ): Boolean
 }
