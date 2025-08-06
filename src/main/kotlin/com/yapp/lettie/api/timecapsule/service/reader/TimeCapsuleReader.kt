@@ -54,6 +54,5 @@ class TimeCapsuleReader(
     fun searchTimeCapsules(
         keyword: String,
         pageable: Pageable,
-    ): Page<TimeCapsule> =
-        timeCapsuleRepository.findTimeCapsuleByTitleContainingAndAccessType(keyword, AccessType.PUBLIC, pageable)
+    ): Page<TimeCapsule> = timeCapsuleRepository.findTimeCapsulesByTitle(keyword, AccessType.PUBLIC, pageable)
 }

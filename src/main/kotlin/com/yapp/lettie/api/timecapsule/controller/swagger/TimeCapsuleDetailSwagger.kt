@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.NotBlank
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 
@@ -22,8 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 interface TimeCapsuleDetailSwagger {
     @Operation(
         summary = "타임캡슐 상세 조회",
-        description =
-            """
+        description = """
         캡슐의 기본 정보와 오픈일시, 참여자 수, 좋아요 여부, 상태 및 남은 시간을 조회합니다.
         로그인하지 않은 사용자도 접근 가능하며, 로그인 사용자일 경우 좋아요 여부(liked)가 포함됩니다.
 
@@ -111,15 +111,17 @@ interface TimeCapsuleDetailSwagger {
 
     @Operation(
         summary = "타임캡슐 리스트 조회 (비로그인 가능)",
-        description =
-            """
+        description = """
         타임캡슐 리스트를 조회합니다. 타입에 따라 필터링이 가능합니다.
-        페이지네이션과 정렬 기능을 지원합니다.
+        페이지네이션 기능을 지원합니다.
 
         <타입별 필터링>
         - WRITABLE: 작성 가능한 캡슐
         - WAITING_OPEN: 오픈 대기 중인 캡슐
         - OPENED: 오픈된 캡슐
+
+        <정렬 방식>
+        - 편지 많은 순서로 정렬, 편지 수가 동일하면 생성일이 최근인 순서로 정렬
         """,
     )
     @Parameters(
@@ -131,25 +133,22 @@ interface TimeCapsuleDetailSwagger {
         Parameter(
             name = "size",
             description = "페이지 크기",
-            `in` = ParameterIn.QUERY,
-        ),
-        Parameter(
-            name = "sort",
-            description = "정렬 조건 (예: id,desc 또는 id,asc)",
             `in` = ParameterIn.QUERY,
         ),
     )
     fun exploreTimeCapsules(
         type: TimeCapsuleStatus?,
-        @ParameterObject pageable: Pageable,
+        @Parameter(hidden = true) @PageableDefault(size = 20, page = 0) pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 
     @Operation(
         summary = "타임캡슐 검색 (비로그인 가능)",
-        description =
-            """
-        타임캡슐을 키워드로 검색합니다. 페이지네이션과 정렬 기능을 지원합니다.
+        description = """
+        타임캡슐을 키워드로 검색합니다. 페이지네이션 기능을 지원합니다.
         검색어는 타임캡슐 제목을 포함합니다.
+
+        <정렬 방식>
+        - 편지 많은 순서로 정렬, 편지 수가 동일하면 생성일이 최근인 순서로 정렬
         """,
     )
     @Parameters(
@@ -163,14 +162,9 @@ interface TimeCapsuleDetailSwagger {
             description = "페이지 크기",
             `in` = ParameterIn.QUERY,
         ),
-        Parameter(
-            name = "sort",
-            description = "정렬 조건 (예: id,desc 또는 id,asc)",
-            `in` = ParameterIn.QUERY,
-        ),
     )
     fun searchTimeCapsules(
         @NotBlank keyword: String,
-        @ParameterObject pageable: Pageable,
+        @Parameter(hidden = true) @PageableDefault(size = 20, page = 0) pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 }
