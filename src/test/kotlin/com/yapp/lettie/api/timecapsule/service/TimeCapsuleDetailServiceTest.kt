@@ -91,11 +91,11 @@ class TimeCapsuleDetailServiceTest {
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
-            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
         } returns
             PresignedUrlDto(
-                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
-                key = "CAPSULE/detail_bead0.mp4",
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
+                key = "CAPSULE/detail_bead0.png",
                 expireAt = now.plusMinutes(5),
             )
 
@@ -111,7 +111,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(2, result.participantCount)
         assertNotNull(result.remainingTime)
         assertEquals(1, result.remainingTime?.days)
-        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
     }
 
     @Test
@@ -157,10 +157,10 @@ class TimeCapsuleDetailServiceTest {
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
-            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
         } returns
             PresignedUrlDto(
-                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
                 key = "CAPSULE/detail_bead0.mp4",
                 expireAt = now.plusMinutes(5),
             )
@@ -174,7 +174,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(2, result.remainingTime?.days)
         assertEquals(23, result.remainingTime?.hours)
         assertEquals(59, result.remainingTime?.minutes)
-        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
     }
 
     @Test
@@ -220,11 +220,11 @@ class TimeCapsuleDetailServiceTest {
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
-            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.mp4")
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
         } returns
             PresignedUrlDto(
-                url = "https://mocked-url.com/CAPSULE/detail_bead0.mp4",
-                key = "CAPSULE/detail_bead0.mp4",
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
+                key = "CAPSULE/detail_bead0.png",
                 expireAt = now.plusMinutes(5),
             )
 
@@ -234,7 +234,7 @@ class TimeCapsuleDetailServiceTest {
         // then
         assertEquals(TimeCapsuleStatus.OPENED, result.status)
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
-        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.mp4", result.beadVideoUrl)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
     }
 
     @Test

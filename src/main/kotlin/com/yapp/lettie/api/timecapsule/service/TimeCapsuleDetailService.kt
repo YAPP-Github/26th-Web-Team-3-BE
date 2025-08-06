@@ -100,7 +100,13 @@ class TimeCapsuleDetailService(
     }
 
     private fun getBeadObjectKey(letterCount: Int): String {
-        val beadIndex = if (letterCount >= 100) 10 else letterCount / 10
-        return "CAPSULE/detail_bead$beadIndex.mp4"
+        val beadIndex = if (letterCount >= MAX_BEAD_THRESHOLD) MAX_BEAD_INDEX else letterCount / LETTERS_PER_BEAD
+        return "CAPSULE/detail_bead$beadIndex.png"
+    }
+
+    companion object {
+        private const val LETTERS_PER_BEAD = 10
+        private const val MAX_BEAD_INDEX = 10
+        private const val MAX_BEAD_THRESHOLD = LETTERS_PER_BEAD * MAX_BEAD_INDEX
     }
 }
