@@ -61,7 +61,7 @@ class TimeCapsuleCustomerRepositoryImpl(
                 .where(timeCapsule.accessType.eq(AccessType.PUBLIC).and(builder))
                 .groupBy(timeCapsule.id)
 
-        val orderSpecifiers = buildSortOrder(sort, now, SortContext.MY)
+        val orderSpecifiers = buildSortOrder(sort, now, SortContext.EXPLORE)
         query.orderBy(*orderSpecifiers.toTypedArray())
 
         query
