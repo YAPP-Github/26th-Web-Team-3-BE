@@ -5,11 +5,13 @@ import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummariesR
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
+import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.NotBlank
 import org.springdoc.core.annotations.ParameterObject
@@ -39,20 +41,35 @@ interface TimeCapsuleDetailSwagger {
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
 
     @Operation(
-        summary = "메인페이지 내가 만든 캡슐 조회 (로그인 시에만)",
+        summary = "메인페이지 내 캡슐 조회 (로그인 전용)",
         description = """
-            [메인페이지 내가 만든 캡슐 조회 호출 방식]
-            1. 로그인 시에만 내가 만든 캡슐을 조회할 수 있다.
-            2. size를 10으로 지정하여 메인페이지 내가 만든 캡슐을 조회한다.
-            3. 정렬 방식은 생성일자 (최근)순으로 정렬하여 반환한다.
+        [호출 방식]
+        1. 로그인한 사용자만 접근 가능합니다.
+        2. `filter` 파라미터로 원하는 범주를 지정합니다.
+           - ALL                           : 내가 만든 + 좋아요 + 참여 중인 전체
+           - CREATED                : 내가 만든 캡슐
+           - LIKED                       : 좋아요한 캡슐
+           - PARTICIPATING     : 편지를 작성한(참여 중인) 캡슐
+        3. 기본 정렬 = 생성일자(createdAt) DESC 입니다.
 
-            [응답 구조]
-            remaingStatus.type
-            - WRITABLE, WAITING_OPEN인 경우 남은 시간을 day, hours, minutes로 반환한다.
-            - OPENED인 경우 오픈 날짜와 '오픈 완료'를 반환한다.
-        """,
+        [응답 구조]
+        remaingStatus.type
+        - WRITABLE, WAITING_OPEN인 경우 남은 시간을 day, hours, minutes로 반환한다.
+        - OPENED인 경우 오픈 날짜와 '오픈 완료'를 반환한다.
+    """,
     )
     @Parameters(
+        Parameter(
+            name = "filter",
+            description = "캡슐 범주 필터",
+            `in` = ParameterIn.QUERY,
+            schema =
+                Schema(
+                    implementation = MyCapsuleFilter::class,
+                    defaultValue = "ALL",
+                    allowableValues = ["ALL", "CREATED", "LIKED", "PARTICIPATING"],
+                ),
+        ),
         Parameter(
             name = "page",
             description = "페이지 번호 (0부터 시작)",
@@ -60,17 +77,13 @@ interface TimeCapsuleDetailSwagger {
         ),
         Parameter(
             name = "size",
-            description = "페이지 크기",
-            `in` = ParameterIn.QUERY,
-        ),
-        Parameter(
-            name = "sort",
-            description = "정렬 조건 (예: id,desc 또는 id,asc)",
+            description = "페이지 크기 (기본 10)",
             `in` = ParameterIn.QUERY,
         ),
     )
     fun getMyTimeCapsules(
         userInfo: UserInfoPayload,
+        filter: MyCapsuleFilter,
         @ParameterObject pageable: Pageable,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 
