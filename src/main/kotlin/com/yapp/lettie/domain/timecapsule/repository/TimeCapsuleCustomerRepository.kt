@@ -2,6 +2,7 @@ package com.yapp.lettie.domain.timecapsule.repository
 
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.data.domain.Page
@@ -24,6 +25,7 @@ interface TimeCapsuleCustomerRepository {
     fun getMyTimeCapsules(
         userId: Long,
         filter: MyCapsuleFilter,
+        sort: CapsuleSort,
         pageable: Pageable,
     ): Page<TimeCapsule>
 }

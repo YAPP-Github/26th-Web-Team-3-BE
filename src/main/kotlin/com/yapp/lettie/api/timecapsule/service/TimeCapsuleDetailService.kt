@@ -11,6 +11,7 @@ import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -63,9 +64,10 @@ class TimeCapsuleDetailService(
     fun getMyTimeCapsules(
         userId: Long,
         filter: MyCapsuleFilter,
+        sort: CapsuleSort,
         pageable: Pageable,
     ): TimeCapsuleSummariesDto {
-        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, filter, pageable)
+        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, filter, sort, pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 

@@ -4,6 +4,7 @@ import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleRepository
@@ -28,8 +29,9 @@ class TimeCapsuleReader(
     fun getMyTimeCapsules(
         userId: Long,
         filter: MyCapsuleFilter,
+        sort: CapsuleSort,
         pageable: Pageable,
-    ): Page<TimeCapsule> = timeCapsuleRepository.getMyTimeCapsules(userId, filter, pageable)
+    ): Page<TimeCapsule> = timeCapsuleRepository.getMyTimeCapsules(userId, filter, sort, pageable)
 
     @Transactional(readOnly = true)
     fun getPopularTimeCapsules(pageable: Pageable): Page<TimeCapsule> =
