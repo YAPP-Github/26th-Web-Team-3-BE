@@ -190,21 +190,19 @@ class TimeCapsuleCustomerRepositoryImpl(
                 .distinct()
                 .groupBy(timeCapsule.id)
 
-        // 기본 정렬
+        // 기본 정렬 ( 1순위 : 오픈일은 지났지만 내가 아직 열람 안 한 캡슐, 2순위: 마지막 수정일, 3순위: 생성일)
         val priorityExpr: NumberExpression<Int> =
             CaseBuilder()
-                // 1순위 : 오픈일은 지났지만 내가 아직 열람 안 한 캡슐
                 .`when`(
                     timeCapsule.openAt.before(now)
                         .and(tcu.isOpened.isFalse),
                 ).then(0)
-                // 그 외 : 1
                 .otherwise(1)
 
         query.orderBy(
-            priorityExpr.asc(), // 1순위
-            timeCapsule.updatedAt.desc(), // 2순위 (마지막 수정일)
-            timeCapsule.createdAt.desc(), // 3순위 (생성일 최신순)
+            priorityExpr.asc(),
+            timeCapsule.updatedAt.desc(),
+            timeCapsule.createdAt.desc(),
         )
             .offset(pageable.offset)
             .limit(pageable.pageSize)
