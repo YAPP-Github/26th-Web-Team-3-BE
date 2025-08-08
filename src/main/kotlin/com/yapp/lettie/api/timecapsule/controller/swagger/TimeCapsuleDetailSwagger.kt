@@ -5,6 +5,7 @@ import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummariesR
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import io.swagger.v3.oas.annotations.Operation
@@ -50,7 +51,11 @@ interface TimeCapsuleDetailSwagger {
            - CREATED                : 내가 만든 캡슐
            - LIKED                       : 좋아요한 캡슐
            - PARTICIPATING     : 편지를 작성한(참여 중인) 캡슐
-        3. 기본 정렬 = 생성일자(createdAt) DESC 입니다.
+        3. `sort` 파라미터로 정렬 방식을 지정합니다.
+           - DEFAULT
+           - LATEST         : 생성일 최신순
+           - OPEN_IMMINENT  : 오픈 임박순 → (열린 캡슐은 최근 열린순)
+           - WRITE_DEADLINE : 작성 마감 임박순 → 마감완료&오픈임박 → 열린순
 
         [응답 구조]
         remaingStatus.type
@@ -84,6 +89,7 @@ interface TimeCapsuleDetailSwagger {
     fun getMyTimeCapsules(
         userInfo: UserInfoPayload,
         filter: MyCapsuleFilter,
+        sort: CapsuleSort,
         @ParameterObject pageable: Pageable,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
 

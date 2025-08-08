@@ -10,6 +10,7 @@ import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.data.domain.Pageable
@@ -41,12 +42,14 @@ class TimeCapsuleDetailApiController(
         @LoginUser userInfo: UserInfoPayload,
         @RequestParam(value = "filter", defaultValue = "ALL")
         filter: MyCapsuleFilter,
+        @RequestParam(value = "sort", defaultValue = "DEFAULT")
+        sort: CapsuleSort,
         pageable: Pageable,
     ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
         ResponseEntity.ok(
             ApiResponse.success(
                 timeCapsuleDetailService
-                    .getMyTimeCapsules(userInfo.id, filter, pageable)
+                    .getMyTimeCapsules(userInfo.id, filter, sort, pageable)
                     .timeCapsules
                     .map { TimeCapsuleSummaryResponse.from(it) },
             ),
