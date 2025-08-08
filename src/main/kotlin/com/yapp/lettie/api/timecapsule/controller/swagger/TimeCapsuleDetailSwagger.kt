@@ -69,11 +69,22 @@ interface TimeCapsuleDetailSwagger {
             description = "캡슐 범주 필터",
             `in` = ParameterIn.QUERY,
             schema =
-                Schema(
-                    implementation = MyCapsuleFilter::class,
-                    defaultValue = "ALL",
-                    allowableValues = ["ALL", "CREATED", "LIKED", "PARTICIPATING"],
-                ),
+            Schema(
+                implementation = MyCapsuleFilter::class,
+                defaultValue = "ALL",
+                allowableValues = ["ALL", "CREATED", "LIKED", "PARTICIPATING"],
+            ),
+        ),
+        Parameter(
+            name = "sort",
+            description = "정렬 기준",
+            `in` = ParameterIn.QUERY,
+            schema =
+            Schema(
+                implementation = CapsuleSort::class,
+                defaultValue = "DEFAULT",
+                allowableValues = ["DEFAULT", "LATEST", "OPEN_IMMINENT", "WRITE_DEADLINE"],
+            ),
         ),
         Parameter(
             name = "page",
