@@ -2,12 +2,17 @@ package com.yapp.lettie.domain.timecapsule.repository
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.OrderSpecifier
+import com.querydsl.core.types.dsl.CaseBuilder
+import com.querydsl.core.types.dsl.NumberExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.yapp.lettie.config.limit
 import com.yapp.lettie.domain.letter.entity.QLetter.letter
 import com.yapp.lettie.domain.timecapsule.entity.QTimeCapsule.timeCapsule
+import com.yapp.lettie.domain.timecapsule.entity.QTimeCapsuleLike
+import com.yapp.lettie.domain.timecapsule.entity.QTimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -133,6 +138,88 @@ class TimeCapsuleCustomerRepositoryImpl(
                         .containsIgnoreCase(title)
                         .and(timeCapsule.accessType.eq(accessType)),
                 )
+
+        return PageableExecutionUtils.getPage(result, pageable) {
+            countQuery.fetchOne() ?: 0L
+        }
+    }
+
+    override fun getMyTimeCapsules(
+        userId: Long,
+        filter: MyCapsuleFilter,
+        pageable: Pageable,
+    ): Page<TimeCapsule> {
+        val like = QTimeCapsuleLike.timeCapsuleLike
+        val participant = QTimeCapsuleUser.timeCapsuleUser
+        val tcu = QTimeCapsuleUser("tcu")
+        val now = LocalDateTime.now()
+
+        val builder =
+            BooleanBuilder().apply {
+                when (filter) {
+                    MyCapsuleFilter.CREATED ->
+                        and(timeCapsule.creator.id.eq(userId))
+
+                    MyCapsuleFilter.LIKED ->
+                        and(like.user.id.eq(userId))
+
+                    MyCapsuleFilter.PARTICIPATING ->
+                        and(participant.user.id.eq(userId))
+
+                    MyCapsuleFilter.ALL ->
+                        and(
+                            timeCapsule.creator.id.eq(userId)
+                                .or(like.user.id.eq(userId))
+                                .or(participant.user.id.eq(userId)),
+                        )
+                }
+            }
+
+        val query =
+            queryFactory
+                .select(timeCapsule)
+                .from(timeCapsule)
+                .leftJoin(like).on(like.timeCapsule.id.eq(timeCapsule.id))
+                .leftJoin(participant).on(participant.timeCapsule.id.eq(timeCapsule.id))
+                .leftJoin(tcu)
+                .on(
+                    tcu.timeCapsule.id.eq(timeCapsule.id)
+                        .and(tcu.user.id.eq(userId)),
+                )
+                .where(builder)
+                .distinct()
+                .groupBy(timeCapsule.id)
+
+        // 기본 정렬
+        val priorityExpr: NumberExpression<Int> =
+            CaseBuilder()
+                // 1순위 : 오픈일은 지났지만 내가 아직 열람 안 한 캡슐
+                .`when`(
+                    timeCapsule.openAt.before(now)
+                        .and(tcu.isOpened.isFalse),
+                ).then(0)
+                // 그 외 : 1
+                .otherwise(1)
+
+        query.orderBy(
+            priorityExpr.asc(), // 1순위
+            timeCapsule.updatedAt.desc(), // 2순위 (마지막 수정일)
+            timeCapsule.createdAt.desc(), // 3순위 (생성일 최신순)
+        )
+            .offset(pageable.offset)
+            .limit(pageable.pageSize)
+
+        val result = query.fetch()
+
+        val countQuery =
+            queryFactory
+                .select(timeCapsule.countDistinct())
+                .from(timeCapsule)
+                .leftJoin(like)
+                .on(like.timeCapsule.id.eq(timeCapsule.id))
+                .leftJoin(participant)
+                .on(participant.timeCapsule.id.eq(timeCapsule.id))
+                .where(builder)
 
         return PageableExecutionUtils.getPage(result, pageable) {
             countQuery.fetchOne() ?: 0L
