@@ -67,7 +67,8 @@ class TimeCapsuleDetailService(
         sort: CapsuleSort,
         pageable: Pageable,
     ): TimeCapsuleSummariesDto {
-        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, filter, sort, pageable)
+        val now = LocalDateTime.now()
+        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, filter, sort, now, pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 

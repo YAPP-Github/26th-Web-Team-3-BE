@@ -26,6 +26,7 @@ interface TimeCapsuleCustomerRepository {
         userId: Long,
         filter: MyCapsuleFilter,
         sort: CapsuleSort,
+        now: LocalDateTime,
         pageable: Pageable,
     ): Page<TimeCapsule>
 }

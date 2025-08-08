@@ -150,12 +150,12 @@ class TimeCapsuleCustomerRepositoryImpl(
         userId: Long,
         filter: MyCapsuleFilter,
         sort: CapsuleSort,
+        now: LocalDateTime,
         pageable: Pageable,
     ): Page<TimeCapsule> {
         val like = QTimeCapsuleLike.timeCapsuleLike
         val participant = QTimeCapsuleUser.timeCapsuleUser
         val tcu = QTimeCapsuleUser("tcu")
-        val now = LocalDateTime.now()
 
         val builder =
             BooleanBuilder().apply {

@@ -30,8 +30,16 @@ class TimeCapsuleReader(
         userId: Long,
         filter: MyCapsuleFilter,
         sort: CapsuleSort,
+        now: LocalDateTime,
         pageable: Pageable,
-    ): Page<TimeCapsule> = timeCapsuleRepository.getMyTimeCapsules(userId, filter, sort, pageable)
+    ): Page<TimeCapsule> =
+        timeCapsuleRepository.getMyTimeCapsules(
+            userId,
+            filter,
+            sort,
+            now,
+            pageable,
+        )
 
     @Transactional(readOnly = true)
     fun getPopularTimeCapsules(pageable: Pageable): Page<TimeCapsule> =
