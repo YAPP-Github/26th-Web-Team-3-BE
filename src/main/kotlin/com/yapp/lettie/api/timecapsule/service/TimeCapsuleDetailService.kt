@@ -76,7 +76,7 @@ class TimeCapsuleDetailService(
 
     fun exploreTimeCapsules(payload: ExploreTimeCapsulesPayload): TimeCapsuleSummariesDto {
         val now = LocalDateTime.now()
-        val capsules = timeCapsuleReader.exploreTimeCapsules(payload.type, now, payload.pageable)
+        val capsules = timeCapsuleReader.exploreTimeCapsules(payload.type, payload.sort, now, payload.pageable)
         return getTimeCapsuleSummaries(capsules, now)
     }
 

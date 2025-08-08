@@ -48,11 +48,12 @@ class TimeCapsuleReader(
     @Transactional(readOnly = true)
     fun exploreTimeCapsules(
         timeCapsuleStatus: TimeCapsuleStatus?,
+        sort: CapsuleSort,
         now: LocalDateTime,
         pageable: Pageable,
     ): Page<TimeCapsule> =
         timeCapsuleRepository
-            .getTimeCapsulesByStatus(timeCapsuleStatus, now, pageable)
+            .getTimeCapsulesByStatus(timeCapsuleStatus, sort, now, pageable)
 
     @Transactional(readOnly = true)
     fun findCapsulesToOpen(

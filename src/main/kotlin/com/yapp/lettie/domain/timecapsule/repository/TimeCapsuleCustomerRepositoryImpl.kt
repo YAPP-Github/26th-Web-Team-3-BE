@@ -173,7 +173,6 @@ class TimeCapsuleCustomerRepositoryImpl(
                 .where(builder)
                 .groupBy(timeCapsule.id)
 
-
         val orderSpecifiers = buildSortOrder(sort, now, SortContext.MY, tcu)
         query.orderBy(*orderSpecifiers.toTypedArray())
 
@@ -195,8 +194,7 @@ class TimeCapsuleCustomerRepositoryImpl(
                 )
                 .where(builder)
 
-        return PageableExecutionUtils.getPage(result, pageable)
-        {
+        return PageableExecutionUtils.getPage(result, pageable) {
             countQuery.fetchOne() ?: 0L
         }
     }
@@ -207,7 +205,6 @@ class TimeCapsuleCustomerRepositoryImpl(
         context: SortContext,
         tcu: QTimeCapsuleUser? = null,
     ): List<OrderSpecifier<*>> {
-
         return when (sort) {
             // 최신 생성 순
             CapsuleSort.LATEST -> listOf(timeCapsule.createdAt.desc())
@@ -216,68 +213,74 @@ class TimeCapsuleCustomerRepositoryImpl(
             2순위: 열린 캡슐, 최근에 열린순
              */
             CapsuleSort.OPEN_IMMINENT -> {
-                val groupExpr = CaseBuilder()
-                    .`when`(timeCapsule.openAt.after(now)).then(0)
-                    .otherwise(1)
+                val groupExpr =
+                    CaseBuilder()
+                        .`when`(timeCapsule.openAt.after(now)).then(0)
+                        .otherwise(1)
 
-                val diffExpr: NumberExpression<Long> = Expressions.numberTemplate(
-                    Long::class.java,
-                    "timestampdiff(SECOND, {0}, {1})",
-                    now, timeCapsule.openAt
-                )
+                val diffExpr: NumberExpression<Long> =
+                    Expressions.numberTemplate(
+                        Long::class.java,
+                        "timestampdiff(SECOND, {0}, {1})",
+                        now,
+                        timeCapsule.openAt,
+                    )
 
                 listOf(
                     groupExpr.asc(),
                     diffExpr.asc(),
-                    timeCapsule.openAt.desc()
+                    timeCapsule.openAt.desc(),
                 )
             }
             /*  작성 마감순
            group 0 : 아직 작성 가능  (now < closedAt)
            group 1 : 작성 마감 & 오픈 전 (closedAt ≤ now < openAt)
            group 2 : 이미 열림      (now ≥ openAt)
-            */
+             */
             CapsuleSort.WRITE_DEADLINE -> {
-                val groupExpr = CaseBuilder()
-                    .`when`(timeCapsule.closedAt.after(now)).then(0)
-                    .`when`(
-                        timeCapsule.closedAt.before(now)
-                            .and(timeCapsule.openAt.after(now))
-                    ).then(1)
-                    .otherwise(2)
+                val groupExpr =
+                    CaseBuilder()
+                        .`when`(timeCapsule.closedAt.after(now)).then(0)
+                        .`when`(
+                            timeCapsule.closedAt.before(now)
+                                .and(timeCapsule.openAt.after(now)),
+                        ).then(1)
+                        .otherwise(2)
 
                 listOf(
                     groupExpr.asc(),
                     timeCapsule.closedAt.asc(),
                     timeCapsule.openAt.asc(),
-                    timeCapsule.openAt.desc()
+                    timeCapsule.openAt.desc(),
                 )
             }
 
-            CapsuleSort.DEFAULT -> when (context) {
+            CapsuleSort.DEFAULT ->
+                when (context) {
+                    // “내 캡슐” 기본 : 미열람 우선
+                    SortContext.MY -> {
+                        val priorityExpr =
+                            CaseBuilder()
+                                .`when`(
+                                    timeCapsule.openAt.before(now)
+                                        .and(tcu!!.isOpened.min().eq(false)),
+                                ).then(0)
+                                .otherwise(1)
 
-                /* “내 캡슐” 기본 : 미열람 우선 */
-                SortContext.MY -> {
-                    val priorityExpr = CaseBuilder()
-                        .`when`(
-                            timeCapsule.openAt.before(now)
-                                .and(tcu!!.isOpened.min().eq(false))
-                        ).then(0)
-                        .otherwise(1)
+                        listOf(
+                            priorityExpr.asc(),
+                            timeCapsule.updatedAt.desc(),
+                            timeCapsule.createdAt.desc(),
+                        )
+                    }
 
-                    listOf(
-                        priorityExpr.asc(),
-                        timeCapsule.updatedAt.desc(),
-                        timeCapsule.createdAt.desc()
-                    )
+                    // “Explore” 기본 : 편지 수 ↓, ID ↓
+                    SortContext.EXPLORE ->
+                        listOf(
+                            letter.count().desc(),
+                            timeCapsule.id.desc(),
+                        )
                 }
-
-                /*  “Explore” 기본 : 편지 수 ↓, ID ↓ */
-                SortContext.EXPLORE -> listOf(
-                    letter.count().desc(),
-                    timeCapsule.id.desc()
-                )
-            }
         }
     }
 

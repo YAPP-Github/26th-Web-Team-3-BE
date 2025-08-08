@@ -151,7 +151,10 @@ interface TimeCapsuleDetailSwagger {
         - OPENED: 오픈된 캡슐
 
         <정렬 방식>
-        - 편지 많은 순서로 정렬, 편지 수가 동일하면 생성일이 최근인 순서로 정렬
+        - DEFAULT   : 기본 정렬 (편지 수 -> 생성일자 (최근)순)
+        - LATEST         : 생성일 최신순
+        - OPEN_IMMINENT  : 오픈 임박순 → (열린 캡슐은 최근 열린순)
+        - WRITE_DEADLINE : 작성 마감 임박순 → 마감완료&오픈임박 → 열린순
         """,
     )
     @Parameters(
@@ -168,6 +171,7 @@ interface TimeCapsuleDetailSwagger {
     )
     fun exploreTimeCapsules(
         type: TimeCapsuleStatus?,
+        sort: CapsuleSort,
         @Parameter(hidden = true) @PageableDefault(size = 20, page = 0) pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 

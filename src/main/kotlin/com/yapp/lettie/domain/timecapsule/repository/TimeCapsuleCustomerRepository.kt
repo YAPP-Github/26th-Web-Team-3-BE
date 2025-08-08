@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 interface TimeCapsuleCustomerRepository {
     fun getTimeCapsulesByStatus(
         type: TimeCapsuleStatus?,
+        sort: CapsuleSort,
         now: LocalDateTime,
         pageable: Pageable,
     ): Page<TimeCapsule>

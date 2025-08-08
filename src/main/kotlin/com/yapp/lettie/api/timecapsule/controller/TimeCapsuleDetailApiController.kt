@@ -49,9 +49,9 @@ class TimeCapsuleDetailApiController(
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
         val payload =
             ExploreMyTimeCapsulesPayload.of(
-                filter = filter,
-                sort = sort,
-                pageable = pageable,
+                filter,
+                sort,
+                pageable,
             )
 
         val capsules =
@@ -82,12 +82,16 @@ class TimeCapsuleDetailApiController(
 
     @GetMapping("/explore")
     override fun exploreTimeCapsules(
-        @RequestParam type: TimeCapsuleStatus?,
+        @RequestParam
+        type: TimeCapsuleStatus?,
+        @RequestParam(value = "sort", defaultValue = "DEFAULT")
+        sort: CapsuleSort,
         pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
         val payload =
-            ExploreTimeCapsulesPayload(
-                type = type,
+            ExploreTimeCapsulesPayload.of(
+                type,
+                sort,
                 pageable = pageable,
             )
 
