@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreMyTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
@@ -11,8 +12,6 @@ import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
-import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
-import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -63,12 +62,10 @@ class TimeCapsuleDetailService(
 
     fun getMyTimeCapsules(
         userId: Long,
-        filter: MyCapsuleFilter,
-        sort: CapsuleSort,
-        pageable: Pageable,
+        payload: ExploreMyTimeCapsulesPayload,
     ): TimeCapsuleSummariesDto {
         val now = LocalDateTime.now()
-        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, filter, sort, now, pageable)
+        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, payload.filter, payload.sort, now, payload.pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 

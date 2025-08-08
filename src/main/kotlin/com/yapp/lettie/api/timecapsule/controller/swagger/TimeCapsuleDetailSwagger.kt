@@ -102,7 +102,7 @@ interface TimeCapsuleDetailSwagger {
         filter: MyCapsuleFilter,
         sort: CapsuleSort,
         @ParameterObject pageable: Pageable,
-    ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>>
+    ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>>
 
     @Operation(
         summary = "<< 보류 >> 편지 수 인기 캡슐 조회 (비로그인 가능)",

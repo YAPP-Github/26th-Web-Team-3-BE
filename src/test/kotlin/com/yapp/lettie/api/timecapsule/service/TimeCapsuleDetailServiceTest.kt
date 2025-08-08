@@ -3,6 +3,7 @@ package com.yapp.lettie.api.timecapsule.service
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.file.service.dto.PresignedUrlDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreMyTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
@@ -286,13 +287,13 @@ class TimeCapsuleDetailServiceTest {
             mapOf(1L to 10, 2L to 15)
 
         // when
-        val result =
-            detailService.getMyTimeCapsules(
-                userId,
+        val payload =
+            ExploreMyTimeCapsulesPayload.of(
                 MyCapsuleFilter.CREATED,
                 CapsuleSort.DEFAULT,
                 pageable,
             )
+        val result = detailService.getMyTimeCapsules(userId, payload)
 
         // then
         assertEquals(2, result.timeCapsules.size)
@@ -333,13 +334,13 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
 
         // when
-        val result =
-            detailService.getMyTimeCapsules(
-                userId,
+        val payload =
+            ExploreMyTimeCapsulesPayload.of(
                 MyCapsuleFilter.CREATED,
                 CapsuleSort.DEFAULT,
                 pageable,
             )
+        val result = detailService.getMyTimeCapsules(userId, payload)
 
         // then
         assertTrue(result.timeCapsules.isEmpty())
