@@ -251,7 +251,6 @@ class TimeCapsuleCustomerRepositoryImpl(
                     groupExpr.asc(),
                     timeCapsule.closedAt.asc(),
                     timeCapsule.openAt.asc(),
-                    timeCapsule.openAt.desc(),
                 )
             }
 
