@@ -82,7 +82,7 @@ interface TimeCapsuleDetailSwagger {
         ),
         Parameter(
             name = "size",
-            description = "페이지 크기 (기본 10)",
+            description = "페이지 크기",
             `in` = ParameterIn.QUERY,
         ),
     )
