@@ -175,35 +175,33 @@ class TimeCapsuleCustomerRepositoryImpl(
                 }
             }
 
-        val query =
-            queryFactory
-                .select(timeCapsule)
-                .from(timeCapsule)
-                .leftJoin(like).on(like.timeCapsule.id.eq(timeCapsule.id))
-                .leftJoin(participant).on(participant.timeCapsule.id.eq(timeCapsule.id))
-                .leftJoin(tcu)
-                .on(
-                    tcu.timeCapsule.id.eq(timeCapsule.id)
-                        .and(tcu.user.id.eq(userId)),
-                )
-                .where(builder)
-                .distinct()
-                .groupBy(timeCapsule.id)
-
+        val isOpenedMin = tcu.isOpened.min()
         // 기본 정렬 ( 1순위 : 오픈일은 지났지만 내가 아직 열람 안 한 캡슐, 2순위: 마지막 수정일, 3순위: 생성일)
         val priorityExpr: NumberExpression<Int> =
             CaseBuilder()
                 .`when`(
                     timeCapsule.openAt.before(now)
-                        .and(tcu.isOpened.isFalse),
+                        .and(isOpenedMin.eq(false))
                 ).then(0)
                 .otherwise(1)
 
-        query.orderBy(
-            priorityExpr.asc(),
-            timeCapsule.updatedAt.desc(),
-            timeCapsule.createdAt.desc(),
-        )
+
+        val query = queryFactory
+            .select(timeCapsule)
+            .from(timeCapsule)
+            .leftJoin(like).on(like.timeCapsule.id.eq(timeCapsule.id))
+            .leftJoin(participant).on(participant.timeCapsule.id.eq(timeCapsule.id))
+            .leftJoin(tcu).on(
+                tcu.timeCapsule.id.eq(timeCapsule.id)
+                    .and(tcu.user.id.eq(userId)),
+            )
+            .where(builder)
+            .groupBy(timeCapsule.id)
+            .orderBy(
+                priorityExpr.asc(),
+                timeCapsule.updatedAt.desc(),
+                timeCapsule.createdAt.desc(),
+            )
             .offset(pageable.offset)
             .limit(pageable.pageSize)
 
@@ -217,6 +215,11 @@ class TimeCapsuleCustomerRepositoryImpl(
                 .on(like.timeCapsule.id.eq(timeCapsule.id))
                 .leftJoin(participant)
                 .on(participant.timeCapsule.id.eq(timeCapsule.id))
+                .leftJoin(tcu)
+                .on(
+                    tcu.timeCapsule.id.eq(timeCapsule.id)
+                        .and(tcu.user.id.eq(userId))
+                )
                 .where(builder)
 
         return PageableExecutionUtils.getPage(result, pageable) {
