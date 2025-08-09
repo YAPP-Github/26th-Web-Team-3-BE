@@ -45,3 +45,6 @@ management:
     metrics:
       export:
         enabled: true
+
+cookie:
+  secure: false
