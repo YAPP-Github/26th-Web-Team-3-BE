@@ -15,8 +15,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @OpenAPIDefinition(
     servers = [
         Server(url = "https://lettie.me", description = "개발 서버"),
-        Server(url = "http://localhost:8080", description = "로컬 서버")
-    ]
+        Server(url = "http://localhost:8080", description = "로컬 서버"),
+    ],
 )
 @Configuration
 @EnableWebSecurity
