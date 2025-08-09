@@ -2,6 +2,7 @@ package com.yapp.lettie.api.auth.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.yapp.lettie.api.ApiPath
+import com.yapp.lettie.api.auth.component.CookieComponent
 import com.yapp.lettie.api.auth.component.JwtComponent
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
@@ -103,13 +104,14 @@ class AuthorizationFilter(
         request.setAttribute(CURRENT_USER_KEY, defaultUser)
     }
 
-    private fun getTokenFromRequest(request: HttpServletRequest?): String? {
-        val bearerToken = request?.getHeader("Authorization")
-        return if (!bearerToken.isNullOrBlank() && bearerToken.startsWith("Bearer ")) {
-            bearerToken.substring(7)
-        } else {
-            null
+    private fun getTokenFromRequest(request: HttpServletRequest): String? {
+        request.cookies?.let { cookies ->
+            cookies.find { it.name == CookieComponent.ACCESS_TOKEN_COOKIE_NAME }?.let { cookie ->
+                return cookie.value
+            }
         }
+
+        return null
     }
 
     private fun handleException(
