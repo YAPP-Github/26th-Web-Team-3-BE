@@ -207,7 +207,7 @@ class TimeCapsuleCustomerRepositoryImpl(
     ): List<OrderSpecifier<*>> {
         return when (sort) {
             // 최신 생성 순
-            CapsuleSort.LATEST -> listOf(timeCapsule.createdAt.desc())
+            CapsuleSort.LATEST -> listOf(timeCapsule.id.desc())
             /* 오픈 임박 순
             1순위: 아직 안열렸고, 오픈이 임박한 순
             2순위: 열린 캡슐, 최근에 열린순
@@ -269,7 +269,7 @@ class TimeCapsuleCustomerRepositoryImpl(
                         listOf(
                             priorityExpr.asc(),
                             timeCapsule.updatedAt.desc(),
-                            timeCapsule.createdAt.desc(),
+                            timeCapsule.id.desc(),
                         )
                     }
 
