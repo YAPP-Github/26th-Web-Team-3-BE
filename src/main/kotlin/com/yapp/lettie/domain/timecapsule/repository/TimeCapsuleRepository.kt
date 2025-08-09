@@ -11,13 +11,6 @@ import java.time.LocalDateTime
 interface TimeCapsuleRepository :
     JpaRepository<TimeCapsule, Long>,
     TimeCapsuleCustomerRepository {
-    fun findByInviteCode(inviteCode: String): TimeCapsule?
-
-    fun findByCreatorIdOrderByCreatedAtDesc(
-        creatorId: Long,
-        pageable: Pageable,
-    ): Page<TimeCapsule>
-
     @Query(
         """
     SELECT tc FROM TimeCapsule tc

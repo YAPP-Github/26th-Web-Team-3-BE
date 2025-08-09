@@ -3,6 +3,7 @@ package com.yapp.lettie.api.timecapsule.service
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.file.service.dto.PresignedUrlDto
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreMyTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
@@ -11,6 +12,8 @@ import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
+import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import com.yapp.lettie.domain.user.entity.User
 import io.mockk.every
@@ -267,40 +270,77 @@ class TimeCapsuleDetailServiceTest {
             )
 
         val pageable = PageRequest.of(0, 2)
-        val page = PageImpl(capsules, pageable, 0)
-        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns page
-        every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns mapOf(1L to 3, 2L to 5)
-        every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns mapOf(1L to 10, 2L to 15)
+        val page = PageImpl(capsules, pageable, capsules.size.toLong())
+
+        every {
+            capsuleReader.getMyTimeCapsules(
+                userId,
+                MyCapsuleFilter.CREATED,
+                CapsuleSort.DEFAULT,
+                any(),
+                any(),
+            )
+        } returns page
+        every { timeCapsuleUserReader.getParticipantCountMap(listOf(1L, 2L)) } returns
+            mapOf(1L to 3, 2L to 5)
+        every { letterReader.getLetterCountMap(listOf(1L, 2L)) } returns
+            mapOf(1L to 10, 2L to 15)
 
         // when
-        val result = detailService.getMyTimeCapsules(userId, pageable)
+        val payload =
+            ExploreMyTimeCapsulesPayload.of(
+                MyCapsuleFilter.CREATED,
+                CapsuleSort.DEFAULT,
+                pageable,
+            )
+        val result = detailService.getMyTimeCapsules(userId, payload)
 
         // then
         assertEquals(2, result.timeCapsules.size)
         assertEquals(2L, result.totalCount)
-        val first = result.timeCapsules[0]
-        assertEquals(1L, first.id)
-        assertEquals("내 첫 캡슐", first.title)
-        assertEquals(3, first.participantCount)
-        assertEquals(10, first.letterCount)
-        val second = result.timeCapsules[1]
-        assertEquals(2L, second.id)
-        assertEquals(5, second.participantCount)
-        assertEquals(15, second.letterCount)
+
+        with(result.timeCapsules[0]) {
+            assertEquals(1L, id)
+            assertEquals("내 첫 캡슐", title)
+            assertEquals(3, participantCount)
+            assertEquals(10, letterCount)
+        }
+        with(result.timeCapsules[1]) {
+            assertEquals(2L, id)
+            assertEquals("내 두 번째 캡슐", title)
+            assertEquals(5, participantCount)
+            assertEquals(15, letterCount)
+        }
     }
 
     @Test
     fun `내 캡슐 목록이 비어있을 때 빈 페이지가 반환된다`() {
         // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 1L
         val pageable = PageRequest.of(0, 2)
-        val page = PageImpl(listOf<TimeCapsule>(), pageable, 0)
-        every { capsuleReader.getMyTimeCapsules(userId, any()) } returns page
+        val emptyPage = PageImpl<TimeCapsule>(emptyList(), pageable, 0)
+
+        every {
+            capsuleReader.getMyTimeCapsules(
+                userId,
+                MyCapsuleFilter.CREATED,
+                CapsuleSort.DEFAULT,
+                any(),
+                any(),
+            )
+        } returns emptyPage
         every { timeCapsuleUserReader.getParticipantCountMap(emptyList()) } returns emptyMap()
         every { letterReader.getLetterCountMap(emptyList()) } returns emptyMap()
 
         // when
-        val result = detailService.getMyTimeCapsules(userId, pageable)
+        val payload =
+            ExploreMyTimeCapsulesPayload.of(
+                MyCapsuleFilter.CREATED,
+                CapsuleSort.DEFAULT,
+                pageable,
+            )
+        val result = detailService.getMyTimeCapsules(userId, payload)
 
         // then
         assertTrue(result.timeCapsules.isEmpty())

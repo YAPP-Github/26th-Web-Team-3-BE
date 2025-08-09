@@ -2,6 +2,7 @@ package com.yapp.lettie.domain.timecapsule.entity
 
 import com.yapp.lettie.domain.BaseEntity
 import com.yapp.lettie.domain.user.entity.User
+import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -25,6 +26,8 @@ class TimeCapsuleUser(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val timeCapsule: TimeCapsule,
+    @Column(name = "is_opened", nullable = false)
+    var isOpened: Boolean = false,
 ) : BaseEntity() {
     companion object {
         fun of(

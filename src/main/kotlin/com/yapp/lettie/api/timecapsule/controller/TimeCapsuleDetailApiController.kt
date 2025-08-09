@@ -6,10 +6,13 @@ import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummariesR
 import com.yapp.lettie.api.timecapsule.controller.response.TimeCapsuleSummaryResponse
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleDetailSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleDetailService
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreMyTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
+import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
+import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -38,16 +41,31 @@ class TimeCapsuleDetailApiController(
     @GetMapping("/my")
     override fun getMyTimeCapsules(
         @LoginUser userInfo: UserInfoPayload,
+        @RequestParam(value = "filter", defaultValue = "ALL")
+        filter: MyCapsuleFilter,
+        @RequestParam(value = "sort", defaultValue = "DEFAULT")
+        sort: CapsuleSort,
         pageable: Pageable,
-    ): ResponseEntity<ApiResponse<List<TimeCapsuleSummaryResponse>>> =
-        ResponseEntity.ok(
+    ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
+        val payload =
+            ExploreMyTimeCapsulesPayload.of(
+                filter,
+                sort,
+                pageable,
+            )
+
+        val capsules =
+            timeCapsuleDetailService.getMyTimeCapsules(
+                userId = userInfo.id,
+                payload = payload,
+            )
+
+        return ResponseEntity.ok(
             ApiResponse.success(
-                timeCapsuleDetailService
-                    .getMyTimeCapsules(userInfo.id, pageable)
-                    .timeCapsules
-                    .map { TimeCapsuleSummaryResponse.from(it) },
+                TimeCapsuleSummariesResponse.from(capsules),
             ),
         )
+    }
 
     @GetMapping("/popular")
     override fun getPopularTimeCapsules(
@@ -64,12 +82,16 @@ class TimeCapsuleDetailApiController(
 
     @GetMapping("/explore")
     override fun exploreTimeCapsules(
-        @RequestParam type: TimeCapsuleStatus?,
+        @RequestParam
+        type: TimeCapsuleStatus?,
+        @RequestParam(value = "sort", defaultValue = "DEFAULT")
+        sort: CapsuleSort,
         pageable: Pageable,
     ): ResponseEntity<ApiResponse<TimeCapsuleSummariesResponse>> {
         val payload =
-            ExploreTimeCapsulesPayload(
-                type = type,
+            ExploreTimeCapsulesPayload.of(
+                type,
+                sort,
                 pageable = pageable,
             )
 

@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.file.service.FileService
 import com.yapp.lettie.api.letter.service.reader.LetterReader
+import com.yapp.lettie.api.timecapsule.service.dto.ExploreMyTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.ExploreTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingTimeDto
 import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
@@ -61,9 +62,10 @@ class TimeCapsuleDetailService(
 
     fun getMyTimeCapsules(
         userId: Long,
-        pageable: Pageable,
+        payload: ExploreMyTimeCapsulesPayload,
     ): TimeCapsuleSummariesDto {
-        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, pageable)
+        val now = LocalDateTime.now()
+        val capsules = timeCapsuleReader.getMyTimeCapsules(userId, payload.filter, payload.sort, now, payload.pageable)
         return getTimeCapsuleSummaries(capsules, LocalDateTime.now())
     }
 
@@ -74,7 +76,7 @@ class TimeCapsuleDetailService(
 
     fun exploreTimeCapsules(payload: ExploreTimeCapsulesPayload): TimeCapsuleSummariesDto {
         val now = LocalDateTime.now()
-        val capsules = timeCapsuleReader.exploreTimeCapsules(payload.type, now, payload.pageable)
+        val capsules = timeCapsuleReader.exploreTimeCapsules(payload.type, payload.sort, now, payload.pageable)
         return getTimeCapsuleSummaries(capsules, now)
     }
 

@@ -1,22 +1,22 @@
 package com.yapp.lettie.api.timecapsule.service.dto
 
 import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
-import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
+import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import org.springframework.data.domain.Pageable
 
-data class ExploreTimeCapsulesPayload(
-    val type: TimeCapsuleStatus?,
+data class ExploreMyTimeCapsulesPayload(
+    val filter: MyCapsuleFilter,
     val sort: CapsuleSort,
     val pageable: Pageable,
 ) {
     companion object {
         fun of(
-            type: TimeCapsuleStatus?,
+            filter: MyCapsuleFilter,
             sort: CapsuleSort,
             pageable: Pageable,
-        ): ExploreTimeCapsulesPayload =
-            ExploreTimeCapsulesPayload(
-                type = type,
+        ): ExploreMyTimeCapsulesPayload =
+            ExploreMyTimeCapsulesPayload(
+                filter = filter,
                 sort = sort,
                 pageable = pageable,
             )
