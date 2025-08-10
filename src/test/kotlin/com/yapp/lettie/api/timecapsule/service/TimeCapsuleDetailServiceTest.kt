@@ -8,6 +8,7 @@ import com.yapp.lettie.api.timecapsule.service.dto.SearchTimeCapsulesPayload
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserWriter
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
@@ -21,13 +22,16 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import java.lang.reflect.Method
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -46,10 +50,19 @@ class TimeCapsuleDetailServiceTest {
     lateinit var timeCapsuleUserReader: TimeCapsuleUserReader
 
     @MockK
+    lateinit var timeCapsuleUserWriter: TimeCapsuleUserWriter
+
+    @MockK
     lateinit var letterReader: LetterReader
 
     @InjectMockKs
     lateinit var detailService: TimeCapsuleDetailService
+
+    private val getBeadObjectKeyMethod: Method by lazy {
+        TimeCapsuleDetailService::class.java
+            .getDeclaredMethod("getBeadObjectKey", Int::class.java)
+            .apply { isAccessible = true }
+    }
 
     @Test
     fun `캡슐이 WRITABLE 상태일 때, 상세 정보를 정확히 반환한다`() {
@@ -85,6 +98,12 @@ class TimeCapsuleDetailServiceTest {
                 timeCapsuleLikes.addAll(likes)
             }
 
+        val timeCapsuleUser =
+            mockk<TimeCapsuleUser> {
+                every { isOpened } returns false
+                every { updateOpened() } returns Unit
+            }
+
         every { capsuleReader.getById(capsuleId) } returns capsule
         every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
             mockk {
@@ -92,7 +111,9 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
+        every { timeCapsuleUserWriter.save(timeCapsuleUser) } returns Unit
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
         } returns
@@ -112,9 +133,165 @@ class TimeCapsuleDetailServiceTest {
         assertTrue(result.isLiked)
         assertEquals(1, result.likeCount)
         assertEquals(2, result.participantCount)
+        assertEquals(3, result.letterCount)
+        assertTrue(result.isFirstOpen) // 첫 방문
         assertNotNull(result.remainingTime)
         assertEquals(1, result.remainingTime?.days)
         assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
+
+        // 첫 방문이므로 updateOpened()와 save()가 호출되었는지 확인
+        verify { timeCapsuleUser.updateOpened() }
+        verify { timeCapsuleUserWriter.save(timeCapsuleUser) }
+    }
+
+    @Test
+    fun `이미 방문한 캡슐일 때는 isOpened 업데이트를 하지 않는다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val capsuleId = 1L
+        val userId = 10L
+
+        val user = mockk<User> { every { id } returns userId }
+        val capsule =
+            TimeCapsule(
+                id = capsuleId,
+                creator = user,
+                inviteCode = "ABC123",
+                title = "캡슐 제목",
+                subtitle = "부제목",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(3),
+                closedAt = now.plusDays(2),
+            )
+
+        val timeCapsuleUser =
+            mockk<TimeCapsuleUser> {
+                every { isOpened } returns true // 이미 방문함
+            }
+
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns null
+        every { likeReader.getLikeCount(capsuleId) } returns 0
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 1
+        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 5
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
+                key = "CAPSULE/detail_bead0.png",
+                expireAt = now.plusMinutes(5),
+            )
+
+        // when
+        val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
+
+        // then
+        assertFalse(result.isFirstOpen) // 이미 방문한 상태
+
+        // updateOpened()와 save()가 호출되지 않았는지 확인
+        verify(exactly = 0) { timeCapsuleUser.updateOpened() }
+        verify(exactly = 0) { timeCapsuleUserWriter.save(any()) }
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 편지 개수가 0개일 때 bead0을 반환한다`() {
+        val result = getBeadObjectKeyMethod.invoke(detailService, 0) as String
+        assertEquals("CAPSULE/detail_bead0.png", result)
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 편지 개수가 1-9개일 때 bead0을 반환한다`() {
+        val result1 = getBeadObjectKeyMethod.invoke(detailService, 1) as String
+        val result9 = getBeadObjectKeyMethod.invoke(detailService, 9) as String
+
+        assertEquals("CAPSULE/detail_bead0.png", result1)
+        assertEquals("CAPSULE/detail_bead0.png", result9)
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 편지 개수가 10-19개일 때 bead1을 반환한다`() {
+        val result10 = getBeadObjectKeyMethod.invoke(detailService, 10) as String
+        val result19 = getBeadObjectKeyMethod.invoke(detailService, 19) as String
+
+        assertEquals("CAPSULE/detail_bead1.png", result10)
+        assertEquals("CAPSULE/detail_bead1.png", result19)
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 편지 개수가 50개일 때 bead5를 반환한다`() {
+        val result = getBeadObjectKeyMethod.invoke(detailService, 50) as String
+        assertEquals("CAPSULE/detail_bead5.png", result)
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 편지 개수가 100개 이상일 때 최대값인 bead10을 반환한다`() {
+        val result100 = getBeadObjectKeyMethod.invoke(detailService, 100) as String
+        val result150 = getBeadObjectKeyMethod.invoke(detailService, 150) as String
+        val result1000 = getBeadObjectKeyMethod.invoke(detailService, 1000) as String
+
+        assertEquals("CAPSULE/detail_bead10.png", result100)
+        assertEquals("CAPSULE/detail_bead10.png", result150)
+        assertEquals("CAPSULE/detail_bead10.png", result1000)
+    }
+
+    @Test
+    fun `getBeadObjectKey 메서드 - 경계값 테스트 99개와 100개`() {
+        val result99 = getBeadObjectKeyMethod.invoke(detailService, 99) as String
+        val result100 = getBeadObjectKeyMethod.invoke(detailService, 100) as String
+
+        assertEquals("CAPSULE/detail_bead9.png", result99)
+        assertEquals("CAPSULE/detail_bead10.png", result100)
+    }
+
+    @Test
+    fun `편지 개수에 따른 올바른 beadVideoUrl이 반환된다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val capsuleId = 1L
+        val userId = 10L
+        val letterCount = 25 // bead2가 선택되어야 함
+
+        val user = mockk<User> { every { id } returns userId }
+        val capsule =
+            TimeCapsule(
+                id = capsuleId,
+                creator = user,
+                inviteCode = "ABC123",
+                title = "캡슐 제목",
+                subtitle = "부제목",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(3),
+                closedAt = now.plusDays(2),
+            )
+
+        val timeCapsuleUser =
+            mockk<TimeCapsuleUser> {
+                every { isOpened } returns true
+            }
+
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns null
+        every { likeReader.getLikeCount(capsuleId) } returns 0
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 1
+        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns letterCount
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead2.png")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead2.png",
+                key = "CAPSULE/detail_bead2.png",
+                expireAt = now.plusMinutes(5),
+            )
+
+        // when
+        val result = detailService.getTimeCapsuleDetail(capsuleId, userId)
+
+        // then
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead2.png", result.beadVideoUrl)
+        assertEquals(letterCount, result.letterCount)
     }
 
     @Test
@@ -151,6 +328,11 @@ class TimeCapsuleDetailServiceTest {
                 timeCapsuleLikes.addAll(likes)
             }
 
+        val timeCapsuleUser =
+            mockk<TimeCapsuleUser> {
+                every { isOpened } returns true
+            }
+
         every { capsuleReader.getById(capsuleId) } returns capsule
         every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
             mockk {
@@ -158,13 +340,14 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
         } returns
             PresignedUrlDto(
                 url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
-                key = "CAPSULE/detail_bead0.mp4",
+                key = "CAPSULE/detail_bead0.png",
                 expireAt = now.plusMinutes(5),
             )
 
@@ -178,6 +361,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(23, result.remainingTime?.hours)
         assertEquals(59, result.remainingTime?.minutes)
         assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
+        assertFalse(result.isFirstOpen) // 이미 방문한 상태
     }
 
     @Test
@@ -214,6 +398,11 @@ class TimeCapsuleDetailServiceTest {
                 timeCapsuleLikes.addAll(likes)
             }
 
+        val timeCapsuleUser =
+            mockk<TimeCapsuleUser> {
+                every { isOpened } returns true
+            }
+
         every { capsuleReader.getById(capsuleId) } returns capsule
         every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns
             mockk {
@@ -221,6 +410,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
+        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
@@ -238,6 +428,7 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(TimeCapsuleStatus.OPENED, result.status)
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
         assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
+        assertFalse(result.isFirstOpen) // 이미 방문한 상태
     }
 
     @Test
