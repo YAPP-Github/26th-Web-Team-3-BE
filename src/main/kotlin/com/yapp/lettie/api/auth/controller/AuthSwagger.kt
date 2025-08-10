@@ -5,8 +5,10 @@ import com.yapp.lettie.api.auth.controller.response.JwtTokenResponse
 import com.yapp.lettie.api.auth.controller.response.OAuthUrlResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 
@@ -29,9 +31,13 @@ interface AuthSwagger {
         redirectUrl: String,
     ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
-    @Operation(summary = "구글 로그인 요청", description = "구글 로그인을 요청합니다.")
+    @Operation(
+        summary = "구글 로그인 요청",
+        description = "구글 로그인을 요청합니다. 성공 시 JWT 토큰이 HTTP Only 쿠키로 설정됩니다.",
+    )
     fun googleLogin(
         @RequestBody request: AuthorizationRequest,
+        @Parameter(hidden = true) response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 
     @Operation(summary = "네이버 oauth url 조회", description = "네이버 oauth url을 조회합니다.")
@@ -40,8 +46,20 @@ interface AuthSwagger {
         redirectUrl: String,
     ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
-    @Operation(summary = "네이버 로그인 요청", description = "네이버 로그인을 요청합니다.")
+    @Operation(
+        summary = "네이버 로그인 요청",
+        description = "네이버 로그인을 요청합니다. 성공 시 JWT 토큰이 HTTP Only 쿠키로 설정됩니다.",
+    )
     fun naverLogin(
         @RequestBody request: AuthorizationRequest,
+        @Parameter(hidden = true) response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
+
+    @Operation(
+        summary = "로그아웃",
+        description = "로그아웃을 수행합니다. HTTP Only 쿠키의 JWT 토큰을 삭제합니다.",
+    )
+    fun logout(
+        @Parameter(hidden = true) response: HttpServletResponse,
+    ): ResponseEntity<ApiResponse<Boolean>>
 }
