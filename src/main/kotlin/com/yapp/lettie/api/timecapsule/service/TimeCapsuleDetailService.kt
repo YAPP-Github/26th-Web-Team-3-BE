@@ -29,27 +29,37 @@ class TimeCapsuleDetailService(
 ) {
     fun getTimeCapsuleDetail(
         capsuleId: Long,
-        userId: Long,
+        userId: Long?,
     ): TimeCapsuleDetailDto {
         val capsule = timeCapsuleReader.getById(capsuleId)
         val now = LocalDateTime.now()
 
-        val liked = timeCapsuleLikeReader.findByUserIdAndCapsuleId(userId, capsuleId)?.isLiked ?: false
+        val liked =
+            userId?.let {
+                timeCapsuleLikeReader.findByUserIdAndCapsuleId(it, capsuleId)?.isLiked
+            } ?: false
+
         val status = capsule.getStatus(now)
         val remainingTime = RemainingTimeDto.fromStatus(status, now, capsule.openAt, capsule.closedAt)
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)
         val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
-        val timeCapsuleUser = timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId)
-        val isFirstOpen = !timeCapsuleUser.isOpened
+
+        val (isFirstOpen, isMine) =
+            if (userId != null) {
+                val timeCapsuleUser = timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId)
+                val firstOpen = timeCapsuleUser?.let { !it.isOpened } ?: false
+                if (firstOpen && timeCapsuleUser != null) {
+                    timeCapsuleUser.updateOpened()
+                    timeCapsuleUserWriter.save(timeCapsuleUser)
+                }
+                firstOpen to (capsule.creator.id == userId)
+            } else {
+                false to false
+            }
+
         val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
-        val isMine = capsule.creator.id == userId
         val objectKey = getBeadObjectKey(letterCount)
         val beadVideoUrl = fileService.generatePresignedDownloadUrlByObjectKey(objectKey).url
-
-        if (isFirstOpen) {
-            timeCapsuleUser.updateOpened()
-            timeCapsuleUserWriter.save(timeCapsuleUser)
-        }
 
         return TimeCapsuleDetailDto(
             id = capsule.id,

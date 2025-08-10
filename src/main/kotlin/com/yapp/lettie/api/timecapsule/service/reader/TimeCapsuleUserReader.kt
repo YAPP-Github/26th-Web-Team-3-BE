@@ -49,4 +49,10 @@ class TimeCapsuleUserReader(
     ): TimeCapsuleUser =
         timeCapsuleUserRepository.findByUserIdAndTimeCapsuleId(userId, capsuleId)
             ?: throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
+
+    @Transactional(readOnly = true)
+    fun getTimeCapsuleUserOrNull(
+        capsuleId: Long,
+        userId: Long,
+    ): TimeCapsuleUser? = timeCapsuleUserRepository.findByUserIdAndTimeCapsuleId(userId, capsuleId)
 }

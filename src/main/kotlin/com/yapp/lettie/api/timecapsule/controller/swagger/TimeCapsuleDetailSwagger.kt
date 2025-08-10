@@ -37,7 +37,7 @@ interface TimeCapsuleDetailSwagger {
         """,
     )
     fun getCapsuleDetail(
-        userInfo: UserInfoPayload,
+        userInfo: UserInfoPayload?,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>>
 
