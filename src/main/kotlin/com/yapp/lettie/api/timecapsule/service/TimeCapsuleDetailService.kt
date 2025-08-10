@@ -77,6 +77,7 @@ class TimeCapsuleDetailService(
             inviteCode = capsule.inviteCode,
             beadVideoUrl = beadVideoUrl,
             isFirstOpen = isFirstOpen,
+            accessType = capsule.accessType,
         )
     }
 
