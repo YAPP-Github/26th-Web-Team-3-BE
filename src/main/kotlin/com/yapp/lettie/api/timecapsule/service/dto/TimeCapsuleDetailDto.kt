@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.timecapsule.service.dto
 
+import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import java.time.LocalDateTime
 
@@ -19,4 +20,5 @@ data class TimeCapsuleDetailDto(
     val inviteCode: String,
     val beadVideoUrl: String,
     val isFirstOpen: Boolean,
+    val accessType: AccessType,
 )

@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.controller.response
 
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleDetailDto
+import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
@@ -37,6 +38,8 @@ data class TimeCapsuleDetailResponse(
     val beadVideoUrl: String,
     @Schema(description = "첫 오픈 여부", example = "true")
     val isFirstOpen: Boolean,
+    @Schema(description = "접근 유형", example = "PUBLIC")
+    val accessType: AccessType,
 ) {
     companion object {
         fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse =
@@ -64,6 +67,7 @@ data class TimeCapsuleDetailResponse(
                 inviteCode = dto.inviteCode,
                 beadVideoUrl = dto.beadVideoUrl,
                 isFirstOpen = dto.isFirstOpen,
+                accessType = dto.accessType,
             )
     }
 }
