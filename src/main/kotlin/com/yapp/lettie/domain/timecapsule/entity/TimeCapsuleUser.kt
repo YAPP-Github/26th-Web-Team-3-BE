@@ -33,11 +33,14 @@ class TimeCapsuleUser(
         fun of(
             user: User,
             timeCapsule: TimeCapsule,
-        ): TimeCapsuleUser {
-            return TimeCapsuleUser(
+        ): TimeCapsuleUser =
+            TimeCapsuleUser(
                 user = user,
                 timeCapsule = timeCapsule,
             )
-        }
+    }
+
+    fun updateOpened() {
+        this.isOpened = true
     }
 }

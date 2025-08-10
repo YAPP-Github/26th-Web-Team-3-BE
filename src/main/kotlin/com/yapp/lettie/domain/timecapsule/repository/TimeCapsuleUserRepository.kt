@@ -37,4 +37,9 @@ interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long> {
         userId: Long,
         capsuleId: Long,
     ): Boolean
+
+    fun findByUserIdAndTimeCapsuleId(
+        userId: Long,
+        capsuleId: Long,
+    ): TimeCapsuleUser?
 }

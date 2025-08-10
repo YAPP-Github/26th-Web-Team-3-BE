@@ -35,10 +35,12 @@ data class TimeCapsuleDetailResponse(
     val inviteCode: String,
     @Schema(description = "구슬 영상 URL", example = "https://example.com/bead-video.mp4")
     val beadVideoUrl: String,
+    @Schema(description = "첫 오픈 여부", example = "true")
+    val isFirstOpen: Boolean,
 ) {
     companion object {
-        fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse {
-            return TimeCapsuleDetailResponse(
+        fun from(dto: TimeCapsuleDetailDto): TimeCapsuleDetailResponse =
+            TimeCapsuleDetailResponse(
                 id = dto.id,
                 title = dto.title,
                 subtitle = dto.subtitle,
@@ -61,7 +63,7 @@ data class TimeCapsuleDetailResponse(
                 isMine = dto.isMine,
                 inviteCode = dto.inviteCode,
                 beadVideoUrl = dto.beadVideoUrl,
+                isFirstOpen = dto.isFirstOpen,
             )
-        }
     }
 }
