@@ -18,4 +18,5 @@ data class TimeCapsuleDetailDto(
     val isMine: Boolean,
     val inviteCode: String,
     val beadVideoUrl: String,
+    val isFirstOpen: Boolean,
 )
