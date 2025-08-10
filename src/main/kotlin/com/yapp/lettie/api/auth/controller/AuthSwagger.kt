@@ -5,6 +5,7 @@ import com.yapp.lettie.api.auth.controller.response.JwtTokenResponse
 import com.yapp.lettie.api.auth.controller.response.OAuthUrlResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
@@ -36,7 +37,7 @@ interface AuthSwagger {
     )
     fun googleLogin(
         @RequestBody request: AuthorizationRequest,
-        response: HttpServletResponse,
+        @Parameter(hidden = true) response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 
     @Operation(summary = "네이버 oauth url 조회", description = "네이버 oauth url을 조회합니다.")
@@ -51,12 +52,14 @@ interface AuthSwagger {
     )
     fun naverLogin(
         @RequestBody request: AuthorizationRequest,
-        response: HttpServletResponse,
+        @Parameter(hidden = true) response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>>
 
     @Operation(
         summary = "로그아웃",
         description = "로그아웃을 수행합니다. HTTP Only 쿠키의 JWT 토큰을 삭제합니다.",
     )
-    fun logout(response: HttpServletResponse): ResponseEntity<ApiResponse<Unit>>
+    fun logout(
+        @Parameter(hidden = true) response: HttpServletResponse,
+    ): ResponseEntity<ApiResponse<Unit>>
 }

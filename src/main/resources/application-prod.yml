@@ -28,3 +28,4 @@ minio:
 
 cookie:
   secure: true
+  same-site: None

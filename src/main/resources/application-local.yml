@@ -37,4 +37,5 @@ logging:
     org.hibernate.orm.jdbc.bind: trace
 
 cookie:
-  secure: false
+  secure: true
+  same-site: None

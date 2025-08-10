@@ -1,15 +1,18 @@
 package com.yapp.lettie.api.auth.component
 
 import com.yapp.lettie.api.auth.service.dto.JwtTokenDto
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
+import java.time.Duration
 
 @Component
 class CookieComponent(
     @Value("\${jwt.expiration}") private val accessTokenExpireLength: Long,
-    @Value("\${cookie.secure:false}") private val cookieSecure: Boolean,
+    @Value("\${cookie.secure}") private val cookieSecure: Boolean,
+    @Value("\${cookie.same-site}") private val sameSite: String,
 ) {
     companion object {
         const val ACCESS_TOKEN_COOKIE_NAME = "accessToken"
@@ -23,13 +26,15 @@ class CookieComponent(
         response: HttpServletResponse,
     ) {
         val cookie =
-            Cookie(ACCESS_TOKEN_COOKIE_NAME, jwtTokenDto.token).apply {
-                isHttpOnly = true // HTTP Only로 변경 (보안상 권장)
-                secure = cookieSecure // 프로퍼티로 설정
-                path = "/"
-                maxAge = (accessTokenExpireLength / 1000).toInt() // 밀리초를 초로 변환
-            }
-        response.addCookie(cookie)
+            ResponseCookie
+                .from(ACCESS_TOKEN_COOKIE_NAME, jwtTokenDto.token)
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(Duration.ofMillis(accessTokenExpireLength))
+                .sameSite(sameSite)
+                .build()
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 
     /**
@@ -37,12 +42,14 @@ class CookieComponent(
      */
     fun clearAccessTokenCookie(response: HttpServletResponse) {
         val cookie =
-            Cookie(ACCESS_TOKEN_COOKIE_NAME, "").apply {
-                isHttpOnly = true
-                secure = cookieSecure // 프로퍼티로 설정
-                path = "/"
-                maxAge = 0 // 쿠키 삭제
-            }
-        response.addCookie(cookie)
+            ResponseCookie
+                .from(ACCESS_TOKEN_COOKIE_NAME, "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(Duration.ZERO)
+                .sameSite(sameSite)
+                .build()
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
 }
