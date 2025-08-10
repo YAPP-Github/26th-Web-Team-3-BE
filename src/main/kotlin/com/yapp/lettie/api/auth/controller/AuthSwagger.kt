@@ -61,5 +61,5 @@ interface AuthSwagger {
     )
     fun logout(
         @Parameter(hidden = true) response: HttpServletResponse,
-    ): ResponseEntity<ApiResponse<Unit>>
+    ): ResponseEntity<ApiResponse<Boolean>>
 }

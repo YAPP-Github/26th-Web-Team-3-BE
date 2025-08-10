@@ -96,11 +96,11 @@ class AuthApiController(
     }
 
     @PostMapping("/logout")
-    override fun logout(response: HttpServletResponse): ResponseEntity<ApiResponse<Unit>> {
+    override fun logout(response: HttpServletResponse): ResponseEntity<ApiResponse<Boolean>> {
         cookieComponent.clearAccessTokenCookie(response)
 
         return ResponseEntity.ok().body(
-            ApiResponse.success(Unit),
+            ApiResponse.success(true),
         )
     }
 }
