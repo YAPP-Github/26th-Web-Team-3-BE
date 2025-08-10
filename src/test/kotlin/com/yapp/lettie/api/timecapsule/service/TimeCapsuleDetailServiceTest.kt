@@ -457,11 +457,12 @@ class TimeCapsuleDetailServiceTest {
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 0
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
-        } returns PresignedUrlDto(
-            url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
-            key = "CAPSULE/detail_bead0.png",
-            expireAt = now.plusMinutes(5),
-        )
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
+                key = "CAPSULE/detail_bead0.png",
+                expireAt = now.plusMinutes(5),
+            )
 
         // when
         val result = detailService.getTimeCapsuleDetail(capsuleId, null)
@@ -477,7 +478,6 @@ class TimeCapsuleDetailServiceTest {
 
         verify(exactly = 0) { timeCapsuleUserWriter.save(any()) }
     }
-
 
     @Test
     fun `내 캡슐 목록을 가져올 때 페이지 정보와 요약 정보들이 정확히 반환된다`() {
