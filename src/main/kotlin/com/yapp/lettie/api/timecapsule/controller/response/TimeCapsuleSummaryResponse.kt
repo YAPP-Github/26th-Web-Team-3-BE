@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.controller.response
 
 import com.yapp.lettie.api.timecapsule.service.dto.RemainingStatusDto
 import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummaryDto
+import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "타임캡슐 요약 응답")
@@ -16,6 +17,8 @@ data class TimeCapsuleSummaryResponse(
     val participantCount: Int,
     @Schema(description = "작성된 편지 수", example = "6")
     val letterCount: Int,
+    @Schema(description = "공개 여부", example = "PUBLIC")
+    val accessType: AccessType,
     @Schema(
         description = "캡슐 오픈까지 남은 시간 또는 오픈 상태",
         implementation = RemainingStatusDto::class,
@@ -31,6 +34,7 @@ data class TimeCapsuleSummaryResponse(
                 title = dto.title,
                 participantCount = dto.participantCount,
                 letterCount = dto.letterCount,
+                accessType = dto.accessType,
                 remainingStatus = dto.remainingStatus,
             )
     }

@@ -26,6 +26,7 @@ data class TimeCapsuleSummariesDto(
                         title = capsule.title,
                         participantCount = participantCountMap[capsule.id] ?: 0,
                         letterCount = letterCountMap[capsule.id] ?: 0,
+                        accessType = capsule.accessType,
                         remainingStatus = RemainingStatusDto.of(capsule.openAt, now, capsule.getStatus(now)),
                     )
                 },
