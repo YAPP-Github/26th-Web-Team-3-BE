@@ -1,4 +1,4 @@
-package com.yapp.lettie.api.timecapsule.service.reader
+package com.yapp.lettie.api.timecapsule.service.writer
 
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleUserRepository

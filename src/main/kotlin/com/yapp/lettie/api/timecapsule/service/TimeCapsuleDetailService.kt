@@ -11,7 +11,7 @@ import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummariesDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
-import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserWriter
+import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleUserWriter
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
