@@ -43,6 +43,7 @@ class SecurityConfig {
                 "https://lettie.me",
                 "https://localhost:3000",
                 "http://localhost:3000",
+                "https://localhost:3000",
             )
 
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")

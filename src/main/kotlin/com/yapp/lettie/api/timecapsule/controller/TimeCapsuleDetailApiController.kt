@@ -29,10 +29,10 @@ class TimeCapsuleDetailApiController(
 ) : TimeCapsuleDetailSwagger {
     @GetMapping("/{capsuleId}")
     override fun getCapsuleDetail(
-        @LoginUser userInfo: UserInfoPayload,
+        @LoginUser userInfo: UserInfoPayload?,
         @PathVariable capsuleId: Long,
     ): ResponseEntity<ApiResponse<TimeCapsuleDetailResponse>> {
-        val detailDto = timeCapsuleDetailService.getTimeCapsuleDetail(capsuleId, userInfo.id)
+        val detailDto = timeCapsuleDetailService.getTimeCapsuleDetail(capsuleId, userInfo?.id)
         return ResponseEntity.ok(
             ApiResponse.success(TimeCapsuleDetailResponse.from(detailDto)),
         )

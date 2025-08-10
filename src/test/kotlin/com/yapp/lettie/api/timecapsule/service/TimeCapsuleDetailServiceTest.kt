@@ -111,7 +111,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
-        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every { timeCapsuleUserWriter.save(timeCapsuleUser) } returns Unit
         every {
@@ -173,7 +173,7 @@ class TimeCapsuleDetailServiceTest {
         every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns null
         every { likeReader.getLikeCount(capsuleId) } returns 0
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 1
-        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 5
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
@@ -275,7 +275,7 @@ class TimeCapsuleDetailServiceTest {
         every { likeReader.findByUserIdAndCapsuleId(userId, capsuleId) } returns null
         every { likeReader.getLikeCount(capsuleId) } returns 0
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 1
-        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns letterCount
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead2.png")
@@ -340,7 +340,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
-        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
@@ -410,7 +410,7 @@ class TimeCapsuleDetailServiceTest {
             }
         every { likeReader.getLikeCount(capsuleId) } returns 1
         every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 2
-        every { timeCapsuleUserReader.getTimeCapsuleUser(capsuleId, userId) } returns timeCapsuleUser
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns timeCapsuleUser
         every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 3
         every {
             fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
@@ -429,6 +429,54 @@ class TimeCapsuleDetailServiceTest {
         assertEquals(now.minusDays(2).toLocalDate(), result.remainingTime?.openDate)
         assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
         assertFalse(result.isFirstOpen) // 이미 방문한 상태
+    }
+
+    @Test
+    fun `비로그인 사용자는 liked, isMine, isFirstOpen이 false로 내려가고 업데이트 호출이 없다`() {
+        // given
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val capsuleId = 999L
+        val creator = mockk<User> { every { id } returns 42L }
+        val capsule =
+            TimeCapsule(
+                id = capsuleId,
+                creator = creator,
+                inviteCode = "GUEST1",
+                title = "게스트도 볼 수 있는 캡슐",
+                subtitle = "공개 캡슐",
+                accessType = AccessType.PUBLIC,
+                openAt = now.plusDays(2),
+                closedAt = now.plusDays(1),
+            )
+
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { likeReader.findByUserIdAndCapsuleId(any(), any()) } returns null
+        every { likeReader.getLikeCount(capsuleId) } returns 0
+        every { timeCapsuleUserReader.getParticipantCount(capsuleId) } returns 0
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(any(), any()) } returns null
+        every { letterReader.getLetterCountByCapsuleId(capsuleId) } returns 0
+        every {
+            fileService.generatePresignedDownloadUrlByObjectKey("CAPSULE/detail_bead0.png")
+        } returns
+            PresignedUrlDto(
+                url = "https://mocked-url.com/CAPSULE/detail_bead0.png",
+                key = "CAPSULE/detail_bead0.png",
+                expireAt = now.plusMinutes(5),
+            )
+
+        // when
+        val result = detailService.getTimeCapsuleDetail(capsuleId, null)
+
+        // then
+        assertFalse(result.isLiked)
+        assertFalse(result.isMine)
+        assertFalse(result.isFirstOpen)
+        assertEquals(0, result.likeCount)
+        assertEquals(0, result.participantCount)
+        assertEquals(0, result.letterCount)
+        assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
+
+        verify(exactly = 0) { timeCapsuleUserWriter.save(any()) }
     }
 
     @Test
