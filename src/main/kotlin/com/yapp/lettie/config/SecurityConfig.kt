@@ -44,7 +44,6 @@ class SecurityConfig {
                 "https://localhost:3000",
                 "http://localhost:3000",
                 "https://localhost:3000",
-
                 // 사설망 대역 허용
                 "http://10.*.*.*",
                 "https://10.*.*.*",
