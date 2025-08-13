@@ -44,6 +44,14 @@ class SecurityConfig {
                 "https://localhost:3000",
                 "http://localhost:3000",
                 "https://localhost:3000",
+
+                // 사설망 대역 허용
+                "http://10.*.*.*",
+                "https://10.*.*.*",
+                "http://192.168.*.*",
+                "https://192.168.*.*",
+                "http://172.16.*.*",
+                "https://172.16.*.*",
             )
 
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
