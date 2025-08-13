@@ -30,43 +30,44 @@ class TimeCapsuleCustomerRepositoryImpl(
         type: TimeCapsuleStatus?,
         sort: CapsuleSort,
         now: LocalDateTime,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<TimeCapsule> {
-
         val builder = BooleanBuilder().and(timeCapsule.accessType.eq(AccessType.PUBLIC))
 
         when (type) {
             TimeCapsuleStatus.OPENED -> builder.and(timeCapsule.openAt.before(now))
-            TimeCapsuleStatus.WAITING_OPEN -> builder.and(
-                timeCapsule.openAt.after(now)
-                    .and(timeCapsule.closedAt.before(now))
-            )
+            TimeCapsuleStatus.WAITING_OPEN ->
+                builder.and(
+                    timeCapsule.openAt.after(now)
+                        .and(timeCapsule.closedAt.before(now)),
+                )
             TimeCapsuleStatus.WRITABLE -> builder.and(timeCapsule.closedAt.after(now))
             null -> {}
         }
 
         val orderSpecifiers = buildSortOrder(sort, now, SortContext.EXPLORE)
 
-        val results = queryFactory
-            .selectFrom(timeCapsule)
-            .leftJoin(letter).on(letter.timeCapsule.id.eq(timeCapsule.id))
-            .where(builder)
-            .groupBy(timeCapsule.id)
-            .orderBy(*orderSpecifiers.toTypedArray())
-            .offset(pageable.offset)
-            .limit(pageable.pageSize)
-            .fetch()
+        val results =
+            queryFactory
+                .selectFrom(timeCapsule)
+                .leftJoin(letter).on(letter.timeCapsule.id.eq(timeCapsule.id))
+                .where(builder)
+                .groupBy(timeCapsule.id)
+                .orderBy(*orderSpecifiers.toTypedArray())
+                .offset(pageable.offset)
+                .limit(pageable.pageSize)
+                .fetch()
 
-        val countQuery = queryFactory
-            .select(timeCapsule.countDistinct())
-            .from(timeCapsule)
-            .where(builder)
+        val countQuery =
+            queryFactory
+                .select(timeCapsule.countDistinct())
+                .from(timeCapsule)
+                .where(builder)
 
         return PageableExecutionUtils.getPage(results, pageable) {
             countQuery.fetchOne() ?: 0L
         }
     }
-
 
     override fun findTimeCapsulesByTitle(
         title: String,
