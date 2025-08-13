@@ -49,3 +49,4 @@ management:
 cookie:
   secure: true
   same-site: None
+  domain: .lettie.me
