@@ -1,7 +1,5 @@
 package com.yapp.lettie.config
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition
-import io.swagger.v3.oas.annotations.servers.Server
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -12,12 +10,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-@OpenAPIDefinition(
-    servers = [
-        Server(url = "https://lettie.me", description = "개발 서버"),
-        Server(url = "http://localhost:8080", description = "로컬 서버"),
-    ],
-)
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
@@ -40,10 +32,10 @@ class SecurityConfig {
 
         configuration.allowedOriginPatterns =
             listOf(
-                "https://lettie.me",
+                "https://api-dev.lettie.me",
                 "https://localhost:3000",
                 "http://localhost:3000",
-                "https://localhost:3000",
+                "http://localhost:8080",
                 // 사설망 대역 허용
                 "http://10.*.*.*",
                 "https://10.*.*.*",
