@@ -13,6 +13,7 @@ class CookieComponent(
     @Value("\${jwt.expiration}") private val accessTokenExpireLength: Long,
     @Value("\${cookie.secure}") private val cookieSecure: Boolean,
     @Value("\${cookie.same-site}") private val sameSite: String,
+    @Value("\${cookie.domain}") private val domain: String,
 ) {
     companion object {
         const val ACCESS_TOKEN_COOKIE_NAME = "accessToken"
@@ -33,6 +34,7 @@ class CookieComponent(
                 .path("/")
                 .maxAge(Duration.ofMillis(accessTokenExpireLength))
                 .sameSite(sameSite)
+                .domain(domain)
                 .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
@@ -49,6 +51,7 @@ class CookieComponent(
                 .path("/")
                 .maxAge(Duration.ZERO)
                 .sameSite(sameSite)
+                .domain(domain)
                 .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
     }
