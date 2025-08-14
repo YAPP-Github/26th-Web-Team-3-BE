@@ -50,7 +50,7 @@ class TimeCapsuleTasklet(
                     recipients = recipients,
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
-                    capsuleLink = generateCapsuleLink(capsule.inviteCode),
+                    capsuleLink = generateCapsuleLink(capsule.id, capsule.inviteCode),
                 )
                 logger.info { "Capsule(${capsule.id}) 오픈 처리 완료, 이메일 전송 완료 (${recipients.size}명)" }
             } catch (e: Exception) {
@@ -61,7 +61,7 @@ class TimeCapsuleTasklet(
         return RepeatStatus.FINISHED
     }
 
-    private fun generateCapsuleLink(inviteCode: String): String = "$domainName/capsules/$inviteCode"
+    private fun generateCapsuleLink(id: Long, inviteCode: String): String = "$domainName/capsule-detail/$inviteCode/$id"
 
     companion object {
         private const val CHECK_INTERVAL_MINUTES = 5L
