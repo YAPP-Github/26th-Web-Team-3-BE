@@ -34,6 +34,7 @@ class SecurityConfig {
             listOf(
                 "https://api-dev.lettie.me",
                 "https://lettie.me",
+                "https://www.lettie.me",
                 "https://localhost:3000",
                 "http://localhost:3000",
                 "http://localhost:8080",
