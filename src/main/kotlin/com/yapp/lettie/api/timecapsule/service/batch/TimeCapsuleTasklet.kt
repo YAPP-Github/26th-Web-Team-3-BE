@@ -50,6 +50,7 @@ class TimeCapsuleTasklet(
                     recipients = recipients,
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
+                    createdDate = capsule.createdAt,
                     capsuleLink = generateCapsuleLink(capsule.id, capsule.inviteCode),
                 )
                 logger.info { "Capsule(${capsule.id}) 오픈 처리 완료, 이메일 전송 완료 (${recipients.size}명)" }
