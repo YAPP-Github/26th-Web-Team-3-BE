@@ -62,7 +62,10 @@ class TimeCapsuleTasklet(
         return RepeatStatus.FINISHED
     }
 
-    private fun generateCapsuleLink(id: Long, inviteCode: String): String = "$domainName/capsule-detail/$inviteCode/$id"
+    private fun generateCapsuleLink(
+        id: Long,
+        inviteCode: String,
+    ): String = "$domainName/capsule-detail/$inviteCode/$id"
 
     companion object {
         private const val CHECK_INTERVAL_MINUTES = 5L

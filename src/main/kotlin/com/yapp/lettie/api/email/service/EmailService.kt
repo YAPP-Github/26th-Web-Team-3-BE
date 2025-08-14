@@ -44,11 +44,12 @@ class EmailService(
         val hours = duration.toHours()
         val minutes = duration.toMinutes()
 
-        val elapsedText = when {
-            days >= 1 -> "${days}일"
-            hours >= 1 -> "${hours}시간"
-            else -> "${minutes}분"
-        }
+        val elapsedText =
+            when {
+                days >= 1 -> "${days}일"
+                hours >= 1 -> "${hours}시간"
+                else -> "${minutes}분"
+            }
 
         recipients.chunked(10).forEach { batch ->
             batch.forEach { recipient ->
@@ -59,7 +60,7 @@ class EmailService(
                         val helper = MimeMessageHelper(mimeMessage, true, "UTF-8")
 
                         helper.setTo(recipient)
-                        helper.setSubject("[LETTIE] $capsuleTitle 캡슐이 방금 열렸어요!")
+                        helper.setSubject("[LETTIE] 캡슐이 방금 열렸어요! - $capsuleTitle ")
 
                         val bannerCid = "logo-${UUID.randomUUID()}"
                         val bannerRes = ClassPathResource("email/email-banner.jpg")
@@ -68,46 +69,35 @@ class EmailService(
                         val htmlContent =
                             """
                             <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
-                                <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 48px 32px; text-align: center;">
+                                <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
-                                    <img src="cid:$bannerCid" alt="Lettie Logo" style="width: 100px; height: auto; margin-bottom: 24px;"/>
-                                    <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;"> $capsuleTitle 캡슐이 열렸어요!</h2>
+                                    <!-- 배너 이미지 -->
+                                    <img src="cid:$bannerCid"
+                                        alt="Lettie Banner"
+                                        style="width: 100%; height: auto; display: block;" />
 
-                                    <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
-                                      <strong>$elapsedText</strong> 만에 열린 캡슐을 열어보러 갈까요?
-                                    </p>
-
-                                    <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
-                                      📬 $capsuleTitle
+                                    <!-- 내용 -->
+                                    <div style="padding: 20px 32px; text-align: center;">
+                                        <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">$capsuleTitle 캡슐이 열렸어요!</h2>
+                                        <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
+                                            <strong>$elapsedText</strong> 만에 열린 캡슐을 열어보러 갈까요?
+                                        </p>
+                                        <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
+                                            📬 $capsuleTitle
+                                        </div>
+                                        <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
+                                            오픈 시각: <strong>$formattedDate</strong>
+                                        </p>
+                                        <a href="$capsuleLink" target="_blank"
+                                            style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3f51b5, #5c6bc0); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                                            캡슐 열어보러 가기
+                                        </a>
+                                        <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
+                                            그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
+                                            - Lettie 팀 드림
+                                        </p>
                                     </div>
-
-                                    <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
-                                      오픈 시각: <strong>$formattedDate</strong>
-                                    </p>
-
-                                    <a href="$capsuleLink" target="_blank"
-                                       style="
-                                         display: inline-block;
-                                         padding: 14px 28px;
-                                         background: linear-gradient(135deg, #3f51b5, #5c6bc0);
-                                         color: white;
-                                         border-radius: 8px;
-                                         text-decoration: none;
-                                         font-weight: 600;
-                                         font-size: 15px;
-                                         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                                         transition: background 0.3s ease;
-                                       "
-                                       onmouseover="this.style.background='linear-gradient(135deg,#5c6bc0,#3f51b5)'"
-                                       onmouseout="this.style.background='linear-gradient(135deg,#3f51b5,#5c6bc0)'">
-                                       캡슐 열어보러 가기
-                                    </a>
-
-                                    <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
-                                      그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
-                                      - Lettie 팀 드림
-                                    </p>
-                              </div>
+                                </div>
                             </div>
                             """.trimIndent()
 
