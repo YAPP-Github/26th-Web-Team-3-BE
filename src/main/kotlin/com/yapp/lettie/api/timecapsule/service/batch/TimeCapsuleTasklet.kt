@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.service.batch
 
 import com.yapp.lettie.api.email.service.EmailService
+import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import mu.KotlinLogging
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 class TimeCapsuleTasklet(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
+    private val letterReader: LetterReader,
     private val emailService: EmailService,
     @Value("\${lettie.domain.name}") private val domainName: String,
 ) : Tasklet {
@@ -33,8 +35,15 @@ class TimeCapsuleTasklet(
 
         val capsuleIds = capsulesToOpen.map { it.id }
         val emailMap = timeCapsuleUserReader.getEmailsGroupByCapsuleId(capsuleIds)
+        val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
         capsulesToOpen.forEach { capsule ->
+            val letterCount = letterCountMap.getOrDefault(capsule.id, 0)
+            if (letterCount == 0) {
+                logger.info { "Capsule(${capsule.id}) 편지 개수 0 → 메일 전송 스킵" }
+                return@forEach
+            }
+
             val recipients = emailMap[capsule.id] ?: emptyList()
             try {
                 emailService.sendTimeCapsuleOpenedEmail(
