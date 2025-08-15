@@ -13,12 +13,11 @@ class UserReader(
     private val userRepository: UserRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getById(id: Long): User {
-        return findById(id) ?: throw ApiErrorException(ErrorMessages.USER_NOT_FOUND)
-    }
+    fun getById(id: Long): User = findById(id) ?: throw ApiErrorException(ErrorMessages.USER_NOT_FOUND)
 
     @Transactional(readOnly = true)
-    fun findById(id: Long): User? {
-        return userRepository.findByIdOrNull(id)
-    }
+    fun findById(id: Long): User? = userRepository.findByIdOrNull(id)
+
+    @Transactional(readOnly = true)
+    fun getUserTotalCount(): Long = userRepository.count()
 }
