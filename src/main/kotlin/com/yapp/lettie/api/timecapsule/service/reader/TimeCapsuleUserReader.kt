@@ -37,6 +37,12 @@ class TimeCapsuleUserReader(
             .groupBy({ it.timeCapsule.id }, { it.user.email })
 
     @Transactional(readOnly = true)
+    fun getCapsuleUserNamesGroupByCapsuleId(capsuleId: List<Long>): Map<Long, List<String>> =
+        timeCapsuleUserRepository
+            .findAllByCapsuleIdsFetchUser(capsuleId)
+            .groupBy({ it.timeCapsule.id }, { it.user.nickname ?: "" })
+
+    @Transactional(readOnly = true)
     fun hasUserJoinedCapsule(
         userId: Long,
         capsuleId: Long,

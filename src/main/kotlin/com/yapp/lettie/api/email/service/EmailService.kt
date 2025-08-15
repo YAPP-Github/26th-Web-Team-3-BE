@@ -32,6 +32,7 @@ class EmailService(
 
     fun sendTimeCapsuleOpenedEmail(
         recipients: List<String>,
+        recipientNames: List<String>,
         capsuleTitle: String,
         openDate: LocalDateTime,
         createdDate: LocalDateTime,
@@ -51,8 +52,8 @@ class EmailService(
                 else -> "${minutes}분"
             }
 
-        recipients.chunked(10).forEach { batch ->
-            batch.forEach { recipient ->
+        recipients.chunked(10).zip(recipientNames.chunked(10)).forEach { (batchRecipients, batchNames) ->
+            batchRecipients.zip(batchNames).forEach { (recipient, name) ->
                 ioScope.launch {
                     delay(100)
                     try {
@@ -60,7 +61,7 @@ class EmailService(
                         val helper = MimeMessageHelper(mimeMessage, true, "UTF-8")
 
                         helper.setTo(recipient)
-                        helper.setSubject("[LETTIE] 캡슐이 방금 열렸어요! - $capsuleTitle ")
+                        helper.setSubject("[LETTIE] ${name}님, 방금 캡슐이 열렸어요! - $capsuleTitle ")
 
                         val bannerCid = "logo-${UUID.randomUUID()}"
                         val bannerRes = ClassPathResource("email/email-banner.jpg")

@@ -30,11 +30,11 @@ class TimeCapsuleTasklet(
         val now = LocalDateTime.now().withSecond(0).withNano(0)
         val previousCheckTime = now.minusMinutes(CHECK_INTERVAL_MINUTES)
 
-        val capsulesToOpen =
-            timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
+        val capsulesToOpen = timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
 
         val capsuleIds = capsulesToOpen.map { it.id }
         val emailMap = timeCapsuleUserReader.getEmailsGroupByCapsuleId(capsuleIds)
+        val capsuleUserNameMap = timeCapsuleUserReader.getCapsuleUserNamesGroupByCapsuleId(capsuleIds)
         val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
         capsulesToOpen.forEach { capsule ->
@@ -45,9 +45,12 @@ class TimeCapsuleTasklet(
             }
 
             val recipients = emailMap[capsule.id] ?: emptyList()
+            val recipientNames = capsuleUserNameMap[capsule.id] ?: emptyList()
+
             try {
                 emailService.sendTimeCapsuleOpenedEmail(
                     recipients = recipients,
+                    recipientNames = recipientNames,
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
                     createdDate = capsule.createdAt,
