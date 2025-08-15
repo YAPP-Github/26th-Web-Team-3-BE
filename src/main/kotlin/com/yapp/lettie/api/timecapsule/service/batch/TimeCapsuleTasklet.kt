@@ -33,24 +33,24 @@ class TimeCapsuleTasklet(
         val capsulesToOpen = timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
 
         val capsuleIds = capsulesToOpen.map { it.id }
-        val emailMap = timeCapsuleUserReader.getEmailsGroupByCapsuleId(capsuleIds)
-        val capsuleUserNameMap = timeCapsuleUserReader.getCapsuleUserNamesGroupByCapsuleId(capsuleIds)
+        val recipientsByCapsule = timeCapsuleUserReader.getRecipientsGroupedByCapsuleId(capsuleIds)
         val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
         capsulesToOpen.forEach { capsule ->
+            val recipients =
+                recipientsByCapsule[capsule.id].orEmpty()
+                    .filter { it.email.isNotBlank() }
+
             val letterCount = letterCountMap.getOrDefault(capsule.id, 0)
             if (letterCount == 0) {
                 logger.info { "Capsule(${capsule.id}) 편지 개수 0 → 메일 전송 스킵" }
                 return@forEach
             }
 
-            val recipients = emailMap[capsule.id] ?: emptyList()
-            val recipientNames = capsuleUserNameMap[capsule.id] ?: emptyList()
-
             try {
                 emailService.sendTimeCapsuleOpenedEmail(
-                    recipients = recipients,
-                    recipientNames = recipientNames,
+                    recipients = recipients.map { it.email },
+                    recipientNames = recipients.map { it.name },
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
                     createdDate = capsule.createdAt,
