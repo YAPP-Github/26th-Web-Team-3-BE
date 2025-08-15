@@ -78,7 +78,7 @@ class EmailService(
 
                                     <!-- 내용 -->
                                     <div style="padding: 20px 32px; text-align: center;">
-                                        <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">$capsuleTitle 캡슐이 열렸어요!</h2>
+                                        <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">기다리던 타임캡슐이 열렸어요!</h2>
                                         <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
                                             <strong>$elapsedText</strong> 만에 열린 캡슐을 열어보러 갈까요?
                                         </p>
