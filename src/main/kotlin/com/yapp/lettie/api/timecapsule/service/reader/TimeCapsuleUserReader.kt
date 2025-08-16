@@ -1,8 +1,8 @@
 package com.yapp.lettie.api.timecapsule.service.reader
 
-import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
+import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleUserRepository
 import org.springframework.stereotype.Service
