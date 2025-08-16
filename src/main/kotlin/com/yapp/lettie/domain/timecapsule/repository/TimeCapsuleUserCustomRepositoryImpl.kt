@@ -6,9 +6,9 @@ import com.yapp.lettie.api.timecapsule.service.dto.RecipientRow
 import com.yapp.lettie.domain.timecapsule.entity.QTimeCapsuleUser
 import com.yapp.lettie.domain.user.entity.QUser
 
-class TimeCapsuleUserCustomerRepositoryImpl(
+class TimeCapsuleUserCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
-) : TimeCapsuleUserCustomerRepository {
+) : TimeCapsuleUserCustomRepository {
     override fun findRecipientsByCapsuleIds(capsuleIds: List<Long>): List<RecipientRow> {
         val timeCapsuleUser = QTimeCapsuleUser.timeCapsuleUser
         val user = QUser.user

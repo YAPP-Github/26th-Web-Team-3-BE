@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 
-interface TimeCapsuleCustomerRepository {
+interface TimeCapsuleCustomRepository {
     fun getTimeCapsulesByStatus(
         type: TimeCapsuleStatus?,
         sort: CapsuleSort,

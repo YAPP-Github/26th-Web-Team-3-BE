@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 interface TimeCapsuleRepository :
     JpaRepository<TimeCapsule, Long>,
-    TimeCapsuleCustomerRepository {
+    TimeCapsuleCustomRepository {
     @Query(
         """
     SELECT tc FROM TimeCapsule tc

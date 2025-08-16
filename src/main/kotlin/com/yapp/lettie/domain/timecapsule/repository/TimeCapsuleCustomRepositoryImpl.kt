@@ -22,9 +22,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import java.time.LocalDateTime
 
-class TimeCapsuleCustomerRepositoryImpl(
+class TimeCapsuleCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
-) : TimeCapsuleCustomerRepository {
+) : TimeCapsuleCustomRepository {
     @Suppress("ktlint:standard:no-consecutive-comments")
     override fun getTimeCapsulesByStatus(
         type: TimeCapsuleStatus?,

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long>, TimeCapsuleUserCustomerRepository {
+interface TimeCapsuleUserRepository : JpaRepository<TimeCapsuleUser, Long>, TimeCapsuleUserCustomRepository {
     fun findAllByTimeCapsuleId(timeCapsuleId: Long): List<TimeCapsuleUser>
 
     fun countByTimeCapsuleId(capsuleId: Long): Int
