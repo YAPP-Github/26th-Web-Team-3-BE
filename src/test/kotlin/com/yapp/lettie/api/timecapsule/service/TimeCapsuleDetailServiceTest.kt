@@ -555,7 +555,6 @@ class TimeCapsuleDetailServiceTest {
     @Test
     fun `내 캡슐 목록이 비어있을 때 빈 페이지가 반환된다`() {
         // given
-        val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         val userId = 1L
         val pageable = PageRequest.of(0, 2)
         val emptyPage = PageImpl<TimeCapsule>(emptyList(), pageable, 0)

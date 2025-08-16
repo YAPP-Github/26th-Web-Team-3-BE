@@ -22,9 +22,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import java.time.LocalDateTime
 
-class TimeCapsuleCustomerRepositoryImpl(
+class TimeCapsuleCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
-) : TimeCapsuleCustomerRepository {
+) : TimeCapsuleCustomRepository {
     @Suppress("ktlint:standard:no-consecutive-comments")
     override fun getTimeCapsulesByStatus(
         type: TimeCapsuleStatus?,
@@ -41,6 +41,7 @@ class TimeCapsuleCustomerRepositoryImpl(
                     timeCapsule.openAt.after(now)
                         .and(timeCapsule.closedAt.before(now)),
                 )
+
             TimeCapsuleStatus.WRITABLE -> builder.and(timeCapsule.closedAt.after(now))
             null -> {}
         }
@@ -82,7 +83,7 @@ class TimeCapsuleCustomerRepositoryImpl(
                 .on(letter.timeCapsule.id.eq(timeCapsule.id))
                 .where(
                     timeCapsule.title
-                        .contains(title)
+                        .containsIgnoreCase(title)
                         .and(timeCapsule.accessType.eq(accessType)),
                 ).groupBy(timeCapsule.id)
 
@@ -203,17 +204,17 @@ class TimeCapsuleCustomerRepositoryImpl(
                         .`when`(timeCapsule.openAt.after(now)).then(0)
                         .otherwise(1)
 
-                val diffExpr: NumberExpression<Long> =
+                val futureDiff: NumberExpression<Long> =
                     Expressions.numberTemplate(
                         Long::class.java,
-                        "timestampdiff(SECOND, {0}, {1})",
-                        now,
+                        "CASE WHEN {0} > {1} THEN timestampdiff(SECOND, {1}, {0}) END",
                         timeCapsule.openAt,
+                        now,
                     )
 
                 listOf(
                     groupExpr.asc(),
-                    diffExpr.asc(),
+                    futureDiff.asc(),
                     timeCapsule.openAt.desc(),
                 )
             }

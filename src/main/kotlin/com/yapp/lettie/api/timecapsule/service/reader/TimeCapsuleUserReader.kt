@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.service.reader
 
 import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
+import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleUserRepository
 import org.springframework.stereotype.Service
@@ -31,10 +32,11 @@ class TimeCapsuleUserReader(
             .map { it.user.email }
 
     @Transactional(readOnly = true)
-    fun getEmailsGroupByCapsuleId(capsuleIds: List<Long>): Map<Long, List<String>> =
-        timeCapsuleUserRepository
-            .findAllByCapsuleIdsFetchUser(capsuleIds)
-            .groupBy({ it.timeCapsule.id }, { it.user.email })
+    fun getRecipientsGroupedByCapsuleId(capsuleIds: List<Long>): Map<Long, List<RecipientRow>> {
+        return timeCapsuleUserRepository
+            .findRecipientsByCapsuleIds(capsuleIds)
+            .groupBy { it.capsuleId }
+    }
 
     @Transactional(readOnly = true)
     fun hasUserJoinedCapsule(

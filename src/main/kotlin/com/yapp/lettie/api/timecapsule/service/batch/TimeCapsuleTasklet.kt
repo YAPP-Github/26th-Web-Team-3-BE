@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.timecapsule.service.batch
 
 import com.yapp.lettie.api.email.service.EmailService
+import com.yapp.lettie.api.letter.service.reader.LetterReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import mu.KotlinLogging
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 class TimeCapsuleTasklet(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
+    private val letterReader: LetterReader,
     private val emailService: EmailService,
     @Value("\${lettie.domain.name}") private val domainName: String,
 ) : Tasklet {
@@ -28,20 +30,31 @@ class TimeCapsuleTasklet(
         val now = LocalDateTime.now().withSecond(0).withNano(0)
         val previousCheckTime = now.minusMinutes(CHECK_INTERVAL_MINUTES)
 
-        val capsulesToOpen =
-            timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
+        val capsulesToOpen = timeCapsuleReader.findCapsulesToOpen(previousCheckTime, now)
 
         val capsuleIds = capsulesToOpen.map { it.id }
-        val emailMap = timeCapsuleUserReader.getEmailsGroupByCapsuleId(capsuleIds)
+        val recipientsByCapsule = timeCapsuleUserReader.getRecipientsGroupedByCapsuleId(capsuleIds)
+        val letterCountMap = letterReader.getLetterCountMap(capsuleIds)
 
         capsulesToOpen.forEach { capsule ->
-            val recipients = emailMap[capsule.id] ?: emptyList()
+            val recipients =
+                recipientsByCapsule[capsule.id].orEmpty()
+                    .filter { it.email.isNotBlank() }
+
+            val letterCount = letterCountMap.getOrDefault(capsule.id, 0)
+            if (letterCount == 0) {
+                logger.info { "Capsule(${capsule.id}) 편지 개수 0 → 메일 전송 스킵" }
+                return@forEach
+            }
+
             try {
                 emailService.sendTimeCapsuleOpenedEmail(
-                    recipients = recipients,
+                    recipients = recipients.map { it.email },
+                    recipientNames = recipients.map { it.name },
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
-                    capsuleLink = generateCapsuleLink(capsule.inviteCode),
+                    createdDate = capsule.createdAt,
+                    capsuleLink = generateCapsuleLink(capsule.id, capsule.inviteCode),
                 )
                 logger.info { "Capsule(${capsule.id}) 오픈 처리 완료, 이메일 전송 완료 (${recipients.size}명)" }
             } catch (e: Exception) {
@@ -52,7 +65,10 @@ class TimeCapsuleTasklet(
         return RepeatStatus.FINISHED
     }
 
-    private fun generateCapsuleLink(inviteCode: String): String = "$domainName/capsules/$inviteCode"
+    private fun generateCapsuleLink(
+        id: Long,
+        inviteCode: String,
+    ): String = "$domainName/capsule-detail/$inviteCode/$id"
 
     companion object {
         private const val CHECK_INTERVAL_MINUTES = 5L
