@@ -16,7 +16,7 @@ FROM openjdk:17-jdk
 
 # 앱 경로를 변수로 설정 (두 번째 스테이지에서도 동일하게 유지)
 ARG APP_DIR=/home/app
-ARG SPRING_PROFILE=dev
+ARG SPRING_PROFILE=prod
 
 # 빌드 결과물 복사
 ARG JAR_FILE=build/libs/*.jar
