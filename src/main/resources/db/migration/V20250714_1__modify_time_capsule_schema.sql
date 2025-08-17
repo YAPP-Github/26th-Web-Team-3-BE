@@ -1,0 +1,3 @@
+ALTER TABLE time_capsule
+    MODIFY COLUMN subtitle VARCHAR(255) NULL,
+    MODIFY COLUMN closed_at DATE NOT NULL;

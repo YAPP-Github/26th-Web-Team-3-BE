@@ -1,0 +1,9 @@
+RENAME TABLE batch_job_instance TO BATCH_JOB_INSTANCE;
+RENAME TABLE batch_job_execution TO BATCH_JOB_EXECUTION;
+RENAME TABLE batch_job_execution_params TO BATCH_JOB_EXECUTION_PARAMS;
+RENAME TABLE batch_step_execution TO BATCH_STEP_EXECUTION;
+RENAME TABLE batch_step_execution_context TO BATCH_STEP_EXECUTION_CONTEXT;
+RENAME TABLE batch_job_execution_context TO BATCH_JOB_EXECUTION_CONTEXT;
+RENAME TABLE batch_step_execution_seq TO BATCH_STEP_EXECUTION_SEQ;
+RENAME TABLE batch_job_execution_seq TO BATCH_JOB_EXECUTION_SEQ;
+RENAME TABLE batch_job_seq TO BATCH_JOB_SEQ;

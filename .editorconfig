@@ -15,3 +15,7 @@ disabled_rules=no-wildcard-imports,comment-spacing
 ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**
 ij_kotlin_package_entry_layout = *,java,javax,kotlin
 ij_kotlin_allow_trailing_comma = true
+
+[*.yml]
+indent_style = space
+indent_size = 2

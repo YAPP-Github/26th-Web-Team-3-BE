@@ -1,0 +1,32 @@
+enable:
+  issues: false
+  prs: true
+
+comments:
+  prs: |
+    Labeler has applied any labels matching special text in your title and description.
+
+labels:
+  '🐞 bug':
+    include:
+      - '\bfix\b'
+      - '\bbug\b'
+  '🧹 chore':
+    include:
+      - '\bchore\b'
+  '📝 docs':
+    include:
+      - '\bdocs?\b'
+  '🔥 feat':
+    include:
+      - '\bfeat\b'
+      - '\bfeature\b'
+  '🏘️ infra':
+    include:
+      - '\binfra\b'
+  '🪜 refactor':
+    include:
+      - '\brefactor\b'
+  '🛡️ test':
+    include:
+      - '\btest\b'

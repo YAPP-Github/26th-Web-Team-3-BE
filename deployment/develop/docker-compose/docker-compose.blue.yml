@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  blue:
+    image: jhzlo/yapp:dev
+    container_name: blue
+    ports:
+      - "8081:8080"
+    env_file:
+      - ../.env.dev
+    environment:
+      - TZ=Asia/Seoul
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: always
+    networks:
+      - docker_compose_backend
+    volumes:
+      - /var/logs/dev:/logs/dev
+
+networks:
+  docker_compose_backend:
+    external: true

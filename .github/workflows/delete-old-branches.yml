@@ -1,0 +1,73 @@
+name: Delete Old Branches
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # 매일 자정(KST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  delete_old_branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 전체 브랜치 히스토리를 가져와야 커밋 시간 확인 가능
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Get branches and delete those older than 7 days
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching all remote branches..."
+          git fetch --all --prune
+
+          echo "Checking for branches older than 7 days..."
+          today=$(date +%s)
+          protected_branches="main develop"
+          deleted=()
+
+          for branch in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            # origin/HEAD (심볼릭 링크) 제외
+            if [[ "$branch" == "origin/HEAD" ]] || [[ "$branch" == "origin" ]]; then
+              continue
+            fi
+
+            branch_name=${branch#origin/}
+
+            if echo "$protected_branches" | grep -qw "$branch_name"; then
+              continue
+            fi
+
+            if ! last_commit=$(git log -1 --format=%ct "origin/$branch_name" 2>/dev/null); then
+              echo "Could not get last commit for $branch_name, skipping."
+              continue
+            fi
+
+            age=$(( (today - last_commit) / 86400 ))
+
+            if [ "$age" -ge 7 ]; then
+              # URL-safe 인코딩 (e.g., feature/#10 → feature%2F%2310)
+              encoded_branch=$(node -p "encodeURIComponent('$branch_name')")
+
+              echo "Deleting branch '$branch_name' (last updated $age days ago)"
+              gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$encoded_branch"
+              deleted+=("$branch_name")
+            fi
+          done
+
+          echo "Deleted branches:"
+          for b in "${deleted[@]}"; do
+            echo "  - $b"
+          done
+
+      - name: Done
+        run: echo "Old branches cleanup completed!"
