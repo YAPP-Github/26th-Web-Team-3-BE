@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
 
-    <property name="APP_NAME" value="${spring.application.name}"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -52,7 +52,9 @@
             <file>${LOG_FILE_PATH_PROD}/${LOG_FILE_NAME_PROD}.json.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_FILE_PATH_PROD}/${LOG_FILE_NAME_PROD}.%d{yyyy-MM-dd}.json.log</fileNamePattern>
-                <maxHistory>60</maxHistory> <totalSizeCap>2GB</totalSizeCap> </rollingPolicy>
+                <maxHistory>60</maxHistory>
+                <totalSizeCap>2GB</totalSizeCap>
+            </rollingPolicy>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"application":"${APP_NAME}", "environment":"prod"}</customFields>
                 <includeMdcKeyName>requestId</includeMdcKeyName>
