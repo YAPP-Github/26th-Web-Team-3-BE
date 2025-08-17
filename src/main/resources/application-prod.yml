@@ -14,6 +14,12 @@ spring:
         format_sql: false
         default_batch_fetch_size: 100
 
+  flyway:
+    enabled: true
+    baseline-version: 0
+    locations:
+      - classpath:db/migration
+
   data:
     redis:
       host: ${REDIS_HOST}
@@ -25,6 +31,21 @@ minio:
   accessKey: ${MINIO_ACCESS_KEY}
   secretKey: ${MINIO_SECRET_KEY}
   bucketName: ${MINIO_BUCKET_NAME}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+      base-path: ${MANAGEMENT_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 cookie:
   secure: true
