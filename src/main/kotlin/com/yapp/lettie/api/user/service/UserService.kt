@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.user.service
 
+import com.yapp.lettie.api.user.service.dto.UserCountDto
 import com.yapp.lettie.api.user.service.dto.UserDto
 import com.yapp.lettie.api.user.service.reader.UserReader
 import org.springframework.stereotype.Service
@@ -12,4 +13,6 @@ class UserService(
         val user = userReader.getById(userId)
         return UserDto.of(user)
     }
+
+    fun getUserTotalCount(): UserCountDto = UserCountDto.from(userReader.getUserTotalCount())
 }

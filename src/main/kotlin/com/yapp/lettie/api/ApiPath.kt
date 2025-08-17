@@ -8,6 +8,10 @@ enum class ApiPath(
     val method: HttpMethod,
     val authType: AuthType,
 ) {
+    // 유저 조회 관련 API
+    USER_INFO("/api/v1/users/my-info", HttpMethod.GET, AuthType.REQUIRED),
+    USER_COUNT("/api/v1/users/total-count", HttpMethod.GET, AuthType.NONE),
+
     // 인증 관련 API (로그인 불필요)
     OAUTH_KAKAO("/api/v1/auth/oauth/kakao", HttpMethod.GET, AuthType.NONE),
     OAUTH_KAKAO_LOGIN("/api/v1/auth/code/kakao", HttpMethod.POST, AuthType.NONE),
