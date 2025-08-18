@@ -49,9 +49,8 @@ class AuthService(
     fun googleLogin(
         authorizationCode: String,
         redirectUrl: String,
-        state: String?,
     ): JwtTokenDto {
-        val authUserInfoDto = googleClient.login(authorizationCode, redirectUrl, state)
+        val authUserInfoDto = googleClient.login(authorizationCode, redirectUrl)
 
         val user = userLoginProcessor.loginOrRegister(authUserInfoDto, OAuthProvider.GOOGLE)
         val token: String = jwtComponent.create(user.id, user.role.key)

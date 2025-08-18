@@ -65,7 +65,7 @@ class AuthApiController(
             throw ApiErrorException(ErrorMessages.REDIRECT_URL_REQUIRED)
         }
 
-        val jwtTokenDto = authService.googleLogin(request.authorizationCode, request.redirectUrl, request.state)
+        val jwtTokenDto = authService.googleLogin(request.authorizationCode, request.redirectUrl)
         cookieComponent.setAccessTokenCookie(jwtTokenDto, response)
 
         return ResponseEntity.ok().body(

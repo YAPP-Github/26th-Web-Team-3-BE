@@ -20,7 +20,6 @@ class GoogleClient(
     fun login(
         authorizationCode: String,
         redirectUrl: String,
-        state: String? = null,
     ): AuthUserInfoDto {
         val tokenRequestParams =
             LinkedMultiValueMap<String, String>().apply {
@@ -29,7 +28,6 @@ class GoogleClient(
                 add("client_secret", authoGoogleClient.clientSecret)
                 add("redirect_uri", redirectUrl)
                 add("code", URLDecoder.decode(authorizationCode, StandardCharsets.UTF_8))
-                state?.let { add("state", it) }
             }
 
         val tokenResponse =
