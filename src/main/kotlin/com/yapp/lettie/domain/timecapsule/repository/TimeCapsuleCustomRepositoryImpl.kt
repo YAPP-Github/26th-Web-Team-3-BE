@@ -17,6 +17,7 @@ import com.yapp.lettie.domain.timecapsule.entity.vo.CapsuleSort
 import com.yapp.lettie.domain.timecapsule.entity.vo.MyCapsuleFilter
 import com.yapp.lettie.domain.timecapsule.entity.vo.SortContext
 import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleStatus
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
@@ -135,14 +136,16 @@ class TimeCapsuleCustomRepositoryImpl(
                         and(like.user.id.eq(userId))
 
                     MyCapsuleFilter.PARTICIPATING ->
-                        and(participant.user.id.eq(userId))
+                        and(participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)))
 
                     MyCapsuleFilter.ALL ->
                         and(
-                            timeCapsule.creator.id.eq(userId)
-                                .or(like.user.id.eq(userId))
-                                .or(participant.user.id.eq(userId)),
+                            timeCapsule.creator.id.eq(userId),
                         )
+                            .or(like.user.id.eq(userId))
+                            .or(
+                                participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)),
+                            )
                 }
             }
 
