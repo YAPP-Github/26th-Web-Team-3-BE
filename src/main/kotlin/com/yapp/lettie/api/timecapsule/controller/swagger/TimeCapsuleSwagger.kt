@@ -47,4 +47,13 @@ interface TimeCapsuleSwagger {
         userInfo: UserInfoPayload,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>>
+
+    @Operation(
+        summary = "타임캡슐 나가기",
+        description = "참여 중인 타임캡슐에서 나갑니다. 캡슐에서 나가면 재참여는 불가능합니다.",
+    )
+    fun leave(
+        userInfo: UserInfoPayload,
+        capsuleId: Long,
+    ): ResponseEntity<ApiResponse<Boolean>>
 }
