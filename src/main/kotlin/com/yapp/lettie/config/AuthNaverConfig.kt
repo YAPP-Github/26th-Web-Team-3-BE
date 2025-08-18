@@ -28,10 +28,17 @@ class AuthNaverConfig {
     fun oauthUrl(
         url: String,
         state: String?,
-    ): String =
-        authorizationUri +
-            "?client_id=$clientId" +
-            "&redirect_uri=$url" +
-            "&response_type=code" +
-            "&state=$state"
+    ): String {
+        val baseUrl =
+            authorizationUri +
+                "?client_id=$clientId" +
+                "&redirect_uri=$url" +
+                "&response_type=code"
+
+        return if (state != null) {
+            "$baseUrl&state=$state"
+        } else {
+            baseUrl
+        }
+    }
 }

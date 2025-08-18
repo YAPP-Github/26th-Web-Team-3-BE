@@ -24,7 +24,7 @@ class NaverClient(
                 add("grant_type", authNaverClient.grantType)
                 add("client_id", authNaverClient.clientId)
                 add("client_secret", authNaverClient.clientSecret)
-                add("state", state)
+                state?.let { add("state", it) }
                 add("code", authorizationCode)
             }
 

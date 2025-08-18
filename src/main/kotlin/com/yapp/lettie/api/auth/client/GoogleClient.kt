@@ -29,7 +29,7 @@ class GoogleClient(
                 add("client_secret", authoGoogleClient.clientSecret)
                 add("redirect_uri", redirectUrl)
                 add("code", URLDecoder.decode(authorizationCode, StandardCharsets.UTF_8))
-                add("state", state)
+                state?.let { add("state", it) }
             }
 
         val tokenResponse =

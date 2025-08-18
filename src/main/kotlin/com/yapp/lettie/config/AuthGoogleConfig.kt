@@ -31,11 +31,18 @@ class AuthGoogleConfig {
     fun oauthUrl(
         url: String,
         state: String?,
-    ): String =
-        authorizationUri +
-            "?client_id=$clientId" +
-            "&redirect_uri=$url" +
-            "&state=$state" +
-            "&response_type=code" +
-            "&scope=${scope.replace(",", "%20")}"
+    ): String {
+        val baseUrl =
+            authorizationUri +
+                "?client_id=$clientId" +
+                "&redirect_uri=$url" +
+                "&response_type=code" +
+                "&scope=${scope.replace(",", "%20")}"
+
+        return if (state != null) {
+            "$baseUrl&state=$state"
+        } else {
+            baseUrl
+        }
+    }
 }
