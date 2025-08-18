@@ -29,6 +29,8 @@ interface AuthSwagger {
     fun googleAuth(
         @Schema(description = "구글 로그인 후 리다이렉트될 URL (URL 인코딩 필요)")
         redirectUrl: String,
+        @Schema(description = "구글 로그인 후 상태값 (선택사항)", example = "state")
+        state: String? = null,
     ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(
@@ -44,6 +46,8 @@ interface AuthSwagger {
     fun naverAuth(
         @Schema(description = "네이버 로그인 후 리다이렉트될 URL (URL 인코딩 필요)")
         redirectUrl: String,
+        @Schema(description = "네이버 로그인 후 상태값 (선택사항)", example = "state")
+        state: String? = null,
     ): ResponseEntity<ApiResponse<OAuthUrlResponse>>
 
     @Operation(

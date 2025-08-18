@@ -15,13 +15,16 @@ class NaverClient(
     private val authNaverClient: AuthNaverConfig,
     private val restClientUtil: RestClientUtil,
 ) {
-    fun login(authorizationCode: String): AuthUserInfoDto {
+    fun login(
+        authorizationCode: String,
+        state: String?,
+    ): AuthUserInfoDto {
         val tokenRequestParams =
             LinkedMultiValueMap<String, String>().apply {
                 add("grant_type", authNaverClient.grantType)
                 add("client_id", authNaverClient.clientId)
                 add("client_secret", authNaverClient.clientSecret)
-                add("state", authNaverClient.state)
+                add("state", state)
                 add("code", authorizationCode)
             }
 

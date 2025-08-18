@@ -24,9 +24,15 @@ class AuthService(
 ) {
     fun getKakaoLoginUrl(url: String): String = authKakaoConfig.oauthUrl(url)
 
-    fun getGoogleLoginUrl(url: String): String = authGoogleConfig.oauthUrl(url)
+    fun getGoogleLoginUrl(
+        url: String,
+        state: String?,
+    ): String = authGoogleConfig.oauthUrl(url, state)
 
-    fun getNaverLoginUrl(url: String): String = authNaverConfig.oauthUrl(url)
+    fun getNaverLoginUrl(
+        url: String,
+        state: String?,
+    ): String = authNaverConfig.oauthUrl(url, state)
 
     fun kakaoLogin(
         authorizationCode: String,
@@ -43,8 +49,9 @@ class AuthService(
     fun googleLogin(
         authorizationCode: String,
         redirectUrl: String,
+        state: String?,
     ): JwtTokenDto {
-        val authUserInfoDto = googleClient.login(authorizationCode, redirectUrl)
+        val authUserInfoDto = googleClient.login(authorizationCode, redirectUrl, state)
 
         val user = userLoginProcessor.loginOrRegister(authUserInfoDto, OAuthProvider.GOOGLE)
         val token: String = jwtComponent.create(user.id, user.role.key)
@@ -52,8 +59,11 @@ class AuthService(
         return JwtTokenDto.of(token, user)
     }
 
-    fun naverLogin(authorizationCode: String): JwtTokenDto {
-        val authUserInfoDto = naverClient.login(authorizationCode)
+    fun naverLogin(
+        authorizationCode: String,
+        state: String?,
+    ): JwtTokenDto {
+        val authUserInfoDto = naverClient.login(authorizationCode, state)
 
         val user = userLoginProcessor.loginOrRegister(authUserInfoDto, OAuthProvider.NAVER)
         val token: String = jwtComponent.create(user.id, user.role.key)

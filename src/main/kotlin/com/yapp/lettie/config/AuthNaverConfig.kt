@@ -23,12 +23,12 @@ class AuthNaverConfig {
     @Value("\${oauth.naver.user-info-uri}")
     lateinit var userInfoUri: String
 
-    @Value("\${oauth.naver.state}")
-    lateinit var state: String
-
     var grantType = "authorization_code"
 
-    fun oauthUrl(url: String): String =
+    fun oauthUrl(
+        url: String,
+        state: String?,
+    ): String =
         authorizationUri +
             "?client_id=$clientId" +
             "&redirect_uri=$url" +

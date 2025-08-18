@@ -28,10 +28,14 @@ class AuthGoogleConfig {
 
     var grantType = "authorization_code"
 
-    fun oauthUrl(url: String): String =
+    fun oauthUrl(
+        url: String,
+        state: String?,
+    ): String =
         authorizationUri +
             "?client_id=$clientId" +
             "&redirect_uri=$url" +
+            "&state=$state" +
             "&response_type=code" +
             "&scope=${scope.replace(",", "%20")}"
 }

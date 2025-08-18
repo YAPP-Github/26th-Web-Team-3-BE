@@ -7,4 +7,6 @@ data class AuthorizationRequest(
     val authorizationCode: String,
     @Schema(description = "redirect URL (URL 인코딩 X)")
     val redirectUrl: String?,
+    @Schema(description = "구글 로그인 후 상태값 (선택사항)", example = "state")
+    val state: String? = null,
 )
