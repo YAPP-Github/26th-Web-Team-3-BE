@@ -101,6 +101,7 @@ class TimeCapsuleDetailServiceTest {
         val timeCapsuleUser =
             mockk<TimeCapsuleUser> {
                 every { isOpened } returns false
+                every { isActive } returns true
                 every { updateOpened() } returns Unit
             }
 
@@ -167,6 +168,7 @@ class TimeCapsuleDetailServiceTest {
         val timeCapsuleUser =
             mockk<TimeCapsuleUser> {
                 every { isOpened } returns true // 이미 방문함
+                every { isActive } returns true
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
@@ -269,6 +271,7 @@ class TimeCapsuleDetailServiceTest {
         val timeCapsuleUser =
             mockk<TimeCapsuleUser> {
                 every { isOpened } returns true
+                every { isActive } returns true
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
@@ -331,6 +334,7 @@ class TimeCapsuleDetailServiceTest {
         val timeCapsuleUser =
             mockk<TimeCapsuleUser> {
                 every { isOpened } returns true
+                every { isActive } returns true
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
@@ -401,6 +405,7 @@ class TimeCapsuleDetailServiceTest {
         val timeCapsuleUser =
             mockk<TimeCapsuleUser> {
                 every { isOpened } returns true
+                every { isActive } returns true
             }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
