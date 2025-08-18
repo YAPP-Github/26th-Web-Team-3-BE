@@ -15,6 +15,7 @@ import com.yapp.lettie.domain.file.entity.LetterFile
 import com.yapp.lettie.domain.letter.entity.Letter
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.user.UserRole
 import com.yapp.lettie.domain.user.entity.User
 import io.mockk.every
@@ -74,6 +75,7 @@ class LetterServiceTest {
 
         every { timeCapsuleReader.getById(capsuleId) } returns capsule
         every { userReader.getById(userId) } returns user
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns null
         every { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) } returns true
         every { letterWriter.save(any()) } returns savedLetter
         every { fileWriter.save(any()) } returns savedFile
@@ -83,7 +85,8 @@ class LetterServiceTest {
 
         // then
         assertEquals(100L, result)
-        verify { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) }
+        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) }
     }
 
     @Test
@@ -102,10 +105,7 @@ class LetterServiceTest {
                 objectKey = null,
             )
 
-        val user =
-            mockk<User> {
-                every { id } returns userId
-            }
+        val user = mockk<User> { every { id } returns userId }
 
         val timeCapsuleUser = mockk<TimeCapsuleUser>(relaxed = true)
         every { timeCapsuleUser.user } returns user
@@ -115,15 +115,13 @@ class LetterServiceTest {
         every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
         every { capsule.id } returns capsuleId
 
-        val savedLetter =
-            mockk<Letter>(relaxed = true) {
-                every { id } returns 100L
-            }
+        val savedLetter = mockk<Letter>(relaxed = true) { every { id } returns 100L }
 
         every { timeCapsuleReader.getById(capsuleId) } returns capsule
         every { userReader.getById(userId) } returns user
-        every { letterWriter.save(any()) } returns savedLetter
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns null
         every { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) } returns true
+        every { letterWriter.save(any()) } returns savedLetter
 
         // when
         val result = letterService.writeLetter(userId, payload)
@@ -132,6 +130,8 @@ class LetterServiceTest {
         assertEquals(100L, result)
         verify(exactly = 1) { timeCapsuleReader.getById(capsuleId) }
         verify(exactly = 1) { userReader.getById(userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) }
         verify(exactly = 1) { letterWriter.save(any()) }
         verify(exactly = 0) { fileWriter.save(any()) }
         verify(exactly = 0) { savedLetter.addFile(any()) }
@@ -175,6 +175,46 @@ class LetterServiceTest {
         assertEquals(ErrorMessages.CLOSED_TIME_CAPSULE.message, exception.error.message)
         verify(exactly = 1) { timeCapsuleReader.getById(capsuleId) }
         verify(exactly = 1) { userReader.getById(userId) }
+        verify(exactly = 0) { letterWriter.save(any()) }
+        verify(exactly = 0) { fileWriter.save(any()) }
+    }
+
+    @Test
+    fun `나간 사용자가 편지 작성을 시도하면 예외를 발생시킨다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 1L
+        val payload =
+            CreateLetterPayload(
+                capsuleId = capsuleId,
+                content = "테스트 편지 내용",
+                from = "테스트 발신자",
+                objectKey = null,
+            )
+
+        val user = mockk<User> { every { id } returns userId }
+        val capsule = mockk<TimeCapsule> { every { isClosed(any()) } returns false }
+
+        val leftUser =
+            mockk<TimeCapsuleUser> {
+                every { status } returns TimeCapsuleUserStatus.LEFT
+            }
+
+        every { timeCapsuleReader.getById(capsuleId) } returns capsule
+        every { userReader.getById(userId) } returns user
+        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns leftUser
+
+        // when & then
+        val exception =
+            assertThrows(ApiErrorException::class.java) {
+                letterService.writeLetter(userId, payload)
+            }
+
+        assertEquals(ErrorMessages.ALREADY_LEFT_CAPSULE.message, exception.error.message)
+        verify(exactly = 1) { timeCapsuleReader.getById(capsuleId) }
+        verify(exactly = 1) { userReader.getById(userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 0) { timeCapsuleUserReader.hasUserJoinedCapsule(any(), any()) }
         verify(exactly = 0) { letterWriter.save(any()) }
         verify(exactly = 0) { fileWriter.save(any()) }
     }
