@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import com.yapp.lettie.domain.timecapsule.entity.QTimeCapsuleUser
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.user.entity.QUser
 
 class TimeCapsuleUserCustomRepositoryImpl(
@@ -24,7 +25,10 @@ class TimeCapsuleUserCustomRepositoryImpl(
             )
             .from(timeCapsuleUser)
             .join(timeCapsuleUser.user, user)
-            .where(timeCapsuleUser.timeCapsule.id.`in`(capsuleIds))
+            .where(
+                timeCapsuleUser.timeCapsule.id.`in`(capsuleIds)
+                    .and(timeCapsuleUser.status.eq(TimeCapsuleUserStatus.ACTIVE)),
+            )
             .fetch()
     }
 }
