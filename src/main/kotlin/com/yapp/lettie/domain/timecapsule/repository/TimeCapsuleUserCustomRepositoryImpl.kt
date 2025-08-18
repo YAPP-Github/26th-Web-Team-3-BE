@@ -11,6 +11,8 @@ class TimeCapsuleUserCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : TimeCapsuleUserCustomRepository {
     override fun findRecipientsByCapsuleIds(capsuleIds: List<Long>): List<RecipientRow> {
+        if (capsuleIds.isEmpty()) return emptyList()
+
         val timeCapsuleUser = QTimeCapsuleUser.timeCapsuleUser
         val user = QUser.user
 

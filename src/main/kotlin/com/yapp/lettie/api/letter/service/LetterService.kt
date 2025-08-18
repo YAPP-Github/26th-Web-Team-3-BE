@@ -118,7 +118,7 @@ class LetterService(
         userId: Long,
         capsuleId: Long,
     ) {
-        val timeCapsuleUser = timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId)
+        val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
         if (timeCapsuleUser != null && timeCapsuleUser.status == TimeCapsuleUserStatus.LEFT) {
             throw ApiErrorException(ErrorMessages.ALREADY_LEFT_CAPSULE)
         }

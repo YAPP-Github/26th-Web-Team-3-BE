@@ -75,7 +75,7 @@ class LetterServiceTest {
 
         every { timeCapsuleReader.getById(capsuleId) } returns capsule
         every { userReader.getById(userId) } returns user
-        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns null
+        every { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) } returns null
         every { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) } returns true
         every { letterWriter.save(any()) } returns savedLetter
         every { fileWriter.save(any()) } returns savedFile
@@ -85,7 +85,7 @@ class LetterServiceTest {
 
         // then
         assertEquals(100L, result)
-        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) }
         verify(exactly = 1) { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) }
     }
 
@@ -119,7 +119,7 @@ class LetterServiceTest {
 
         every { timeCapsuleReader.getById(capsuleId) } returns capsule
         every { userReader.getById(userId) } returns user
-        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns null
+        every { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) } returns null
         every { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) } returns true
         every { letterWriter.save(any()) } returns savedLetter
 
@@ -130,7 +130,7 @@ class LetterServiceTest {
         assertEquals(100L, result)
         verify(exactly = 1) { timeCapsuleReader.getById(capsuleId) }
         verify(exactly = 1) { userReader.getById(userId) }
-        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) }
         verify(exactly = 1) { timeCapsuleUserReader.hasUserJoinedCapsule(userId, capsuleId) }
         verify(exactly = 1) { letterWriter.save(any()) }
         verify(exactly = 0) { fileWriter.save(any()) }
@@ -202,7 +202,7 @@ class LetterServiceTest {
 
         every { timeCapsuleReader.getById(capsuleId) } returns capsule
         every { userReader.getById(userId) } returns user
-        every { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) } returns leftUser
+        every { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) } returns leftUser
 
         // when & then
         val exception =
@@ -213,7 +213,7 @@ class LetterServiceTest {
         assertEquals(ErrorMessages.ALREADY_LEFT_CAPSULE.message, exception.error.message)
         verify(exactly = 1) { timeCapsuleReader.getById(capsuleId) }
         verify(exactly = 1) { userReader.getById(userId) }
-        verify(exactly = 1) { timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId) }
+        verify(exactly = 1) { timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId) }
         verify(exactly = 0) { timeCapsuleUserReader.hasUserJoinedCapsule(any(), any()) }
         verify(exactly = 0) { letterWriter.save(any()) }
         verify(exactly = 0) { fileWriter.save(any()) }

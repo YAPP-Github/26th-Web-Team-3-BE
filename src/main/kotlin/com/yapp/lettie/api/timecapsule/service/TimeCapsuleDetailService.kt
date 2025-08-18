@@ -46,7 +46,7 @@ class TimeCapsuleDetailService(
 
         val (isFirstOpen, isMine, isJoined) =
             if (userId != null) {
-                val timeCapsuleUser = timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId)
+                val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
                 val firstOpen = timeCapsuleUser?.let { !it.isOpened } ?: false
                 if (firstOpen && timeCapsuleUser != null) {
                     timeCapsuleUser.updateOpened()
