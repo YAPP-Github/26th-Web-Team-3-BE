@@ -4,6 +4,7 @@ import com.yapp.lettie.common.error.ErrorMessages
 import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.timecapsule.repository.TimeCapsuleUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,23 +14,18 @@ class TimeCapsuleUserReader(
     private val timeCapsuleUserRepository: TimeCapsuleUserRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getParticipantCount(capsuleId: Long): Int = timeCapsuleUserRepository.countByTimeCapsuleId(capsuleId)
+    fun getParticipantCount(capsuleId: Long): Int =
+        timeCapsuleUserRepository.countByTimeCapsuleIdAndStatus(capsuleId, TimeCapsuleUserStatus.ACTIVE)
 
     @Transactional(readOnly = true)
     fun getParticipantCountMap(capsuleIds: List<Long>): Map<Long, Int> =
         timeCapsuleUserRepository
-            .getCountGroupedByCapsuleIds(capsuleIds)
+            .getCountGroupedByCapsuleIdsAndStatus(capsuleIds, TimeCapsuleUserStatus.ACTIVE)
             .associate { row ->
                 val capsuleId = row[0] as Long
                 val count = (row[1] as Long).toInt()
                 capsuleId to count
             }
-
-    @Transactional(readOnly = true)
-    fun findEmailsByCapsuleId(capsuleId: Long): List<String> =
-        timeCapsuleUserRepository
-            .findAllByTimeCapsuleId(capsuleId)
-            .map { it.user.email }
 
     @Transactional(readOnly = true)
     fun getRecipientsGroupedByCapsuleId(capsuleIds: List<Long>): Map<Long, List<RecipientRow>> {
@@ -42,7 +38,12 @@ class TimeCapsuleUserReader(
     fun hasUserJoinedCapsule(
         userId: Long,
         capsuleId: Long,
-    ): Boolean = timeCapsuleUserRepository.existsByUserIdAndTimeCapsuleId(userId, capsuleId)
+    ): Boolean =
+        timeCapsuleUserRepository.existsByUserIdAndTimeCapsuleIdAndStatus(
+            userId,
+            capsuleId,
+            TimeCapsuleUserStatus.ACTIVE,
+        )
 
     @Transactional(readOnly = true)
     fun getTimeCapsuleUser(

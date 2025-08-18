@@ -32,6 +32,8 @@ enum class ErrorMessages(
     NOT_JOINED_TIME_CAPSULE(ExtendedHttpStatus.FORBIDDEN, 4_006, "타임캡슐에 참여하지 않았습니다."),
     INVALID_OPEN_AT(ExtendedHttpStatus.BAD_REQUEST, 4_007, "오픈 날짜가 현재 시간 이전입니다."),
     INVALID_CLOSED_AT(ExtendedHttpStatus.BAD_REQUEST, 4_008, "작성 마감 날짜가 오픈 날짜 이후입니다."),
+    NOT_JOINED_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_009, "참여하지 않은 캡슐입니다."),
+    ALREADY_LEFT_CAPSULE(ExtendedHttpStatus.BAD_REQUEST, 4_010, "이미 나간 캡슐입니다."),
 
     // file
     CAN_NOT_GET_PRESIGNED_URL(ExtendedHttpStatus.INTERNAL_SERVER_ERROR, 5_001, "Presigned URL을 가져올 수 없습니다."),
