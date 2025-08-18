@@ -41,12 +41,8 @@ class TimeCapsuleService(
         }
 
         val capsule = TimeCapsule.of(user, generateInviteCode(), payload)
-        val timeCapsuleUser = TimeCapsuleUser.of(user, capsule)
-
-        capsule.addUser(timeCapsuleUser)
-        user.addTimeCapsuleUser(timeCapsuleUser)
-
         val savedCapsule = timeCapsuleWriter.save(capsule)
+
         return CreateTimeCapsuleDto.of(
             id = savedCapsule.id,
             inviteCode = savedCapsule.inviteCode,
@@ -65,7 +61,7 @@ class TimeCapsuleService(
             throw ApiErrorException(ErrorMessages.CLOSED_TIME_CAPSULE)
         }
 
-        if (capsule.timeCapsuleUsers.any { it.user.id == user.id }) {
+        if (capsule.timeCapsuleUsers.any { it.user.id == user.id && it.isActive }) {
             throw ApiErrorException(ErrorMessages.ALREADY_JOINED)
         }
 
@@ -102,6 +98,21 @@ class TimeCapsuleService(
             existing.isLiked = false
             timeCapsuleLikeWriter.save(existing)
         }
+    }
+
+    @Transactional
+    fun leaveTimeCapsule(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val capsule = timeCapsuleReader.getById(capsuleId)
+
+        val timeCapsuleUser =
+            capsule.timeCapsuleUsers
+                .firstOrNull { it.user.id == userId && it.isActive }
+                ?: throw ApiErrorException(ErrorMessages.NOT_JOINED_CAPSULE)
+
+        timeCapsuleUser.leave()
     }
 
     private fun generateInviteCode(): String = UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
