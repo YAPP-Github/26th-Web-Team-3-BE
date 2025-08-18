@@ -17,6 +17,7 @@ data class TimeCapsuleDetailDto(
     val status: TimeCapsuleStatus,
     val remainingTime: RemainingTimeDto? = null,
     val isMine: Boolean,
+    val isJoined: Boolean,
     val inviteCode: String,
     val beadVideoUrl: String,
     val isFirstOpen: Boolean,

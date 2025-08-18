@@ -44,7 +44,7 @@ class TimeCapsuleDetailService(
         val likeCount = timeCapsuleLikeReader.getLikeCount(capsuleId)
         val participantCount = timeCapsuleUserReader.getParticipantCount(capsuleId)
 
-        val (isFirstOpen, isMine) =
+        val (isFirstOpen, isMine, isJoined) =
             if (userId != null) {
                 val timeCapsuleUser = timeCapsuleUserReader.getTimeCapsuleUserOrNull(capsuleId, userId)
                 val firstOpen = timeCapsuleUser?.let { !it.isOpened } ?: false
@@ -52,9 +52,10 @@ class TimeCapsuleDetailService(
                     timeCapsuleUser.updateOpened()
                     timeCapsuleUserWriter.save(timeCapsuleUser)
                 }
-                firstOpen to (capsule.creator.id == userId)
+                val joined = timeCapsuleUser?.isActive ?: false
+                Triple(firstOpen, capsule.creator.id == userId, joined)
             } else {
-                false to false
+                Triple(false, false, false)
             }
 
         val letterCount = letterReader.getLetterCountByCapsuleId(capsule.id)
@@ -74,6 +75,7 @@ class TimeCapsuleDetailService(
             status = status,
             remainingTime = remainingTime,
             isMine = isMine,
+            isJoined = isJoined,
             inviteCode = capsule.inviteCode,
             beadVideoUrl = beadVideoUrl,
             isFirstOpen = isFirstOpen,
