@@ -43,4 +43,4 @@ logging:
 cookie:
   secure: false
   same-site: Strict
-  domain: #비어있게
+  domain: "" #비어있게
