@@ -23,6 +23,7 @@ enum class ApiPath(
     // 타임캡슐 관련 API
     TIME_CAPSULE_CREATE("/api/v1/capsules", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_JOIN("/api/v1/capsules/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
+    TIME_CAPSULE_LEAVE("/api/v1/capsules/{capsuleId}/leave", HttpMethod.DELETE, AuthType.REQUIRED),
     TIME_CAPSULE_LIKE("/api/v1/capsules/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_DETAIL("/api/v1/capsules/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
 
