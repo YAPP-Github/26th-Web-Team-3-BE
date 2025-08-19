@@ -133,19 +133,17 @@ class TimeCapsuleCustomRepositoryImpl(
                         and(timeCapsule.creator.id.eq(userId))
 
                     MyCapsuleFilter.LIKED ->
-                        and(like.user.id.eq(userId))
+                        and(like.user.id.eq(userId).and(like.isLiked.isTrue))
 
                     MyCapsuleFilter.PARTICIPATING ->
                         and(participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)))
 
                     MyCapsuleFilter.ALL ->
                         and(
-                            timeCapsule.creator.id.eq(userId),
+                            timeCapsule.creator.id.eq(userId)
+                                .or(like.user.id.eq(userId).and(like.isLiked.isTrue))
+                                .or(participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE))),
                         )
-                            .or(like.user.id.eq(userId))
-                            .or(
-                                participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)),
-                            )
                 }
             }
 
