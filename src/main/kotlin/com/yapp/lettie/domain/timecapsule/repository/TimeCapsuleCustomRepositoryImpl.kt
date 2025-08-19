@@ -126,28 +126,19 @@ class TimeCapsuleCustomRepositoryImpl(
         val participant = QTimeCapsuleUser.timeCapsuleUser
         val tcu = QTimeCapsuleUser("tcu")
 
+        val createdByMe = timeCapsule.creator.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE))
+        val likedByMe = like.user.id.eq(userId).and(like.isLiked.isTrue)
+        val participating =
+            participant.user.id.eq(userId)
+                .and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE))
+
         val builder =
             BooleanBuilder().apply {
                 when (filter) {
-                    MyCapsuleFilter.CREATED ->
-                        and(timeCapsule.creator.id.eq(userId))
-
-                    MyCapsuleFilter.LIKED ->
-                        and(like.user.id.eq(userId).and(like.isLiked.isTrue))
-
-                    MyCapsuleFilter.PARTICIPATING ->
-                        and(participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)))
-
-                    MyCapsuleFilter.ALL ->
-                        and(
-                            timeCapsule.creator.id.eq(userId)
-                                .or(like.user.id.eq(userId).and(like.isLiked.isTrue))
-                                .or(
-                                    participant.user.id.eq(
-                                        userId,
-                                    ).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)),
-                                ),
-                        )
+                    MyCapsuleFilter.CREATED -> and(createdByMe)
+                    MyCapsuleFilter.LIKED -> and(likedByMe)
+                    MyCapsuleFilter.PARTICIPATING -> and(participating)
+                    MyCapsuleFilter.ALL -> and(createdByMe.or(likedByMe).or(participating))
                 }
             }
 
