@@ -142,7 +142,11 @@ class TimeCapsuleCustomRepositoryImpl(
                         and(
                             timeCapsule.creator.id.eq(userId)
                                 .or(like.user.id.eq(userId).and(like.isLiked.isTrue))
-                                .or(participant.user.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE))),
+                                .or(
+                                    participant.user.id.eq(
+                                        userId,
+                                    ).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)),
+                                ),
                         )
                 }
             }
