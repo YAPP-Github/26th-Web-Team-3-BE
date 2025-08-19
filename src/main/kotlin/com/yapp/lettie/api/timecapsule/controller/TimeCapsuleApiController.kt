@@ -50,6 +50,15 @@ class TimeCapsuleApiController(
         return ResponseEntity.ok(ApiResponse.success(true))
     }
 
+    @DeleteMapping("/{capsuleId}/leave")
+    override fun leave(
+        @LoginUser userInfo: UserInfoPayload,
+        @PathVariable capsuleId: Long,
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        timeCapsuleService.leaveTimeCapsule(userInfo.id, capsuleId)
+        return ResponseEntity.ok(ApiResponse.success(true))
+    }
+
     @Deprecated("편지 작성 시 자동 참여 처리로 인해 더 이상 사용되지 않습니다. 추후 제거 예정입니다.")
     @PostMapping("/{capsuleId}/join")
     override fun join(

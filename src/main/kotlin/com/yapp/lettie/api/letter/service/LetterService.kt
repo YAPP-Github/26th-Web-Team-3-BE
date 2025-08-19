@@ -16,6 +16,7 @@ import com.yapp.lettie.common.exception.ApiErrorException
 import com.yapp.lettie.domain.file.entity.LetterFile
 import com.yapp.lettie.domain.letter.entity.Letter
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -40,6 +41,8 @@ class LetterService(
         if (capsule.isClosed(LocalDateTime.now())) {
             throw ApiErrorException(ErrorMessages.CLOSED_TIME_CAPSULE)
         }
+
+        validateUserCanJoinByLetter(userId, payload.capsuleId)
 
         val alreadyJoined = timeCapsuleUserReader.hasUserJoinedCapsule(user.id, capsule.id)
         if (!alreadyJoined) {
@@ -108,6 +111,16 @@ class LetterService(
 
         if (capsule.isPrivate() && capsule.timeCapsuleUsers.none { it.user.id == userId }) {
             throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
+        }
+    }
+
+    private fun validateUserCanJoinByLetter(
+        userId: Long,
+        capsuleId: Long,
+    ) {
+        val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
+        if (timeCapsuleUser != null && timeCapsuleUser.status == TimeCapsuleUserStatus.LEFT) {
+            throw ApiErrorException(ErrorMessages.ALREADY_LEFT_CAPSULE)
         }
     }
 }

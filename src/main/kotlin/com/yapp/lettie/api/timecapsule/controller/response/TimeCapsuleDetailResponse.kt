@@ -32,6 +32,8 @@ data class TimeCapsuleDetailResponse(
     val remainingTime: RemainingTimeResponse?,
     @Schema(description = "내가 만든 타임캡슐 여부", example = "false")
     val isMine: Boolean,
+    @Schema(description = "캡슐 참여 여부", example = "true")
+    val isJoined: Boolean,
     @Schema(description = "타임캡슐 고유 식별자(공유 링크용)", example = "abc123xy")
     val inviteCode: String,
     @Schema(description = "구슬 영상 URL", example = "https://example.com/bead-video.mp4")
@@ -64,6 +66,7 @@ data class TimeCapsuleDetailResponse(
                         )
                     },
                 isMine = dto.isMine,
+                isJoined = dto.isJoined,
                 inviteCode = dto.inviteCode,
                 beadVideoUrl = dto.beadVideoUrl,
                 isFirstOpen = dto.isFirstOpen,

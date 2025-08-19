@@ -1,0 +1,2 @@
+ALTER TABLE time_capsule_user
+    ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE';

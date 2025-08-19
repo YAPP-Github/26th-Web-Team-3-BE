@@ -15,6 +15,7 @@ services:
       - docker_compose_backend
     volumes:
       - /var/logs/prod:/logs/prod
+      - /opt/elastic/apm:/opt/elastic/apm:ro
 
 networks:
   docker_compose_backend:
