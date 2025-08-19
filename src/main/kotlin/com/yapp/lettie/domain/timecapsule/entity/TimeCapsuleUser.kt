@@ -1,10 +1,13 @@
 package com.yapp.lettie.domain.timecapsule.entity
 
 import com.yapp.lettie.domain.BaseEntity
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.user.entity.User
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.ForeignKey
 import jakarta.persistence.GeneratedValue
@@ -28,6 +31,9 @@ class TimeCapsuleUser(
     val timeCapsule: TimeCapsule,
     @Column(name = "is_opened", nullable = false)
     var isOpened: Boolean = false,
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    var status: TimeCapsuleUserStatus = TimeCapsuleUserStatus.ACTIVE,
 ) : BaseEntity() {
     companion object {
         fun of(
@@ -43,4 +49,13 @@ class TimeCapsuleUser(
     fun updateOpened() {
         this.isOpened = true
     }
+
+    fun leave() {
+        this.status = TimeCapsuleUserStatus.LEFT
+    }
+
+    val isActive: Boolean
+        get() = status == TimeCapsuleUserStatus.ACTIVE
+
+    fun canJoinByLetter(): Boolean = status == TimeCapsuleUserStatus.NEVER_JOINED
 }

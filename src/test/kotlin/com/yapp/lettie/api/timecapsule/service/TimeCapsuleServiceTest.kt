@@ -12,6 +12,7 @@ import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
+import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.user.entity.User
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -215,5 +216,120 @@ class TimeCapsuleServiceTest {
         // then
         assertThat(existingLike.isLiked).isFalse()
         verify { capsuleLikeWriter.save(existingLike) }
+    }
+
+    @Test
+    fun `활성 상태인 사용자가 캡슐을 나가면 상태가 LEFT로 변경된다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 40L
+        val user = mockk<User> { every { id } returns userId }
+        val capsule = mockk<TimeCapsule>(relaxed = true)
+        val timeCapsuleUser = spyk(TimeCapsuleUser.of(user, capsule))
+
+        every { userReader.getById(userId) } returns user
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
+
+        // when
+        timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
+
+        // then
+        assertThat(timeCapsuleUser.status).isEqualTo(TimeCapsuleUserStatus.LEFT)
+        verify { timeCapsuleUser.leave() }
+    }
+
+    @Test
+    fun `참여하지 않은 사용자가 캡슐을 나가려고 하면 예외가 발생한다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 50L
+        val user = mockk<User> { every { id } returns userId }
+        val capsule = mockk<TimeCapsule>(relaxed = true)
+
+        every { userReader.getById(userId) } returns user
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsule.timeCapsuleUsers } returns mutableListOf()
+
+        // when & then
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
+            }
+
+        assertThat(exception.error.message).isEqualTo(ErrorMessages.NOT_JOINED_CAPSULE.message)
+    }
+
+    @Test
+    fun `이미 나간 사용자가 다시 나가려고 하면 예외가 발생한다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 60L
+        val user = mockk<User> { every { id } returns userId }
+        val capsule = mockk<TimeCapsule>(relaxed = true)
+        val timeCapsuleUser = spyk(TimeCapsuleUser.of(user, capsule))
+        timeCapsuleUser.status = TimeCapsuleUserStatus.LEFT
+
+        every { userReader.getById(userId) } returns user
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
+
+        // when & then
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
+            }
+
+        assertThat(exception.error.message).isEqualTo(ErrorMessages.NOT_JOINED_CAPSULE.message)
+    }
+
+    @Test
+    fun `나간 사용자가 있는 캡슐에서 활성 사용자만 참여 체크된다`() {
+        // given
+        val userId1 = 1L
+        val userId2 = 2L
+        val capsuleId = 70L
+        val user1 = mockk<User> { every { id } returns userId1 }
+        val user2 = mockk<User> { every { id } returns userId2 }
+        val capsule = mockk<TimeCapsule>(relaxed = true)
+
+        val activeUser = spyk(TimeCapsuleUser.of(user1, capsule)) // ACTIVE 상태
+        val leftUser = spyk(TimeCapsuleUser.of(user2, capsule))
+        leftUser.status = TimeCapsuleUserStatus.LEFT // LEFT 상태
+
+        every { userReader.getById(userId1) } returns user1
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsule.timeCapsuleUsers } returns mutableListOf(activeUser, leftUser)
+        every { capsule.closedAt } returns LocalDateTime.now().plusDays(1)
+
+        // when & then - 활성 사용자는 이미 참여한 것으로 인식
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.joinTimeCapsule(userId1, capsuleId)
+            }
+        assertThat(exception.error.message).isEqualTo(ErrorMessages.ALREADY_JOINED.message)
+    }
+
+    @Test
+    fun `LEFT 상태인 사용자는 다시 참여할 수 있다`() {
+        // given
+        val userId = 1L
+        val capsuleId = 80L
+        val user = mockk<User>(relaxed = true) { every { id } returns userId }
+        val capsule = mockk<TimeCapsule>(relaxed = true)
+        val timeCapsuleUser = spyk(TimeCapsuleUser.of(user, capsule))
+        timeCapsuleUser.status = TimeCapsuleUserStatus.LEFT
+
+        every { userReader.getById(userId) } returns user
+        every { capsuleReader.getById(capsuleId) } returns capsule
+        every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
+        every { capsule.closedAt } returns LocalDateTime.now().plusDays(1)
+
+        // when
+        timeCapsuleService.joinTimeCapsule(userId, capsuleId)
+
+        // then
+        verify { capsule.addUser(any()) }
+        verify { user.addTimeCapsuleUser(any()) }
     }
 }

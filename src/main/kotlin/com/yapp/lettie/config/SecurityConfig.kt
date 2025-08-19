@@ -32,8 +32,9 @@ class SecurityConfig {
 
         configuration.allowedOriginPatterns =
             listOf(
-                "https://api.lettie.me",
+                "https://api-dev.lettie.me",
                 "https://lettie.me",
+                "https://dev.lettie.me",
                 "https://www.lettie.me",
                 "https://localhost:3000",
                 "http://localhost:3000",
