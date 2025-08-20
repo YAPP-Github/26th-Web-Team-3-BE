@@ -46,10 +46,13 @@ class AuthApiController(
     }
 
     @GetMapping("/oauth/google")
-    override fun googleAuth(redirectUrl: String): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun googleAuth(
+        redirectUrl: String,
+        state: String?,
+    ): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                OAuthUrlResponse(authService.getGoogleLoginUrl(redirectUrl)),
+                OAuthUrlResponse(authService.getGoogleLoginUrl(redirectUrl, state)),
             ),
         )
 
@@ -73,10 +76,13 @@ class AuthApiController(
     }
 
     @GetMapping("/oauth/naver")
-    override fun naverAuth(redirectUrl: String): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
+    override fun naverAuth(
+        redirectUrl: String,
+        state: String?,
+    ): ResponseEntity<ApiResponse<OAuthUrlResponse>> =
         ResponseEntity.ok().body(
             ApiResponse.success(
-                OAuthUrlResponse(authService.getNaverLoginUrl(redirectUrl)),
+                OAuthUrlResponse(authService.getNaverLoginUrl(redirectUrl, state)),
             ),
         )
 
@@ -85,7 +91,7 @@ class AuthApiController(
         @RequestBody request: AuthorizationRequest,
         response: HttpServletResponse,
     ): ResponseEntity<ApiResponse<JwtTokenResponse>> {
-        val jwtTokenDto = authService.naverLogin(request.authorizationCode)
+        val jwtTokenDto = authService.naverLogin(request.authorizationCode, request.state)
         cookieComponent.setAccessTokenCookie(jwtTokenDto, response)
 
         return ResponseEntity.ok().body(
