@@ -65,37 +65,37 @@ class EmailService(
 
                         val htmlContent =
                             """
-                                        <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
-                                            <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
+                            <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
+                                <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
-                                                <!-- 배너 이미지 -->
-                                                <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
-                                                alt="Lettie Banner"
-                                                style="width: 100%; height: auto; display: block;" />
+                                    <!-- 배너 이미지 -->
+                                    <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
+                                    alt="Lettie Banner"
+                                    style="width: 100%; height: auto; display: block;" />
 
-                                                <!-- 내용 -->
-                                                <div style="padding: 20px 32px; text-align: center;">
-                                                    <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">기다리던 타임캡슐이 열렸어요!</h2>
-                                                    <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
-                                                        <strong>$elapsedText</strong> 만에 열린 캡슐을 열어보러 갈까요?
-                                                    </p>
-                                                    <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
-                                                        📬 $capsuleTitle
-                                                    </div>
-                                                    <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
-                                                        오픈 시각: <strong>$formattedDate</strong>
-                                                    </p>
-                                                    <a href="$capsuleLink" target="_blank"
-                                                        style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3f51b5, #5c6bc0); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                                                        캡슐 열어보러 가기
-                                                    </a>
-                                                    <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
-                                                        그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
-                                                        - Lettie 팀 드림
-                                                    </p>
-                                                </div>
-                                            </div>
+                                    <!-- 내용 -->
+                                    <div style="padding: 20px 32px; text-align: center;">
+                                        <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">기다리던 타임캡슐이 열렸어요!</h2>
+                                        <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
+                                            <strong>$elapsedText</strong> 만에 열린 캡슐을 열어보러 갈까요?
+                                        </p>
+                                        <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
+                                            📬 $capsuleTitle
                                         </div>
+                                        <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
+                                            오픈 시각: <strong>$formattedDate</strong>
+                                        </p>
+                                        <a href="$capsuleLink" target="_blank"
+                                            style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3f51b5, #5c6bc0); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                                            캡슐 열어보러 가기
+                                        </a>
+                                        <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
+                                            그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
+                                            - Lettie 팀 드림
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                             """.trimIndent()
 
                         helper.setText(htmlContent, htmlContent)
@@ -123,37 +123,37 @@ class EmailService(
 
                 val htmlContent =
                     """
-                                <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
-                                    <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
+                    <div style="font-family: 'Apple SD Gothic Neo', Arial, sans-serif; background-color: #f0f4f8; padding: 60px 20px;">
+                        <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
-                                        <!-- 배너 이미지 -->
-                                        <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
-                                        alt="Lettie Banner"
-                                        style="width: 100%; height: auto; display: block;" />
+                            <!-- 배너 이미지 -->
+                            <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
+                            alt="Lettie Banner"
+                            style="width: 100%; height: auto; display: block;" />
 
-                                        <!-- 내용 -->
-                                        <div style="padding: 20px 32px; text-align: center;">
-                                            <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">기다리던 타임캡슐이 열렸어요!</h2>
-                                            <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
-                                                <strong>1시간</strong> 만에 열린 캡슐을 열어보러 갈까요?
-                                            </p>
-                                            <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
-                                                📬 test
-                                            </div>
-                                            <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
-                                                오픈 시각: <strong>12:00</strong>
-                                            </p>
-                                            <a href="https://lettie.me" target="_blank"
-                                                style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3f51b5, #5c6bc0); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                                                캡슐 열어보러 가기
-                                            </a>
-                                            <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
-                                                그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
-                                                - Lettie 팀 드림
-                                            </p>
-                                        </div>
-                                    </div>
+                            <!-- 내용 -->
+                            <div style="padding: 20px 32px; text-align: center;">
+                                <h2 style="color: #37474F; font-size: 22px; margin-bottom: 16px;">기다리던 타임캡슐이 열렸어요!</h2>
+                                <p style="font-size: 14px; color: #607D8B; margin-bottom: 24px;">
+                                    <strong>1시간</strong> 만에 열린 캡슐을 열어보러 갈까요?
+                                </p>
+                                <div style="font-size: 24px; font-weight: bold; color: #3f51b5; margin: 30px 0 12px;">
+                                    📬 test
                                 </div>
+                                <p style="font-size: 14px; color: #888; margin-bottom: 32px;">
+                                    오픈 시각: <strong>12:00</strong>
+                                </p>
+                                <a href="https://lettie.me" target="_blank"
+                                    style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3f51b5, #5c6bc0); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                                    캡슐 열어보러 가기
+                                </a>
+                                <p style="font-size: 12px; color: #B0BEC5; margin-top: 40px;">
+                                    그때의 기억을 추억하는 시간이 되기를 바라요. 💌<br/>
+                                    - Lettie 팀 드림
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                     """.trimIndent()
 
                 val plainText =
