@@ -100,9 +100,9 @@ class EmailService(
 
                         helper.setText(htmlContent, true)
                         mailSender.send(mime)
-                        logger.info { "이메일 전송 성공: $recipient" }
+                        logger.info { "이메일 전송 성공: ${maskEmail(recipient.email)}" }
                     } catch (e: Exception) {
-                        logger.error(e) { "메일 전송 실패: $recipient" }
+                        logger.error(e) { "메일 전송 실패: ${maskEmail(recipient.email)}" }
                     }
                 }
             }
@@ -156,18 +156,6 @@ class EmailService(
                     </div>
                     """.trimIndent()
 
-                val plainText =
-                    """
-                    Test 님, 기다리던 타임캡슐이 열렸어요!
-
-                    캡슐: test
-                    오픈 시각: 12:00
-
-                    바로 열어보기: https://lettie.com
-
-                    - Lettie 팀 드림
-                    """.trimIndent()
-
                 helper.setText(htmlContent, true)
                 mailSender.send(mime)
                 logger.info { "테스트 메일 전송 성공: $to" }
@@ -175,5 +163,18 @@ class EmailService(
                 logger.error(e) { "테스트 메일 전송 실패: $to" }
             }
         }
+    }
+
+    private fun maskEmail(email: String): String {
+        val parts = email.split("@")
+        if (parts.size != 2) return "****"
+        val local = parts[0]
+        val domain = parts[1]
+        val maskedLocal =
+            when {
+                local.length <= 2 -> local.first() + "*"
+                else -> local.first() + "*".repeat(local.length - 2) + local.last()
+            }
+        return "$maskedLocal@$domain"
     }
 }
