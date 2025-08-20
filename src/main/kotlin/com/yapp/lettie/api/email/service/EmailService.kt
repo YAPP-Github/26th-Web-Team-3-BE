@@ -98,7 +98,7 @@ class EmailService(
                             </div>
                             """.trimIndent()
 
-                        helper.setText(htmlContent, htmlContent)
+                        helper.setText(htmlContent, true)
                         mailSender.send(mime)
                         logger.info { "이메일 전송 성공: $recipient" }
                     } catch (e: Exception) {
