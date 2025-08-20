@@ -1,6 +1,7 @@
 package com.yapp.lettie.api.email.service
 
 import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
+import com.yapp.lettie.infrastructure.minio.MinioProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,9 +20,12 @@ import java.time.format.DateTimeFormatter
 @Service
 class EmailService(
     private val mailSender: JavaMailSender,
+    private val minioProperties: MinioProperties,
 ) : DisposableBean {
     private val logger = KotlinLogging.logger {}
     private val ioScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val emailBannerUrl: String =
+        "${minioProperties.endpoint}/object/EMAIL/email-banner.jpg"
 
     override fun destroy() {
         ioScope.cancel()
@@ -69,7 +73,7 @@ class EmailService(
                                 <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                                     <!-- 배너 이미지 -->
-                                    <img src="$EMAIL_BANNER_URL
+                                    <img src="$emailBannerUrl
                                     alt="Lettie Banner"
                                     style="width: 100%; height: auto; display: block;" />
 
@@ -127,7 +131,7 @@ class EmailService(
                         <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                             <!-- 배너 이미지 -->
-                            <img src="$EMAIL_BANNER_URL
+                            <img src="$emailBannerUrl
                             alt="Lettie Banner"
                             style="width: 100%; height: auto; display: block;" />
 
@@ -176,10 +180,5 @@ class EmailService(
                 else -> local.first() + "*".repeat(local.length - 2) + local.last()
             }
         return "$maskedLocal@$domain"
-    }
-
-    companion object {
-        private const val EMAIL_BANNER_URL =
-            "https://s3.lettie.me/object/EMAIL/email-banner.jpg"
     }
 }
