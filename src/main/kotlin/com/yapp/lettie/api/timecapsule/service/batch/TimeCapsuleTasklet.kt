@@ -49,8 +49,7 @@ class TimeCapsuleTasklet(
 
             try {
                 emailService.sendTimeCapsuleOpenedEmail(
-                    recipients = recipients.map { it.email },
-                    recipientNames = recipients.map { it.name },
+                    recipients = recipients,
                     capsuleTitle = capsule.title,
                     openDate = capsule.openAt,
                     createdDate = capsule.createdAt,
