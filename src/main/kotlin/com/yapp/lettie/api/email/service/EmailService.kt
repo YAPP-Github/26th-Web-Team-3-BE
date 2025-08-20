@@ -73,7 +73,7 @@ class EmailService(
                                 <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                                     <!-- 배너 이미지 -->
-                                    <img src=$emailBannerUrl
+                                    <img src="$emailBannerUrl"
                                     alt="Lettie Banner"
                                     style="width: 100%; height: auto; display: block;" />
 
@@ -131,7 +131,7 @@ class EmailService(
                         <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                             <!-- 배너 이미지 -->
-                            <img src=$emailBannerUrl
+                            <img src="$emailBannerUrl"
                             alt="Lettie Banner"
                             style="width: 100%; height: auto; display: block;" />
 
