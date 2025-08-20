@@ -69,7 +69,7 @@ class EmailService(
                                 <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                                     <!-- 배너 이미지 -->
-                                    <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
+                                    <img src="$EMAIL_BANNER_URL
                                     alt="Lettie Banner"
                                     style="width: 100%; height: auto; display: block;" />
 
@@ -127,7 +127,7 @@ class EmailService(
                         <div style="max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden;">
 
                             <!-- 배너 이미지 -->
-                            <img src="https://s3.lettie.me/object/EMAIL/email-banner.jpg"
+                            <img src="$EMAIL_BANNER_URL
                             alt="Lettie Banner"
                             style="width: 100%; height: auto; display: block;" />
 
@@ -176,5 +176,10 @@ class EmailService(
                 else -> local.first() + "*".repeat(local.length - 2) + local.last()
             }
         return "$maskedLocal@$domain"
+    }
+
+    companion object {
+        private const val EMAIL_BANNER_URL =
+            "https://s3.lettie.me/object/EMAIL/email-banner.jpg"
     }
 }
