@@ -1,5 +1,6 @@
 package com.yapp.lettie.api.email.service
 
+import com.yapp.lettie.domain.timecapsule.dto.RecipientRow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,8 +28,7 @@ class EmailService(
     }
 
     fun sendTimeCapsuleOpenedEmail(
-        recipients: List<String>,
-        recipientNames: List<String>,
+        recipients: List<RecipientRow>,
         capsuleTitle: String,
         openDate: LocalDateTime,
         createdDate: LocalDateTime,
@@ -48,8 +48,8 @@ class EmailService(
                 else -> "${minutes}분"
             }
 
-        recipients.chunked(10).zip(recipientNames.chunked(10)).forEach { (batchRecipients, batchNames) ->
-            batchRecipients.zip(batchNames).forEach { (recipient, name) ->
+        recipients.chunked(10).forEach { batch ->
+            batch.forEach { recipient ->
                 ioScope.launch {
                     delay(100)
                     try {
@@ -60,8 +60,8 @@ class EmailService(
                                 "UTF-8",
                             )
 
-                        helper.setTo(recipient)
-                        helper.setSubject("[LETTIE] ${name}님, 방금 캡슐이 열렸어요! - $capsuleTitle ")
+                        helper.setTo(recipient.email)
+                        helper.setSubject("[LETTIE] ${recipient.name}님, 방금 캡슐이 열렸어요! - $capsuleTitle ")
 
                         val htmlContent =
                             """
