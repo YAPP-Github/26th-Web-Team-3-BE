@@ -130,7 +130,7 @@ class TimeCapsuleCustomRepositoryImpl(
             timeCapsule.creator.id.eq(userId)
                 .and(
                     participant.status.isNull
-                        .or(participant.status.ne(TimeCapsuleUserStatus.LEFT)),
+                        .or(participant.status.eq(TimeCapsuleUserStatus.ACTIVE)),
                 )
         val likedByMe = like.user.id.eq(userId).and(like.isLiked.isTrue)
         val participating =
