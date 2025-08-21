@@ -126,7 +126,12 @@ class TimeCapsuleCustomRepositoryImpl(
         val participant = QTimeCapsuleUser.timeCapsuleUser
         val tcu = QTimeCapsuleUser("tcu")
 
-        val createdByMe = timeCapsule.creator.id.eq(userId).and(participant.status.eq(TimeCapsuleUserStatus.ACTIVE))
+        val createdByMe =
+            timeCapsule.creator.id.eq(userId)
+                .and(
+                    participant.status.isNull
+                        .or(participant.status.ne(TimeCapsuleUserStatus.LEFT)),
+                )
         val likedByMe = like.user.id.eq(userId).and(like.isLiked.isTrue)
         val participating =
             participant.user.id.eq(userId)
