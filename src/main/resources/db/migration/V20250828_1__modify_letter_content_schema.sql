@@ -1,0 +1,2 @@
+ALTER TABLE letter
+    MODIFY COLUMN content TEXT NOT NULL,
