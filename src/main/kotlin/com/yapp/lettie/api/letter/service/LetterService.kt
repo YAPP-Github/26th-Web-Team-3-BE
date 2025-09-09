@@ -82,7 +82,7 @@ class LetterService(
     ): LettersDto {
         val capsule = timeCapsuleReader.getById(payload.capsuleId)
 
-        validateTimeCapsuleRead(capsule.id, user.id)
+        validateTimeCapsuleRead(capsule.id)
 
         val letters = letterReader.findByCapsuleId(payload.capsuleId, payload.pageable)
         return LettersDto.of(user.id, letters)
@@ -94,23 +94,16 @@ class LetterService(
         letterId: Long,
     ): LetterDto {
         val letter = letterReader.getById(letterId)
-        validateTimeCapsuleRead(letter.timeCapsule.id, user.id)
+        validateTimeCapsuleRead(letter.timeCapsule.id)
 
         return LetterDto.of(user.id, letter)
     }
 
-    private fun validateTimeCapsuleRead(
-        capsuleId: Long,
-        userId: Long,
-    ) {
+    private fun validateTimeCapsuleRead(capsuleId: Long) {
         val capsule = timeCapsuleReader.getById(capsuleId)
 
         if (capsule.isNotOpen(LocalDateTime.now())) {
             throw ApiErrorException(ErrorMessages.NOT_OPENED_CAPSULE)
-        }
-
-        if (capsule.isPrivate() && capsule.timeCapsuleUsers.none { it.user.id == userId }) {
-            throw ApiErrorException(ErrorMessages.NOT_JOINED_TIME_CAPSULE)
         }
     }
 
