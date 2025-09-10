@@ -121,13 +121,17 @@ class TimeCapsuleService(
     }
 
     @Transactional
-    fun openTimeCapsule(capsuleId: Long, userId: Long?): OpenTimeCapsuleDto {
+    fun openTimeCapsule(
+        capsuleId: Long,
+        userId: Long?,
+    ): OpenTimeCapsuleDto {
         if (userId == null) {
             return OpenTimeCapsuleDto(isFirstOpen = false)
         }
 
-        val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
-            ?: return OpenTimeCapsuleDto(isFirstOpen = false)
+        val timeCapsuleUser =
+            timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
+                ?: return OpenTimeCapsuleDto(isFirstOpen = false)
 
         val isFirstOpen = timeCapsuleUser.isOpened
         if (!isFirstOpen) {

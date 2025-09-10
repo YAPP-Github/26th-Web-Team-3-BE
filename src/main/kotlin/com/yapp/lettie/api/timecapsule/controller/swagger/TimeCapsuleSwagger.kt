@@ -60,7 +60,7 @@ interface TimeCapsuleSwagger {
 
     @Operation(
         summary = "타임캡슐 열기",
-        description = "캡슐을 열고 '처음 오픈 여부'를 반환합니다. 만약 처음 오픈하는 것이라면 false로 업데이트합니다."
+        description = "캡슐을 열고 '처음 오픈 여부'를 반환합니다. 만약 처음 오픈하는 것이라면 false로 업데이트합니다.",
     )
     fun open(
         userInfo: UserInfoPayload?,

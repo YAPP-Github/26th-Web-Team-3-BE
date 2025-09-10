@@ -67,10 +67,9 @@ class TimeCapsuleApiController(
     ): ResponseEntity<ApiResponse<OpenTimeCapsuleResponse>> =
         ResponseEntity.ok(
             ApiResponse.success(
-                OpenTimeCapsuleResponse.from(timeCapsuleService.openTimeCapsule(capsuleId, userInfo?.id))
-                )
+                OpenTimeCapsuleResponse.from(timeCapsuleService.openTimeCapsule(capsuleId, userInfo?.id)),
+            ),
         )
-
 
     @Deprecated("편지 작성 시 자동 참여 처리로 인해 더 이상 사용되지 않습니다. 추후 제거 예정입니다.")
     @PostMapping("/{capsuleId}/join")
