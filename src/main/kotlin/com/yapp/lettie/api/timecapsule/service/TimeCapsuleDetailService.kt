@@ -48,10 +48,6 @@ class TimeCapsuleDetailService(
             if (userId != null) {
                 val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
                 val firstOpen = timeCapsuleUser?.let { !it.isOpened } ?: false
-                if (firstOpen && timeCapsuleUser != null) {
-                    timeCapsuleUser.updateOpened()
-                    timeCapsuleUserWriter.save(timeCapsuleUser)
-                }
                 val joined = timeCapsuleUser?.isActive ?: false
                 Triple(firstOpen, capsule.creator.id == userId, joined)
             } else {

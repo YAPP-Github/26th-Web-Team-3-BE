@@ -33,16 +33,18 @@ class TimeCapsuleUser(
     var isOpened: Boolean = false,
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: TimeCapsuleUserStatus = TimeCapsuleUserStatus.ACTIVE,
+    var status: TimeCapsuleUserStatus,
 ) : BaseEntity() {
     companion object {
         fun of(
             user: User,
             timeCapsule: TimeCapsule,
+            status: TimeCapsuleUserStatus = TimeCapsuleUserStatus.NEVER_JOINED,
         ): TimeCapsuleUser =
             TimeCapsuleUser(
                 user = user,
                 timeCapsule = timeCapsule,
+                status = status,
             )
     }
 
