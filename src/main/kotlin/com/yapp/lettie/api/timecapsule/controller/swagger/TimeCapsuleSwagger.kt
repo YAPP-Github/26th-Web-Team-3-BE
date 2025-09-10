@@ -2,6 +2,7 @@ package com.yapp.lettie.api.timecapsule.controller.swagger
 
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
+import com.yapp.lettie.api.timecapsule.controller.response.OpenTimeCapsuleResponse
 import com.yapp.lettie.common.dto.ApiResponse
 import com.yapp.lettie.common.dto.UserInfoPayload
 import io.swagger.v3.oas.annotations.Operation
@@ -56,4 +57,13 @@ interface TimeCapsuleSwagger {
         userInfo: UserInfoPayload,
         capsuleId: Long,
     ): ResponseEntity<ApiResponse<Boolean>>
+
+    @Operation(
+        summary = "타임캡슐 열기",
+        description = "캡슐을 열고 '처음 오픈 여부'를 반환합니다. 만약 처음 오픈하는 것이라면 false로 업데이트합니다."
+    )
+    fun open(
+        userInfo: UserInfoPayload?,
+        capsuleId: Long,
+    ): ResponseEntity<ApiResponse<OpenTimeCapsuleResponse>>
 }

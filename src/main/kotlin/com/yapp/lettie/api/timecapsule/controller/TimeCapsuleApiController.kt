@@ -3,6 +3,7 @@ package com.yapp.lettie.api.timecapsule.controller
 import com.yapp.lettie.api.auth.annotation.LoginUser
 import com.yapp.lettie.api.timecapsule.controller.request.CreateTimeCapsuleRequest
 import com.yapp.lettie.api.timecapsule.controller.response.CreateTimeCapsuleResponse
+import com.yapp.lettie.api.timecapsule.controller.response.OpenTimeCapsuleResponse
 import com.yapp.lettie.api.timecapsule.controller.swagger.TimeCapsuleSwagger
 import com.yapp.lettie.api.timecapsule.service.TimeCapsuleService
 import com.yapp.lettie.common.dto.ApiResponse
@@ -58,6 +59,18 @@ class TimeCapsuleApiController(
         timeCapsuleService.leaveTimeCapsule(userInfo.id, capsuleId)
         return ResponseEntity.ok(ApiResponse.success(true))
     }
+
+    @PostMapping("/{capsuleId}/open")
+    override fun open(
+        @LoginUser userInfo: UserInfoPayload?,
+        @PathVariable capsuleId: Long,
+    ): ResponseEntity<ApiResponse<OpenTimeCapsuleResponse>> =
+        ResponseEntity.ok(
+            ApiResponse.success(
+                OpenTimeCapsuleResponse.from(timeCapsuleService.openTimeCapsule(capsuleId, userInfo?.id))
+                )
+        )
+
 
     @Deprecated("편지 작성 시 자동 참여 처리로 인해 더 이상 사용되지 않습니다. 추후 제거 예정입니다.")
     @PostMapping("/{capsuleId}/join")
