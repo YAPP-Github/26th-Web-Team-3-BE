@@ -2,9 +2,12 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsuleDto
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
+import com.yapp.lettie.api.timecapsule.service.dto.OpenTimeCapsuleDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleLikeWriter
+import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleUserWriter
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.common.error.ErrorMessages
@@ -24,6 +27,8 @@ class TimeCapsuleService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeWriter: TimeCapsuleLikeWriter,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
+    private val timeCapsuleUserReader: TimeCapsuleUserReader,
+    private val timeCapsuleUserWriter: TimeCapsuleUserWriter,
 ) {
     @Transactional
     fun createTimeCapsule(
@@ -113,6 +118,23 @@ class TimeCapsuleService(
                 ?: throw ApiErrorException(ErrorMessages.NOT_JOINED_CAPSULE)
 
         timeCapsuleUser.leave()
+    }
+
+    @Transactional
+    fun openTimeCapsule(capsuleId: Long, userId: Long?): OpenTimeCapsuleDto {
+        if (userId == null) {
+            return OpenTimeCapsuleDto(isFirstOpen = false)
+        }
+
+        val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
+            ?: return OpenTimeCapsuleDto(isFirstOpen = false)
+
+        val isFirstOpen = timeCapsuleUser.isOpened
+        if (!isFirstOpen) {
+            timeCapsuleUser.updateOpened()
+        }
+
+        return OpenTimeCapsuleDto(isFirstOpen = isFirstOpen)
     }
 
     private fun generateInviteCode(): String = UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
