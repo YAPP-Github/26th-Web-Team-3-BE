@@ -25,7 +25,9 @@ enum class ApiPath(
     TIME_CAPSULE_JOIN("/api/v1/capsules/{capsuleId}/join", HttpMethod.POST, AuthType.REQUIRED),
     TIME_CAPSULE_LEAVE("/api/v1/capsules/{capsuleId}/leave", HttpMethod.DELETE, AuthType.REQUIRED),
     TIME_CAPSULE_LIKE("/api/v1/capsules/{capsuleId}/like", HttpMethod.POST, AuthType.REQUIRED),
+    TiME_CAPSULE_UNLIKE("/api/v1/capsules/{capsuleId}/like", HttpMethod.DELETE, AuthType.REQUIRED),
     TIME_CAPSULE_DETAIL("/api/v1/capsules/{capsuleId}", HttpMethod.GET, AuthType.OPTIONAL),
+    Time_CAPSULE_OPEN("/api/v1/capsules/{capsuleId}/open", HttpMethod.POST, AuthType.OPTIONAL),
 
     // 메인페이지 조회 API
     TIME_CAPSULE_MAIN_MY_LIST("/api/v1/capsules/my", HttpMethod.GET, AuthType.REQUIRED),
