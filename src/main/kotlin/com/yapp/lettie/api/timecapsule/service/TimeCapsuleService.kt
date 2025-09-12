@@ -55,6 +55,7 @@ class TimeCapsuleService(
     }
 
     @Transactional
+    @Deprecated("Use joinTimeCapsule instead")
     fun joinTimeCapsule(
         userId: Long,
         capsuleId: Long,
@@ -125,20 +126,18 @@ class TimeCapsuleService(
         capsuleId: Long,
         userId: Long?,
     ): OpenTimeCapsuleDto {
-        if (userId == null) {
-            return OpenTimeCapsuleDto(isFirstOpen = false)
-        }
-
         val timeCapsuleUser =
-            timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
-                ?: return OpenTimeCapsuleDto(isFirstOpen = false)
+            userId?.let {
+                timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, it)
+            } ?: return OpenTimeCapsuleDto(isFirstOpen = false)
 
-        val isFirstOpen = timeCapsuleUser.isOpened
-        if (!isFirstOpen) {
-            timeCapsuleUser.updateOpened()
+        return when (timeCapsuleUser.isOpened) {
+            true -> OpenTimeCapsuleDto(isFirstOpen = false)
+            false -> {
+                timeCapsuleUser.updateOpened()
+                OpenTimeCapsuleDto(isFirstOpen = true)
+            }
         }
-
-        return OpenTimeCapsuleDto(isFirstOpen = isFirstOpen)
     }
 
     private fun generateInviteCode(): String = UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
