@@ -7,7 +7,6 @@ import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleLikeWriter
-import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleUserWriter
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
 import com.yapp.lettie.common.error.ErrorMessages
@@ -28,7 +27,6 @@ class TimeCapsuleService(
     private val timeCapsuleLikeWriter: TimeCapsuleLikeWriter,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
-    private val timeCapsuleUserWriter: TimeCapsuleUserWriter,
 ) {
     @Transactional
     fun createTimeCapsule(

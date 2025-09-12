@@ -139,10 +139,6 @@ class TimeCapsuleDetailServiceTest {
         assertNotNull(result.remainingTime)
         assertEquals(1, result.remainingTime?.days)
         assertEquals("https://mocked-url.com/CAPSULE/detail_bead0.png", result.beadVideoUrl)
-
-        // 첫 방문이므로 updateOpened()와 save()가 호출되었는지 확인
-        verify { timeCapsuleUser.updateOpened() }
-        verify { timeCapsuleUserWriter.save(timeCapsuleUser) }
     }
 
     @Test
