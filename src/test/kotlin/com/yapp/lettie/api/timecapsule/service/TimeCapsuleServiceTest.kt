@@ -13,7 +13,6 @@ import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleLike
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsuleUser
 import com.yapp.lettie.domain.timecapsule.entity.vo.AccessType
-import com.yapp.lettie.domain.timecapsule.entity.vo.TimeCapsuleUserStatus
 import com.yapp.lettie.domain.user.entity.User
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -206,20 +205,23 @@ class TimeCapsuleServiceTest {
         // given
         val userId = 1L
         val user = mockk<User>(relaxed = true)
-        val payload = CreateTimeCapsulePayload(
-            title = "title",
-            subtitle = "sub",
-            accessType = AccessType.PRIVATE,
-            openAt = LocalDateTime.now().minusDays(1), // 과거 시간
-            closedAt = LocalDateTime.now(),
-        )
+        // openAt을 과거 시간으로 설정
+        val payload =
+            CreateTimeCapsulePayload(
+                title = "title",
+                subtitle = "sub",
+                accessType = AccessType.PRIVATE,
+                openAt = LocalDateTime.now().minusDays(1),
+                closedAt = LocalDateTime.now(),
+            )
 
         every { userReader.getById(userId) } returns user
 
         // when & then
-        val exception = assertThrows<ApiErrorException> {
-            timeCapsuleService.createTimeCapsule(userId, payload)
-        }
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.createTimeCapsule(userId, payload)
+            }
 
         assertThat(exception.error.message).isEqualTo(ErrorMessages.INVALID_OPEN_AT.message)
     }
@@ -229,20 +231,23 @@ class TimeCapsuleServiceTest {
         // given
         val userId = 1L
         val user = mockk<User>(relaxed = true)
-        val payload = CreateTimeCapsulePayload(
-            title = "title",
-            subtitle = "sub",
-            accessType = AccessType.PRIVATE,
-            openAt = LocalDateTime.now().plusDays(5),
-            closedAt = LocalDateTime.now().plusDays(10), // openAt보다 늦음
-        )
+        // closedAt을 openAt보다 늦은 시간으로 설정
+        val payload =
+            CreateTimeCapsulePayload(
+                title = "title",
+                subtitle = "sub",
+                accessType = AccessType.PRIVATE,
+                openAt = LocalDateTime.now().plusDays(5),
+                closedAt = LocalDateTime.now().plusDays(10),
+            )
 
         every { userReader.getById(userId) } returns user
 
         // when & then
-        val exception = assertThrows<ApiErrorException> {
-            timeCapsuleService.createTimeCapsule(userId, payload)
-        }
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.createTimeCapsule(userId, payload)
+            }
 
         assertThat(exception.error.message).isEqualTo(ErrorMessages.INVALID_CLOSED_AT.message)
     }
@@ -254,9 +259,10 @@ class TimeCapsuleServiceTest {
         val capsuleId = 10L
         val user = mockk<User> { every { id } returns userId }
         val timeCapsuleUser = spyk(TimeCapsuleUser.of(user, mockk(relaxed = true)))
-        val capsule = mockk<TimeCapsule> {
-            every { timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
-        }
+        val capsule =
+            mockk<TimeCapsule> {
+                every { timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
+            }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
 
@@ -272,16 +278,18 @@ class TimeCapsuleServiceTest {
         // given
         val userId = 1L
         val capsuleId = 10L
-        val capsule = mockk<TimeCapsule> {
-            every { timeCapsuleUsers } returns mutableListOf()
-        }
+        val capsule =
+            mockk<TimeCapsule> {
+                every { timeCapsuleUsers } returns mutableListOf()
+            }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
 
         // when & then
-        val exception = assertThrows<ApiErrorException> {
-            timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
-        }
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
+            }
 
         assertThat(exception.error.message).isEqualTo(ErrorMessages.NOT_JOINED_CAPSULE.message)
     }
@@ -294,16 +302,18 @@ class TimeCapsuleServiceTest {
         val user = mockk<User> { every { id } returns userId }
         val timeCapsuleUser = spyk(TimeCapsuleUser.of(user, mockk(relaxed = true)))
         timeCapsuleUser.leave() // 이미 떠난 상태
-        val capsule = mockk<TimeCapsule> {
-            every { timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
-        }
+        val capsule =
+            mockk<TimeCapsule> {
+                every { timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
+            }
 
         every { capsuleReader.getById(capsuleId) } returns capsule
 
         // when & then
-        val exception = assertThrows<ApiErrorException> {
-            timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
-        }
+        val exception =
+            assertThrows<ApiErrorException> {
+                timeCapsuleService.leaveTimeCapsule(userId, capsuleId)
+            }
 
         assertThat(exception.error.message).isEqualTo(ErrorMessages.NOT_JOINED_CAPSULE.message)
     }
