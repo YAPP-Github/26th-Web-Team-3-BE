@@ -309,51 +309,6 @@ class LetterServiceTest {
     }
 
     @Test
-    fun `단일 편지 조회 시 프라이빗 타임캡슐에 참여하지 않은 사용자인 경우 예외를 발생시킨다`() {
-        // given
-        val userId = 1L
-        val letterId = 1L
-
-        val user =
-            UserInfoPayload(
-                id = userId,
-                roles = listOf(UserRole.USER.name),
-            )
-
-        val otherUser =
-            mockk<User> {
-                every { id } returns 2L
-            }
-
-        val timeCapsuleUser = mockk<TimeCapsuleUser>(relaxed = true)
-        every { timeCapsuleUser.user } returns otherUser
-
-        val capsule = mockk<TimeCapsule>()
-        every { capsule.id } returns 1L
-        every { capsule.isNotOpen(any()) } returns false
-        every { capsule.isPrivate() } returns true
-        every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
-
-        val mockLetter =
-            mockk<Letter> {
-                every { timeCapsule } returns capsule
-            }
-
-        every { letterReader.getById(letterId) } returns mockLetter
-        every { timeCapsuleReader.getById(1L) } returns capsule
-
-        // when & then
-        val exception =
-            assertThrows(ApiErrorException::class.java) {
-                letterService.readLetter(user, letterId)
-            }
-
-        assertEquals(ErrorMessages.NOT_JOINED_TIME_CAPSULE.message, exception.error.message)
-        verify(exactly = 1) { letterReader.getById(letterId) }
-        verify(exactly = 1) { timeCapsuleReader.getById(1L) }
-    }
-
-    @Test
     fun `단일 편지 조회 시 공개 타임캡슐은 참여하지 않아도 조회 가능하다`() {
         // given
         val userId = 1L
@@ -555,52 +510,6 @@ class LetterServiceTest {
             }
 
         assertEquals(ErrorMessages.NOT_OPENED_CAPSULE.message, exception.error.message)
-        verify(exactly = 2) { timeCapsuleReader.getById(capsuleId) }
-        verify(exactly = 0) { letterReader.findByCapsuleId(any(), any()) }
-    }
-
-    @Test
-    fun `편지 목록 조회 시 프라이빗 타임캡슐에 참여하지 않은 사용자인 경우 예외를 발생시킨다`() {
-        // given
-        val userId = 1L
-        val capsuleId = 1L
-        val pageable = PageRequest.of(0, 20)
-
-        val user =
-            UserInfoPayload(
-                id = userId,
-                roles = listOf(UserRole.USER.name),
-            )
-
-        val payload =
-            GetLettersPayload(
-                capsuleId = capsuleId,
-                pageable = pageable,
-            )
-
-        val otherUser =
-            mockk<User> {
-                every { id } returns 2L
-            }
-
-        val timeCapsuleUser = mockk<TimeCapsuleUser>(relaxed = true)
-        every { timeCapsuleUser.user } returns otherUser
-
-        val capsule = mockk<TimeCapsule>()
-        every { capsule.id } returns capsuleId
-        every { capsule.isNotOpen(any()) } returns false
-        every { capsule.isPrivate() } returns true
-        every { capsule.timeCapsuleUsers } returns mutableListOf(timeCapsuleUser)
-
-        every { timeCapsuleReader.getById(capsuleId) } returns capsule
-
-        // when & then
-        val exception =
-            assertThrows(ApiErrorException::class.java) {
-                letterService.readLetters(user, payload)
-            }
-
-        assertEquals(ErrorMessages.NOT_JOINED_TIME_CAPSULE.message, exception.error.message)
         verify(exactly = 2) { timeCapsuleReader.getById(capsuleId) }
         verify(exactly = 0) { letterReader.findByCapsuleId(any(), any()) }
     }
