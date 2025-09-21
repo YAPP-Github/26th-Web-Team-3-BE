@@ -11,7 +11,6 @@ import com.yapp.lettie.api.timecapsule.service.dto.TimeCapsuleSummariesDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
-import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleUserWriter
 import com.yapp.lettie.domain.timecapsule.entity.TimeCapsule
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -24,7 +23,6 @@ class TimeCapsuleDetailService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
     private val timeCapsuleUserReader: TimeCapsuleUserReader,
-    private val timeCapsuleUserWriter: TimeCapsuleUserWriter,
     private val letterReader: LetterReader,
 ) {
     fun getTimeCapsuleDetail(
@@ -47,13 +45,14 @@ class TimeCapsuleDetailService(
         val (isFirstOpen, isMine, isJoined) =
             if (userId != null) {
                 val timeCapsuleUser = timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, userId)
-                val firstOpen = timeCapsuleUser?.let { !it.isOpened } ?: false
-                if (firstOpen && timeCapsuleUser != null) {
-                    timeCapsuleUser.updateOpened()
-                    timeCapsuleUserWriter.save(timeCapsuleUser)
-                }
+                val isFirstOpen =
+                    timeCapsuleUser
+                        ?.takeIf { it.isActive }
+                        ?.let { !it.isOpened }
+                        ?: false
+
                 val joined = timeCapsuleUser?.isActive ?: false
-                Triple(firstOpen, capsule.creator.id == userId, joined)
+                Triple(isFirstOpen, capsule.creator.id == userId, joined)
             } else {
                 Triple(false, false, false)
             }

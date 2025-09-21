@@ -2,8 +2,10 @@ package com.yapp.lettie.api.timecapsule.service
 
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsuleDto
 import com.yapp.lettie.api.timecapsule.service.dto.CreateTimeCapsulePayload
+import com.yapp.lettie.api.timecapsule.service.dto.OpenTimeCapsuleDto
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleLikeReader
 import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleReader
+import com.yapp.lettie.api.timecapsule.service.reader.TimeCapsuleUserReader
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleLikeWriter
 import com.yapp.lettie.api.timecapsule.service.writer.TimeCapsuleWriter
 import com.yapp.lettie.api.user.service.reader.UserReader
@@ -24,6 +26,7 @@ class TimeCapsuleService(
     private val timeCapsuleReader: TimeCapsuleReader,
     private val timeCapsuleLikeWriter: TimeCapsuleLikeWriter,
     private val timeCapsuleLikeReader: TimeCapsuleLikeReader,
+    private val timeCapsuleUserReader: TimeCapsuleUserReader,
 ) {
     @Transactional
     fun createTimeCapsule(
@@ -50,6 +53,7 @@ class TimeCapsuleService(
     }
 
     @Transactional
+    @Deprecated("Use joinTimeCapsule instead")
     fun joinTimeCapsule(
         userId: Long,
         capsuleId: Long,
@@ -113,6 +117,25 @@ class TimeCapsuleService(
                 ?: throw ApiErrorException(ErrorMessages.NOT_JOINED_CAPSULE)
 
         timeCapsuleUser.leave()
+    }
+
+    @Transactional
+    fun openTimeCapsule(
+        capsuleId: Long,
+        userId: Long?,
+    ): OpenTimeCapsuleDto {
+        val timeCapsuleUser =
+            userId?.let {
+                timeCapsuleUserReader.findTimeCapsuleUser(capsuleId, it)
+            } ?: return OpenTimeCapsuleDto(isFirstOpen = false)
+
+        return when (timeCapsuleUser.isOpened) {
+            true -> OpenTimeCapsuleDto(isFirstOpen = false)
+            false -> {
+                timeCapsuleUser.updateOpened()
+                OpenTimeCapsuleDto(isFirstOpen = true)
+            }
+        }
     }
 
     private fun generateInviteCode(): String = UUID.randomUUID().toString().take(RANDOM_VALUE_LENGTH)
